@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders homepage unchanged 1`] = `
+<div>
+  <div
+    class="w-full flex flex-col lg:flex-row px-4 py-4 mx-auto lg:mx-0 mt-16 sm:mt-20 rounded-xl ring-1 ring-gray-200"
+  >
+    <div
+      class="w-full lg:w-1/2"
+    >
+      <h1
+        class="text-3xl font-bold underline"
+      >
+        Akvo Charts
+      </h1>
+      <div
+        class="_styles-module__test__3ybTi"
+      >
+        Example Component: 
+        Create Chart Library
+      </div>
+    </div>
+    <div
+      class="w-full lg:w-1/2 flex flex-col gap-3"
+    >
+      <div
+        class="w-full p-3"
+      >
+        JSON editable
+      </div>
+      <div
+        class="w-full p-3"
+      >
+        Text Editor
+      </div>
+    </div>
+  </div>
+</div>
+`;
