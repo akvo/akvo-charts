@@ -5,12 +5,20 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
   const chartRef = useRef(null);
 
   useEffect(() => {
-    const chart = echarts.init(chartRef.current);
-    const options = getOptions({ config, data });
-    chart.setOption(options);
+    let chart;
+
+    if (chartRef.current) {
+      setTimeout(() => {
+        chart = echarts.init(chartRef.current);
+        const options = getOptions({ config, data });
+        chart.setOption(options);
+      }, 0);
+    }
 
     return () => {
-      chart.dispose();
+      if (chart) {
+        chart.dispose();
+      }
     };
   }, [config, data, getOptions]);
 
