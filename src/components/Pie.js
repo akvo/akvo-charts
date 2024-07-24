@@ -1,12 +1,11 @@
 import React from 'react';
 import { useECharts } from '../hooks';
 
-const getOptions = ({ config = {}, data = [] }) => ({
-  ...config,
+const getOptions = ({ data = [] }) => ({
   series: [
     {
       type: 'pie',
-      data: data.map((item) => ({ value: item.value, name: item.label }))
+      data: data.map((item) => ({ name: item.label, value: item.value }))
     }
   ]
 });

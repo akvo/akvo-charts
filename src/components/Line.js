@@ -1,19 +1,14 @@
 import React from 'react';
 import { useECharts } from '../hooks';
 
-const getOptions = ({ config = {}, data = [] }) => ({
-  ...config,
+const getOptions = ({ data = [] }) => ({
   xAxis: {
-    type: 'category',
     data: data.map((item) => item.label)
-  },
-  yAxis: {
-    type: 'value'
   },
   series: [
     {
       data: data.map((item) => item.value),
-      type: 'line'
+      type: 'bar'
     }
   ]
 });

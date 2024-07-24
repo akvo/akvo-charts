@@ -10,9 +10,9 @@ test('renders Line component', () => {
   ];
 
   const config = {
-    title: {
-      text: 'Line Chart Example'
-    }
+    title: 'Line Chart Example',
+    xAxisLabel: 'Categories',
+    yAxisLabel: 'Values'
   };
 
   render(

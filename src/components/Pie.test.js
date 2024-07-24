@@ -4,15 +4,12 @@ import Pie from './Pie';
 
 test('renders Pie component', () => {
   const data = [
-    { label: 'A', value: 10 },
-    { label: 'B', value: 20 },
-    { label: 'C', value: 30 }
+    { label: 'Category A', value: 30 },
+    { label: 'Category B', value: 70 }
   ];
 
   const config = {
-    title: {
-      text: 'Pie Chart Example'
-    }
+    title: 'Pie Chart Example'
   };
 
   render(

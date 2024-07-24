@@ -10,9 +10,9 @@ test('renders Bar component', () => {
   ];
 
   const config = {
-    title: {
-      text: 'Bar Chart Example'
-    }
+    title: 'Bar Chart Example',
+    xAxisLabel: 'Categories',
+    yAxisLabel: 'Values'
   };
 
   render(
