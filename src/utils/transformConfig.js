@@ -1,4 +1,9 @@
-const transformConfig = ({ title, xAxisLabel = null, yAxisLabel = null }) => {
+const transformConfig = ({
+  title,
+  xAxisLabel = null,
+  yAxisLabel = null,
+  horizontal = false
+}) => {
   return {
     title: {
       text: title
@@ -7,11 +12,11 @@ const transformConfig = ({ title, xAxisLabel = null, yAxisLabel = null }) => {
       trigger: 'axis'
     },
     xAxis: {
-      type: 'category',
+      type: horizontal ? 'value' : 'category',
       name: xAxisLabel
     },
     yAxis: {
-      type: 'value',
+      type: horizontal ? 'category' : 'value',
       name: yAxisLabel
     },
     series: []
