@@ -25,7 +25,6 @@ jobs:
       - name: Import GPG key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
@@ -38,11 +37,11 @@ jobs:
       - name: Configure Git to use GPG
         run: |
           GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep 'sec' | awk '{print $2}' | cut -d'/' -f2)
+          echo "GPG_KEY_ID=$GPG_KEY_ID" >> $GITHUB_ENV
+          echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
           git config --global user.signingkey $GPG_KEY_ID
           git config --global commit.gpgsign true
           git config --global gpg.program gpg
-          echo "GPG_KEY_ID=$GPG_KEY_ID" >> $GITHUB_ENV
-          echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
 
       - name: Bump version
         id: bump_version
@@ -51,24 +50,34 @@ jobs:
           echo "::set-output name=new_version::$NEW_VERSION"
 
       - name: Commit version bump
+        env:
+          GPG_TTY: ${{ env.GPG_TTY }}
+          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git checkout main
-          git pull origin main
+          git checkout -b release-branch
           git add package.json
-          echo $PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
+          echo "$PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
           git commit -S -m "chore(release): ${{ steps.bump_version.outputs.new_version }}"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_TTY: ${{ env.GPG_TTY }}
-          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          git push origin release-branch
+
+      - name: Create Pull Request
+        id: create_pr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(release): ${{ steps.bump_version.outputs.new_version }}'
+          branch: release-branch
+          title: 'Release ${{ steps.bump_version.outputs.new_version }}'
+          body: 'Automated release of version ${{ steps.bump_version.outputs.new_version }}'
 
       - name: Build the project
+        if: github.event_name == 'pull_request'
         run: yarn build
 
       - name: Publish to npm
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged
         run: yarn publish --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
