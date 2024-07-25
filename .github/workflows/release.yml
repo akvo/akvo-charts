@@ -57,11 +57,11 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git checkout -b release-branch || git checkout release-branch
-          git pull origin release-branch
+          git pull origin release-branch --rebase
           git add package.json
           echo "$PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
           git commit -S -m "chore(release): ${{ steps.bump_version.outputs.new_version }}"
-          git push origin release-branch
+          git push origin release-branch --force
 
       - name: Create Pull Request
         id: create_pr
