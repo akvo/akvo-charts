@@ -13,21 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: '18'
-
-      - name: Install Dependencies
-        run: yarn install
-
-      - name: Build project
-        run: yarn build
-
-      - name: Configure NPM
-        run: echo "//registry.npmjs.org/:_authToken=\${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: Publish to NPM
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm build
+      - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn publish --provenance --access public
