@@ -1,6 +1,6 @@
 {
   "name": "akvo-charts",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Echarts Wrapper for React Component",
   "author": "dedenbangkit",
   "license": "AGPL-3.0",
@@ -53,9 +53,9 @@
   "devDependencies": {
     "@babel/core": "^7.24.9",
     "@babel/eslint-parser": "^7.24.8",
-    "@babel/preset-react": "^7.24.7",
     "@babel/plugin-syntax-flow": "^7.14.5",
     "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@babel/preset-react": "^7.24.7",
     "cross-env": "^7.0.2",
     "eslint": "^8.22.0",
     "eslint-config-prettier": "^8.5.0",
@@ -75,6 +75,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^5.0.1",
+    "standard-version": "^9.5.0",
     "typescript": ">=2.7"
   },
   "files": ["dist"],
