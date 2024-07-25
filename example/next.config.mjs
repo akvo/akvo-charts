@@ -6,6 +6,7 @@ const nextConfig = {
    * @see https://nextjs.org/docs/app/building-your-application/deploying/static-exports
    */
   output: 'export',
+  basePath: '/akvo-charts',
   /**
    * Disable server-based image optimization. Next.js does not support
    * dynamic features with static exports.
