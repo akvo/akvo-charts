@@ -57,7 +57,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git checkout -b release-branch || git checkout release-branch
+          git checkout release-branch
           git add package.json
           echo "$PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
           git commit -S -m "chore(release): $NEW_VERSION"
