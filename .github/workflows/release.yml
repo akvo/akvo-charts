@@ -1,86 +1,30 @@
-name: Release to npm
+name: Publish to NPM
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          registry-url: 'https://registry.npmjs.org/'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: yarn install
 
-      - name: Import GPG key
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          echo "use-agent" >> ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          gpg-connect-agent reloadagent /bye
-
-      - name: Configure Git to use GPG
-        run: |
-          GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep 'sec' | awk '{print $2}' | cut -d'/' -f2)
-          echo "GPG_KEY_ID=$GPG_KEY_ID" >> $GITHUB_ENV
-          echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
-          git config --global user.signingkey $GPG_KEY_ID
-          git config --global commit.gpgsign true
-          git config --global gpg.program gpg
-
-      - name: Bump Version
-        id: bump_version
-        run: |
-          NEW_VERSION=$(yarn version --patch --no-git-tag-version | grep 'New version' | awk '{print $NF}')
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-      - name: Commit Version Bump
-        env:
-          GPG_TTY: ${{ env.GPG_TTY }}
-          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          NEW_VERSION: ${{ env.NEW_VERSION }}
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git checkout -b release-branch || git checkout release-branch
-          git add package.json
-          echo "$PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
-          git commit -S -m "chore(release): $NEW_VERSION"
-          git pull origin release-branch --rebase
-          git push origin release-branch --force
-
-      - name: Create PR
-        id: create_pr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore(release): ${{ env.NEW_VERSION }}'
-          base: main
-          branch: release-branch
-          title: 'Release ${{ env.NEW_VERSION }}'
-          body: 'Automated release of version ${{ env.NEW_VERSION }}'
-
-      - name: Run Build
-        if: github.event_name == 'pull_request'
+      - name: Build project
         run: yarn build
 
       - name: Publish to NPM
-        if: github.event_name == 'pull_request' && github.event.pull_request.merged
-        run: yarn publish --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn publish
