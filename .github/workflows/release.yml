@@ -20,9 +20,12 @@ jobs:
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Get the tag name
         id: get_tag_name
-        run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "::set-output name=TAG_NAME::${TAG_NAME#v}"
 
       - name: Read version from package.json
         id: read_version
