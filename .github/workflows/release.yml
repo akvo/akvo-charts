@@ -41,8 +41,8 @@ jobs:
           git config --global user.signingkey $GPG_KEY_ID
           git config --global commit.gpgsign true
           git config --global gpg.program gpg
+          echo "GPG_KEY_ID=$GPG_KEY_ID" >> $GITHUB_ENV
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
-          echo "export GPG_TTY" >> $GITHUB_ENV
 
       - name: Bump version
         id: bump_version
@@ -62,7 +62,7 @@ jobs:
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_TTY: ${{ steps.configure_gpg.outputs.GPG_TTY }}
+          GPG_TTY: ${{ env.GPG_TTY }}
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Build the project
