@@ -43,13 +43,13 @@ jobs:
           git config --global commit.gpgsign true
           git config --global gpg.program gpg
 
-      - name: Bump version
+      - name: Bump Version
         id: bump_version
         run: |
           NEW_VERSION=$(yarn version --patch --no-git-tag-version | grep 'New version' | awk '{print $NF}')
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-      - name: Commit version bump
+      - name: Commit Version Bump
         env:
           GPG_TTY: ${{ env.GPG_TTY }}
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -64,7 +64,7 @@ jobs:
           git pull origin release-branch --rebase
           git push origin release-branch --force
 
-      - name: Create Pull Request
+      - name: Create PR
         id: create_pr
         uses: peter-evans/create-pull-request@v3
         with:
@@ -75,11 +75,11 @@ jobs:
           title: 'Release ${{ env.NEW_VERSION }}'
           body: 'Automated release of version ${{ env.NEW_VERSION }}'
 
-      - name: Build the project
+      - name: Run Build
         if: github.event_name == 'pull_request'
         run: yarn build
 
-      - name: Publish to npm
+      - name: Publish to NPM
         if: github.event_name == 'pull_request' && github.event.pull_request.merged
         run: yarn publish --non-interactive
         env:
