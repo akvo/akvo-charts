@@ -37,12 +37,12 @@ jobs:
 
       - name: Configure Git to use GPG
         run: |
-          gpg --list-secret-keys --keyid-format LONG
           GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep 'sec' | awk '{print $2}' | cut -d'/' -f2)
           git config --global user.signingkey $GPG_KEY_ID
           git config --global commit.gpgsign true
           git config --global gpg.program gpg
-          echo "export GPG_TTY=$(tty)" >> $GITHUB_ENV
+          echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
+          echo "export GPG_TTY" >> $GITHUB_ENV
 
       - name: Bump version
         id: bump_version
@@ -54,35 +54,21 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git checkout -b release-branch
-          echo "use-agent" >> ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          export GPG_TTY=$(tty)
-          echo $GPG_TTY
+          git checkout main
+          git pull origin main
           git add package.json
           echo $PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
           git commit -S -m "chore(release): ${{ steps.bump_version.outputs.new_version }}"
-          git push origin release-branch
+          git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPG_TTY: ${{ steps.configure_gpg.outputs.GPG_TTY }}
-
-      - name: Create Pull Request
-        id: create_pr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore(release): ${{ steps.bump_version.outputs.new_version }}'
-          branch: release-branch
-          title: 'Release ${{ steps.bump_version.outputs.new_version }}'
-          body: 'Automated release of version ${{ steps.bump_version.outputs.new_version }}'
+          PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Build the project
-        if: github.event_name == 'pull_request'
         run: yarn build
 
       - name: Publish to npm
-        if: github.event_name == 'pull_request' && github.event.pull_request.merged
         run: yarn publish --non-interactive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
