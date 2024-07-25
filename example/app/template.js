@@ -1,3 +1,5 @@
+import 'highlight.js/styles/default.css';
+
 const Template = ({ children }) => {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center">
