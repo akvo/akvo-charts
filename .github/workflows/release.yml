@@ -47,12 +47,13 @@ jobs:
         id: bump_version
         run: |
           NEW_VERSION=$(yarn version --patch --no-git-tag-version | grep 'New version' | awk '{print $NF}')
-          echo "::set-output name=new_version::$NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Commit version bump
         env:
           GPG_TTY: ${{ env.GPG_TTY }}
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          NEW_VERSION: ${{ env.NEW_VERSION }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
@@ -60,7 +61,7 @@ jobs:
           git pull origin release-branch --rebase
           git add package.json
           echo "$PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
-          git commit -S -m "chore(release): ${{ steps.bump_version.outputs.new_version }}"
+          git commit -S -m "chore(release): $NEW_VERSION"
           git push origin release-branch --force
 
       - name: Create Pull Request
@@ -68,11 +69,11 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'chore(release): ${{ steps.bump_version.outputs.new_version }}'
+          commit-message: 'chore(release): ${{ env.NEW_VERSION }}'
           base: main
           branch: release-branch
-          title: 'Release ${{ steps.bump_version.outputs.new_version }}'
-          body: 'Automated release of version ${{ steps.bump_version.outputs.new_version }}'
+          title: 'Release ${{ env.NEW_VERSION }}'
+          body: 'Automated release of version ${{ env.NEW_VERSION }}'
 
       - name: Build the project
         if: github.event_name == 'pull_request'
