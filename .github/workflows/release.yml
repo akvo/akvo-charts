@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '16'
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
@@ -28,10 +28,12 @@ jobs:
           PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          echo "allow-loopback-pinentry" > ~/.gnupg/gpg-agent.conf
-          echo "use-agent" > ~/.gnupg/gpg.conf
-          echo "pinentry-mode loopback" > ~/.gnupg/gpg.conf
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          gpg-connect-agent reloadagent /bye
 
       - name: Configure Git to use GPG
         run: |
@@ -40,6 +42,7 @@ jobs:
           git config --global user.signingkey $GPG_KEY_ID
           git config --global commit.gpgsign true
           git config --global gpg.program gpg
+          echo "export GPG_TTY=$(tty)" >> $GITHUB_ENV
 
       - name: Bump version
         id: bump_version
@@ -52,11 +55,17 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git checkout -b release-branch
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          export GPG_TTY=$(tty)
+          echo $GPG_TTY
           git add package.json
+          echo $PASSPHRASE | gpg --batch --yes --passphrase-fd 0 --pinentry-mode loopback --sign
           git commit -S -m "chore(release): ${{ steps.bump_version.outputs.new_version }}"
           git push origin release-branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_TTY: ${{ steps.configure_gpg.outputs.GPG_TTY }}
 
       - name: Create Pull Request
         id: create_pr
