@@ -68,6 +68,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(release): ${{ steps.bump_version.outputs.new_version }}'
+          base: main
           branch: release-branch
           title: 'Release ${{ steps.bump_version.outputs.new_version }}'
           body: 'Automated release of version ${{ steps.bump_version.outputs.new_version }}'
