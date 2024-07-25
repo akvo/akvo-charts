@@ -42,7 +42,7 @@ const JsonDataDisplay = ({ raw = false, jsonRaw = [] }) => {
         id="raw"
         onClick={(e) => onRawClick(e.target.checked)}
       />
-      <label for="raw">Raw</label>
+      <label htmlFor="raw">Raw</label>
       <ReactJson
         src={raw ? jsonRaw : jsonChart}
         theme="monokai"
