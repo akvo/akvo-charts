@@ -36,13 +36,20 @@ const JsonDataDisplay = ({ raw = false, jsonRaw = [] }) => {
   };
 
   return (
-    <>
-      <input
-        type="checkbox"
-        id="raw"
-        onClick={(e) => onRawClick(e.target.checked)}
-      />
-      <label htmlFor="raw">Raw</label>
+    <div className="w-full relative">
+      <div className="w-fit px-3 py-1 absolute top-2 right-2 text-right bg-white z-[99] rounded-sm">
+        <input
+          type="checkbox"
+          id="raw"
+          onClick={(e) => onRawClick(e.target.checked)}
+        />
+        <label
+          htmlFor="raw"
+          className="mx-1 text-lg"
+        >
+          Raw
+        </label>
+      </div>
       <ReactJson
         src={raw ? jsonRaw : jsonChart}
         theme="monokai"
@@ -51,7 +58,7 @@ const JsonDataDisplay = ({ raw = false, jsonRaw = [] }) => {
         onAdd={onJsonAdd}
         indentWidth={2}
       />
-    </>
+    </div>
   );
 };
 
