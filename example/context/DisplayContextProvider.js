@@ -6,9 +6,7 @@ const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
   showJson: true,
-  showCode: true,
-  isRaw: false,
-  isMap: false
+  showCode: true
 };
 
 const displayReducer = (state, action) => {
@@ -22,16 +20,6 @@ const displayReducer = (state, action) => {
       return {
         ...state,
         showCode: !state.showCode
-      };
-    case 'RAW':
-      return {
-        ...state,
-        isRaw: !state.isRaw
-      };
-    case 'MAP':
-      return {
-        ...state,
-        isMap: !state.isMap
       };
     default:
       throw Error(
