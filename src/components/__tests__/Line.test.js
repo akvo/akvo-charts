@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Bar from './Bar';
+import Line from '../Line';
 
-test('renders Bar component', () => {
+test('renders Line component', () => {
   const data = [
     { label: 'A', value: 10 },
     { label: 'B', value: 20 },
@@ -10,13 +10,13 @@ test('renders Bar component', () => {
   ];
 
   const config = {
-    title: 'Bar Chart Example',
+    title: 'Line Chart Example',
     xAxisLabel: 'Categories',
     yAxisLabel: 'Values'
   };
 
   render(
-    <Bar
+    <Line
       config={config}
       data={data}
     />

@@ -1,4 +1,4 @@
-import transformConfig from './transformConfig';
+import transformConfig from '../transformConfig';
 
 describe('transformConfig', () => {
   it('should transform config correctly for vertical chart', () => {

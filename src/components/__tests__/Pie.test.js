@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Pie from './Pie';
+import Pie from '../Pie';
 
 test('renders Pie component', () => {
   const data = [
