@@ -1,22 +1,23 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Pie from '../Pie';
+import Doughnut from '../Doughnut';
 import renderer from 'react-test-renderer';
 
-test('renders Pie component', () => {
+test('renders Doughnut component', () => {
   const data = [
     { label: 'Category A', value: 30 },
     { label: 'Category B', value: 70 }
   ];
 
   const config = {
-    title: 'Pie Chart Example'
+    title: 'Doughnut Chart Example'
   };
 
   render(
-    <Pie
+    <Doughnut
       config={config}
       data={data}
+      size={50}
     />
   );
 
@@ -24,21 +25,22 @@ test('renders Pie component', () => {
   expect(chartContainer).toBeInTheDocument();
 });
 
-test('matches Pie snapshot', () => {
+test('matches Doughnut snapshot', () => {
   const data = [
     { label: 'Category A', value: 30 },
     { label: 'Category B', value: 70 }
   ];
 
   const config = {
-    title: 'Pie Chart Example'
+    title: 'Doughnut Chart Example'
   };
 
   const tree = renderer
     .create(
-      <Pie
+      <Doughnut
         config={config}
         data={data}
+        size={50}
       />
     )
     .toJSON();
