@@ -16,17 +16,18 @@ const renderCodes = (type = 'default', props) => {
 };
 
 const codeBlock = ({ type = 'default', ...props }) => {
-  return `
-      ${renderImport(type)}
-
-      const Chart = () => {
-        return (
-          <div>
-            ${renderCodes(type, props)}
-          </div>
-        )
-      }
-    `;
+  const codes = [
+    `${renderImport(type)}\n`,
+    `\n`,
+    `const Chart = () => {\n`,
+    `\treturn (\n`,
+    `\t\t<div>\n`,
+    `\t\t\t${renderCodes(type, props)}\n`,
+    `\t\t</div>\n`,
+    `\t)\n`,
+    `}\n`
+  ];
+  return codes.join('');
 };
 
 export default codeBlock;
