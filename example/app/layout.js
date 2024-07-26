@@ -1,5 +1,5 @@
 // These styles apply to every route in the application
-import { ChartContextProvider } from '../context';
+import { DisplayContextProvider, ChartContextProvider } from '../context';
 import './globals.css';
 
 export const metadata = {
@@ -19,9 +19,11 @@ export default function RootLayout({ children }) {
         content="width=device-width, initial-scale=1.0"
       />
       <body>
-        <ChartContextProvider>
-          <main>{children}</main>
-        </ChartContextProvider>
+        <DisplayContextProvider>
+          <ChartContextProvider>
+            <main>{children}</main>
+          </ChartContextProvider>
+        </DisplayContextProvider>
       </body>
     </html>
   );
