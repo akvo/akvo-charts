@@ -1,6 +1,6 @@
 {
   "name": "akvo-charts",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "Echarts Wrapper for React Component",
   "author": "dedenbangkit",
   "license": "AGPL-3.0",
@@ -77,12 +77,14 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^5.0.1",
+    "standard-version": "^9.5.0",
     "typescript": ">=2.7"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
-    "echarts": "^5.5.1"
+    "echarts": "^5.5.1",
+    "postcss-flexbugs-fixes": "^5.0.2"
   }
 }

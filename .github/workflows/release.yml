@@ -1,0 +1,53 @@
+name: Publish to NPM
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get the tag name
+        id: get_tag_name
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "::set-output name=TAG_NAME::${TAG_NAME}"
+
+      - name: Read version from package.json
+        id: read_version
+        run: echo "::set-output name=VERSION::$(node -p "require('./package.json').version")"
+
+      - name: Check tag and version match
+        id: check_tag_version
+        run: |
+          TAG_NAME=${{ steps.get_tag_name.outputs.TAG_NAME }}
+          VERSION=${{ steps.read_version.outputs.VERSION }}
+          echo "Tag: $TAG_NAME"
+          echo "Version: $VERSION"
+          if [ "$TAG_NAME" != "$VERSION" ]; then
+            echo "Tag name ($TAG_NAME) does not match version ($VERSION)"
+            exit 1
+          fi
+
+      - name: Install Dependencies
+        run: npm install
+      - name: Build Package
+        run: npm run build
+      - name: Publish to NPM
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
