@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
-import CopyIcon from '../Icons/CopyIcon';
+
 import SnackBar from '../Snackbar';
 import { useChartContext } from '../../context/ChartContextProvider';
 import { codeBlock } from '../../utils';
 
 import 'highlight.js/styles/default.css';
 import './styles.css';
+import { CopyIcon } from '../Icons';
 
 hljs.registerLanguage('javascript', javascript);
 
@@ -35,7 +36,8 @@ const createHighlight = (content, languange) => {
   const contentTable = adaptedHighlightedContent
     .split(/\r?\n/)
     .map(
-      (lineContent) => `<tr><td class="line-number" data-pseudo-content=${++lineNumber} /><td>${lineContent}</td></tr>`
+      (lineContent) =>
+        `<tr><td class="line-number" data-pseudo-content=${++lineNumber} /><td>${lineContent}</td></tr>`
     )
     .join('');
 
@@ -45,7 +47,8 @@ const createHighlight = (content, languange) => {
 const CodeDisplay = () => {
   const [show, setShow] = useState(false);
 
-  const chartData = useChartContext();
+  const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const chartData = isRaw ? rawConfig : defaultConfig;
   const code = codeBlock(chartData);
 
   const handleOnCopy = () => {
@@ -60,7 +63,7 @@ const CodeDisplay = () => {
     <div className="w-full relative hljs">
       <div className="w-full absolute top-2 right-2 text-right">
         <button onClick={handleOnCopy}>
-          <CopyIcon />
+          <CopyIcon size={20} />
         </button>
       </div>
       <div
@@ -69,7 +72,7 @@ const CodeDisplay = () => {
         }}
       />
       <SnackBar show={show}>
-        The code block content has been copied to the clipboard.
+        {`The code block content has been copied to the clipboard.`}
       </SnackBar>
     </div>
   );
