@@ -1,5 +1,7 @@
 #!/bin/bash
 # This script is used to generate new version for nmis-mobile
+git checkout main
+git pull
 
 APK_NAME="akvo-charts"
 CURRENT_TAG=$(git describe --abbrev=0)
