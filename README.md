@@ -1,4 +1,4 @@
-# akvo-charts
+# Akvo Charts
 
 Echarts Wrapper for React Component
 
@@ -6,21 +6,81 @@ Echarts Wrapper for React Component
 
 ## Install
 
+To get started, install the package via npm or yarn:
+
 ```bash
 npm install --save akvo-charts
+# or
+yarn add akvo-charts
 ```
 
 ## Usage
 
+### Bar or Line Chart
+A component for rendering bar or line chart.
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | `object` |	Configuration options for the chart. |
+| `data` |	`array` |	Data to be displayed in the chart. |
+| `horizontal` |	`boolean`	| If `true`, the chart will be rendered with horizontal bars (optional). |
+
+#### Example:
+
 ```jsx
-import React, { Component } from 'react'
+import React from 'react';
+import { Bar } from 'akvo-charts';
+// Please change Bar into Line if you want to use Line chart
 
-import MyComponent from 'akvo-charts'
-import 'akvo-charts/dist/index.css'
+const BarChartExample = () => {
+  const data = [
+    { label: 'January', value: 30 },
+    { label: 'February', value: 20 },
+    // ...
+  ];
 
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
-}
+  const config = {
+    title: 'Monthly Sales'
+  };
+
+  return <Bar config={config} data={data} horizontal={false} />;
+};
+
+export default BarChartExample;
+```
+
+### Pie or Donut Chart
+A component for rendering pie or donut chart.
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | `object` |	Configuration options for the chart. |
+| `data` |	`array` |	Data to be displayed in the chart. |
+| type |	`string`	| Type of pie chart ('pie' or 'donut') (optional). |
+
+#### Example:
+
+```jsx
+import React from 'react';
+import { Pie } from 'your-package-name';
+
+const PieChartExample = () => {
+  const data = [
+    { label: 'A', value: 30 },
+    { label: 'B', value: 70 },
+    // ...
+  ];
+
+  const config = {
+    title: 'Market Share'
+  };
+
+  return <Pie config={config} data={data} type="pie" />;
+};
+
+export default PieChartExample;
 ```
