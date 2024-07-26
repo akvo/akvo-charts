@@ -1,9 +1,12 @@
-import 'highlight.js/styles/default.css';
+import { Header } from "../components";
 
 const Template = ({ children }) => {
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center">
-      <div className="relative w-full px-6">{children}</div>
+    <div className="min-h-screen">
+      <Header />
+      <div className="w-full relative flex flex-col items-center">
+        <div className="w-full relative">{children}</div>
+      </div>
     </div>
   );
 };
