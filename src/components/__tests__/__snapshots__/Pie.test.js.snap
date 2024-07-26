@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches Donut snapshot 1`] = `
+<div
+  className="container"
+  role="figure"
+/>
+`;
+
+exports[`matches Pie snapshot 1`] = `
+<div
+  className="container"
+  role="figure"
+/>
+`;
