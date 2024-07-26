@@ -1,5 +1,6 @@
 import React from 'react';
 import { useECharts } from '../hooks';
+import styles from '../styles.module.css';
 
 const getOptions = ({ data = [] }) => ({
   series: [
@@ -17,7 +18,7 @@ const Pie = ({ config, data }) => {
     <div
       ref={chartRef}
       role="figure"
-      style={{ width: '100%', height: '400px' }}
+      className={styles.container}
     />
   );
 };

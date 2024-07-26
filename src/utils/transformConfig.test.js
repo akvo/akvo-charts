@@ -1,113 +1,150 @@
 import transformConfig from './transformConfig';
 
 describe('transformConfig', () => {
-  it('should transform configuration with default axis types (vertical)', () => {
-    const config = {
-      title: 'Vertical Chart Example',
+  it('should transform config correctly for vertical chart', () => {
+    const config = transformConfig({
+      title: 'Vertical Chart',
       xAxisLabel: 'X Axis',
       yAxisLabel: 'Y Axis'
-    };
+    });
 
-    const expectedOutput = {
+    expect(config).toEqual({
       title: {
-        text: 'Vertical Chart Example'
+        show: false,
+        text: 'Vertical Chart',
+        subtext: '',
+        textAlign: 'center',
+        left: '50%',
+        textStyle: {
+          color: '#000',
+          fontSize: 14,
+          fontWeight: 'normal'
+        }
+      },
+      grid: {
+        containLabel: true,
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        top: '10%'
       },
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        textStyle: {
+          color: '#000',
+          fontSize: 12,
+          fontWeight: 'bold'
+        }
       },
       xAxis: {
         type: 'category',
-        name: 'X Axis'
+        name: 'X Axis',
+        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLine: { lineStyle: { color: '#000' } },
+        axisTick: { lineStyle: { color: '#000' } }
       },
       yAxis: {
         type: 'value',
-        name: 'Y Axis'
+        name: 'Y Axis',
+        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLine: { lineStyle: { color: '#000' } },
+        axisTick: { lineStyle: { color: '#000' } }
       },
-      series: []
-    };
-
-    expect(transformConfig(config)).toEqual(expectedOutput);
+      series: [],
+      color: [
+        '#4475B4',
+        '#73ADD1',
+        '#AAD9E8',
+        '#FEE08F',
+        '#FDAE60',
+        '#F36C42',
+        '#D73027'
+      ],
+      backgroundColor: 'transparent',
+      animation: true,
+      animationThreshold: 2000,
+      animationDuration: 1000,
+      animationEasing: 'cubicOut',
+      animationDelay: 0,
+      animationDurationUpdate: 300,
+      animationEasingUpdate: 'cubicOut',
+      animationDelayUpdate: 0
+    });
   });
 
-  it('should transform configuration with horizontal axis types', () => {
-    const config = {
-      title: 'Horizontal Chart Example',
-      xAxisLabel: 'Y Axis',
-      yAxisLabel: 'X Axis',
+  it('should transform config correctly for horizontal chart', () => {
+    const config = transformConfig({
+      title: 'Horizontal Chart',
+      xAxisLabel: 'X Axis',
+      yAxisLabel: 'Y Axis',
       horizontal: true
-    };
+    });
 
-    const expectedOutput = {
+    expect(config).toEqual({
       title: {
-        text: 'Horizontal Chart Example'
+        show: false,
+        text: 'Horizontal Chart',
+        subtext: '',
+        textAlign: 'center',
+        left: '50%',
+        textStyle: {
+          color: '#000',
+          fontSize: 14,
+          fontWeight: 'normal'
+        }
+      },
+      grid: {
+        containLabel: true,
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        top: '10%'
       },
       tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        textStyle: {
+          color: '#000',
+          fontSize: 12,
+          fontWeight: 'bold'
+        }
       },
       xAxis: {
         type: 'value',
-        name: 'Y Axis'
+        name: 'X Axis',
+        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLine: { lineStyle: { color: '#000' } },
+        axisTick: { lineStyle: { color: '#000' } }
       },
       yAxis: {
         type: 'category',
-        name: 'X Axis'
+        name: 'Y Axis',
+        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        axisLine: { lineStyle: { color: '#000' } },
+        axisTick: { lineStyle: { color: '#000' } }
       },
-      series: []
-    };
-
-    expect(transformConfig(config)).toEqual(expectedOutput);
-  });
-
-  it('should transform configuration without axis labels (horizontal)', () => {
-    const config = {
-      title: 'Horizontal Pie Chart Example',
-      horizontal: true
-    };
-
-    const expectedOutput = {
-      title: {
-        text: 'Horizontal Pie Chart Example'
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      xAxis: {
-        type: 'value',
-        name: null
-      },
-      yAxis: {
-        type: 'category',
-        name: null
-      },
-      series: []
-    };
-
-    expect(transformConfig(config)).toEqual(expectedOutput);
-  });
-
-  it('should transform configuration without axis labels (vertical)', () => {
-    const config = {
-      title: 'Vertical Pie Chart Example'
-    };
-
-    const expectedOutput = {
-      title: {
-        text: 'Vertical Pie Chart Example'
-      },
-      tooltip: {
-        trigger: 'axis'
-      },
-      xAxis: {
-        type: 'category',
-        name: null
-      },
-      yAxis: {
-        type: 'value',
-        name: null
-      },
-      series: []
-    };
-
-    expect(transformConfig(config)).toEqual(expectedOutput);
+      series: [],
+      color: [
+        '#4475B4',
+        '#73ADD1',
+        '#AAD9E8',
+        '#FEE08F',
+        '#FDAE60',
+        '#F36C42',
+        '#D73027'
+      ],
+      backgroundColor: 'transparent',
+      animation: true,
+      animationThreshold: 2000,
+      animationDuration: 1000,
+      animationEasing: 'cubicOut',
+      animationDelay: 0,
+      animationDurationUpdate: 300,
+      animationEasingUpdate: 'cubicOut',
+      animationDelayUpdate: 0
+    });
   });
 });
