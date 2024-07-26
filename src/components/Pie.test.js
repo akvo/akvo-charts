@@ -22,3 +22,25 @@ test('renders Pie component', () => {
   const chartContainer = screen.getByRole('figure');
   expect(chartContainer).toBeInTheDocument();
 });
+
+test('renders Donut component', () => {
+  const data = [
+    { label: 'Category A', value: 30 },
+    { label: 'Category B', value: 70 }
+  ];
+
+  const config = {
+    title: 'Donut Chart Example'
+  };
+
+  render(
+    <Pie
+      config={config}
+      data={data}
+      type="donut"
+    />
+  );
+
+  const chartContainer = screen.getByRole('figure');
+  expect(chartContainer).toBeInTheDocument();
+});
