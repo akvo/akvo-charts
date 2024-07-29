@@ -10,7 +10,7 @@ describe('transformConfig', () => {
 
     expect(config).toEqual({
       title: {
-        show: false,
+        show: true,
         text: 'Vertical Chart',
         subtext: '',
         textAlign: 'center',
@@ -18,7 +18,7 @@ describe('transformConfig', () => {
         textStyle: {
           color: '#000',
           fontSize: 14,
-          fontWeight: 'normal'
+          fontWeight: 'bold'
         }
       },
       grid: {
@@ -84,7 +84,7 @@ describe('transformConfig', () => {
 
     expect(config).toEqual({
       title: {
-        show: false,
+        show: true,
         text: 'Horizontal Chart',
         subtext: '',
         textAlign: 'center',
@@ -92,7 +92,7 @@ describe('transformConfig', () => {
         textStyle: {
           color: '#000',
           fontSize: 14,
-          fontWeight: 'normal'
+          fontWeight: 'bold'
         }
       },
       grid: {

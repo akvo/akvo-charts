@@ -45,7 +45,7 @@ export const Legend = {
 };
 
 export const Title = {
-  show: false,
+  show: true,
   text: '',
   subtext: '',
   textAlign: 'center',
@@ -53,7 +53,7 @@ export const Title = {
   textStyle: {
     color: '#000',
     fontSize: 14,
-    fontWeight: 'normal'
+    fontWeight: 'bold'
   }
 };
 
