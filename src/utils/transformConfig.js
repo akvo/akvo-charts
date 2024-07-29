@@ -6,14 +6,16 @@ import {
   Title,
   Grid,
   Tooltip,
-  Axis
+  Axis,
+  Legend
 } from './basicChartStyle';
 
 const transformConfig = ({
   title,
   xAxisLabel = null,
   yAxisLabel = null,
-  horizontal = false
+  horizontal = false,
+  dimensions = []
 }) => {
   return {
     title: {
@@ -22,6 +24,10 @@ const transformConfig = ({
     },
     grid: {
       ...Grid
+    },
+    legend: {
+      ...Legend,
+      data: dimensions.slice(1)
     },
     tooltip: {
       ...Tooltip

@@ -32,6 +32,7 @@ export const Colors = {
 };
 
 export const Legend = {
+  show: true,
   icon: 'circle',
   top: 'top',
   left: 15,
@@ -67,6 +68,9 @@ export const Grid = {
 
 export const Tooltip = {
   trigger: 'item',
+  axisPointer: {
+    type: 'shadow'
+  },
   textStyle: {
     color: '#000',
     fontSize: 12,

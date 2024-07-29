@@ -3,7 +3,7 @@ import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
 const getOptions = ({ dimensions = [] }) => {
-  const itemName = dimensions.slice(0);
+  const itemName = dimensions[0];
   const value = dimensions.slice(`-${dimensions.length - 1}`);
   return {
     series: [

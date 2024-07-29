@@ -14,7 +14,7 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
         chart = echarts.init(chartRef.current);
         const { dimensions, source } = normalizeData(data);
         const options = {
-          ...transformConfig({ ...config }),
+          ...transformConfig({ ...config, dimensions }),
           dataset: {
             dimensions,
             source
