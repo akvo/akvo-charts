@@ -25,7 +25,6 @@ yarn add akvo-charts
 | `title`	| A string representing the title of the chart. | string | - |
 | `xAxisLabel`	|	A string that specifies the label text for the X axis of the chart. This helps to describe the data represented along the X axis. This prop is applicable **only for Bar and Line charts**. | string | - |
 | `yAxisLabel`	|	A string that specifies the label text for the Y axis of the chart. This helps to describe the data represented along the Y axis. This prop is applicable **only for Bar and Line charts**. | string | - |
-| `horizontal`	|	A boolean value that, when set to `true`, renders the chart with horizontal bars or lines. This prop is applicable **only for Bar and Line charts**. | boolean | `false` |
 
 **Example Config:**
 
@@ -34,27 +33,58 @@ const config = {
   title: 'Akvo Chart',
   xAxisLabel: 'Year',
   yAxisLabel: 'Income',
-  horizontal: false,
 }
 ```
 
 ### Data
 
-Each component's `data` prop expects an array of objects with the following structure:
+In Akvo-Charts, we follow the [ECharts dataset format](https://echarts.apache.org/en/option.html#dataset.source) to ensure compatibility and ease of use. The following data formats are supported:
 
-| Prop    | Description                          |  Type   | Default |
-|---------|--------------------------------------|---------|---------|
-| `label` | The label for the data point. This will be displayed on the x-axis (for Bar and Line chart) or as the segment label (for Pie chart). | string | - |
-| `value` | The value for the data point. This will determine the height of the bar (for Bar chart), the position of the point (for Line chart), or the size of the segment (for Pie chart). | number | - |
+#### 2D Array
 
-**Example Data:**
+A 2D array where the first row and/or column can contain dimension names. If dimension names are not provided, only the data will be used. This format is useful for simple tabular data representations.
+
+**Example:**
 
 ```jsx
-const data = [
-  { label: 'January', value: 30 },
-  { label: 'February', value: 20 },
-  { label: 'March', value: 50 }
-];
+[
+    ['product', '2015', '2016', '2017'],
+    ['Matcha Latte', 43.3, 85.8, 93.7],
+    ['Milk Tea', 83.1, 73.4, 55.1],
+    ['Cheese Cocoa', 86.4, 65.2, 82.5],
+    ['Walnut Brownie', 72.4, 53.9, 39.1]
+]
+```
+
+#### Row-Based Key-Value Format
+
+An array of objects where each object represents a row of data. The keys in the objects correspond to dimension names, and the values represent the data points. This format is useful for datasets with named dimensions.
+
+**Example:**
+
+```jsx
+[
+    { product: 'Matcha Latte', count: 823, score: 95.8 },
+    { product: 'Milk Tea', count: 235, score: 81.4 },
+    { product: 'Cheese Cocoa', count: 1042, score: 91.2 },
+    { product: 'Walnut Brownie', count: 988, score: 76.9 }
+]
+```
+
+
+#### Column-Based Key-Value Format
+
+An object where each key represents a column of data. The values for each key are arrays that correspond to the data in each column. This format is useful for datasets where columns are explicitly defined.
+
+**Example:**
+
+```jsx
+{
+    'product': ['Matcha Latte', 'Milk Tea', 'Cheese Cocoa', 'Walnut Brownie'],
+    'count': [823, 235, 1042, 988],
+    'score': [95.8, 81.4, 91.2, 76.9]
+}
+
 ```
 
 ---
