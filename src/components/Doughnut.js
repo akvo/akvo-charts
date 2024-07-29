@@ -4,14 +4,22 @@ import styles from '../styles.module.css';
 
 const MAX = 70;
 
-const getOptions = ({ data = [], radius }) => ({
-  series: [
-    {
-      radius,
-      data: data.map((item) => ({ name: item.label, value: item.value }))
-    }
-  ]
-});
+const getOptions = ({ dimensions = [], radius }) => {
+  const itemName = dimensions.slice(0);
+  const value = dimensions.slice(`-${dimensions.length - 1}`);
+  return {
+    series: [
+      {
+        type: 'pie',
+        radius,
+        encode: {
+          itemName,
+          value
+        }
+      }
+    ]
+  };
+};
 
 const Doughnut = ({ config, data, size = 40 }) => {
   const torus = useMemo(() => {
@@ -24,8 +32,8 @@ const Doughnut = ({ config, data, size = 40 }) => {
   const chartRef = useECharts({
     config,
     data,
-    getOptions: ({ data }) =>
-      getOptions({ data, radius: [`${torus}%`, `${MAX}%`] })
+    getOptions: ({ dimensions }) =>
+      getOptions({ dimensions, radius: [`${torus}%`, `${MAX}%`] })
   });
 
   return (

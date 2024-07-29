@@ -9,7 +9,7 @@ const sortKeys = (keys = []) => {
 const normalizeData = (data) => {
   if (Array.isArray(data)) {
     if (data.length > 0 && Array.isArray(data[0])) {
-      // Handle tabular format
+      // Handle tabular format (2d array)
       const [categories, ...rows] = data;
 
       const dimensions = categories.map((item) => item.toLowerCase());
@@ -26,7 +26,7 @@ const normalizeData = (data) => {
         source
       };
     } else if (data.length > 0 && typeof data[0] === 'object') {
-      // Handle key-value format
+      // Handle key-value format (Row based key-value format (object array))
       const keys = Array.from(new Set(data.flatMap(Object.keys)));
       const sortedKeys = sortKeys(keys);
 
@@ -45,7 +45,7 @@ const normalizeData = (data) => {
       };
     }
   } else if (typeof data === 'object') {
-    // Handle object-based format
+    // Handle object-based format (Column based key-value format)
     const keys = Object.keys(data);
     const maxLength = Math.max(...keys.map((key) => data[key].length));
     const sortedKeys = sortKeys(keys);

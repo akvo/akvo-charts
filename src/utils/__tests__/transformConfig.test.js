@@ -29,7 +29,7 @@ describe('transformConfig', () => {
         top: '10%'
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
         textStyle: {
           color: '#000',
           fontSize: 12,
@@ -103,7 +103,7 @@ describe('transformConfig', () => {
         top: '10%'
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
         textStyle: {
           color: '#000',
           fontSize: 12,

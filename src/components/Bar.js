@@ -2,16 +2,15 @@ import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const getOptions = ({ data = [], horizontal = false }) => {
-  const axis = horizontal ? 'yAxis' : 'xAxis';
+const getOptions = ({ horizontal = false }) => {
+  const encode = horizontal
+    ? { x: 'value', y: 'category' }
+    : { x: 'category', y: 'value' };
   return {
-    [axis]: {
-      data: data.map((item) => item.label)
-    },
     series: [
       {
-        data: data.map((item) => item.value),
-        type: 'bar'
+        type: 'bar',
+        encode
       }
     ]
   };
@@ -21,7 +20,7 @@ const Bar = ({ config, data, horizontal = false }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ data }) => getOptions({ data, horizontal })
+    getOptions: () => getOptions({ horizontal })
   });
 
   return (

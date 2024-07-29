@@ -66,7 +66,7 @@ export const Grid = {
 };
 
 export const Tooltip = {
-  trigger: 'axis',
+  trigger: 'item',
   textStyle: {
     color: '#000',
     fontSize: 12,
