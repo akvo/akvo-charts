@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { ChartDisplay } from '../components';
 
 const Editor = dynamic(() => import('../components/Editor'), {
-  ssr: false,
+  ssr: false
 });
 
 const Home = () => {
