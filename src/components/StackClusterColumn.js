@@ -3,20 +3,11 @@ import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 import { Tooltip } from '../utils/basicChartStyle';
 
-const getOptions = ({ dimensions, stackMapping, horizontal = true }) => {
-  // Reverse the stackMapping to get a dimension to stack group map
-  const dimensionToStackMap = {};
-  Object.keys(stackMapping).forEach((stackGroup) => {
-    stackMapping[stackGroup].forEach((dim) => {
-      dimensionToStackMap[dim] = stackGroup;
-    });
-  });
-
-  // Create series based on the reversed stack mapping
+const getOptions = ({ horizontal = false, dimensions = [] }) => {
   const series = dimensions.slice(1).map((dim) => ({
     name: dim,
     type: 'bar',
-    stack: dimensionToStackMap[dim] || 'defaultStack',
+    barGap: 0,
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
@@ -32,12 +23,11 @@ const getOptions = ({ dimensions, stackMapping, horizontal = true }) => {
   };
 };
 
-const StackBar = ({ config, data, stackMapping = {}, horizontal = true }) => {
+const StackClusterColumn = ({ config, data, horizontal = false }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ dimensions }) =>
-      getOptions({ dimensions, stackMapping, horizontal })
+    getOptions: ({ dimensions }) => getOptions({ horizontal, dimensions })
   });
 
   return (
@@ -49,4 +39,4 @@ const StackBar = ({ config, data, stackMapping = {}, horizontal = true }) => {
   );
 };
 
-export default StackBar;
+export default StackClusterColumn;
