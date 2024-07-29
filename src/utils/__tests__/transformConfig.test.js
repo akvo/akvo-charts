@@ -20,16 +20,16 @@ describe('transformConfig', () => {
       },
       grid: {
         containLabel: true,
-        left: '3%',
+        left: '4%',
         right: '4%',
-        bottom: '3%',
-        top: '10%'
+        bottom: '10%',
+        top: '25%'
       },
       legend: {
         show: true,
         icon: 'circle',
-        top: 'top',
-        left: 15,
+        top: 35,
+        left: 'center',
         align: 'left',
         orient: 'horizontal',
         itemGap: 10,
@@ -45,7 +45,9 @@ describe('transformConfig', () => {
         type: 'category',
         name: 'X Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameGap: 45,
+        nameLocation: 'center',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {
             color: '#000'
@@ -61,7 +63,9 @@ describe('transformConfig', () => {
         type: 'value',
         name: 'Y Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameGap: 20,
+        nameLocation: 'end',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {
             color: '#000'
@@ -114,16 +118,16 @@ describe('transformConfig', () => {
       },
       grid: {
         containLabel: true,
-        left: '3%',
+        left: '4%',
         right: '4%',
-        bottom: '3%',
-        top: '10%'
+        bottom: '10%',
+        top: '25%'
       },
       legend: {
         show: true,
         icon: 'circle',
-        top: 'top',
-        left: 15,
+        top: 35,
+        left: 'center',
         align: 'left',
         orient: 'horizontal',
         itemGap: 10,
@@ -139,7 +143,9 @@ describe('transformConfig', () => {
         type: 'value',
         name: 'X Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameGap: 20,
+        nameLocation: 'end',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {
             color: '#000'
@@ -155,7 +161,9 @@ describe('transformConfig', () => {
         type: 'category',
         name: 'Y Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameGap: 45,
+        nameLocation: 'center',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {
             color: '#000'

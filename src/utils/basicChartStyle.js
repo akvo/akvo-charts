@@ -34,8 +34,8 @@ export const Colors = {
 export const Legend = {
   show: true,
   icon: 'circle',
-  top: 'top',
-  left: 15,
+  top: 35,
+  left: 'center',
   align: 'left',
   orient: 'horizontal',
   itemGap: 10,
@@ -60,10 +60,10 @@ export const Title = {
 
 export const Grid = {
   containLabel: true,
-  left: '3%',
+  left: '4%',
   right: '4%',
-  bottom: '3%',
-  top: '10%'
+  bottom: '10%',
+  top: '25%'
 };
 
 export const Tooltip = {
@@ -82,7 +82,7 @@ export const Axis = {
   axisLabel: {
     color: '#000',
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'normal'
   },
   axisLine: {
     lineStyle: {
