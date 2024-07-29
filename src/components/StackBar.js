@@ -3,11 +3,19 @@ import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
 const getOptions = ({ dimensions, stackMapping, horizontal = true }) => {
-  // Create series based on the stackMapping
+  // Reverse the stackMapping to get a dimension to stack group map
+  const dimensionToStackMap = {};
+  Object.keys(stackMapping).forEach((stackGroup) => {
+    stackMapping[stackGroup].forEach((dim) => {
+      dimensionToStackMap[dim] = stackGroup;
+    });
+  });
+
+  // Create series based on the reversed stack mapping
   const series = dimensions.slice(1).map((dim) => ({
     name: dim,
     type: 'bar',
-    stack: stackMapping[dim] || 'defaultStack', // Use the provided stack or default
+    stack: dimensionToStackMap[dim] || 'defaultStack',
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim

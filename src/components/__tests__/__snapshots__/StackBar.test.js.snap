@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StackBar chart matches StackBar snapshot 1`] = `
+<div
+  className="container"
+  role="figure"
+/>
+`;
