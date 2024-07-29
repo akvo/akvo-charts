@@ -91,8 +91,8 @@ An object where each key represents a column of data. The values for each key ar
 
 ## Usage
 
-### Bar or Line Chart
-A component for rendering bar or line chart.
+### Bar Chart
+A component for rendering basic bar chart.
 
 #### Props:
 
@@ -107,7 +107,6 @@ A component for rendering bar or line chart.
 ```jsx
 import React from 'react';
 import { Bar } from 'akvo-charts';
-// Please change Bar into Line if you want to use Line chart
 
 const BarChartExample = () => {
   const data = [
@@ -128,8 +127,44 @@ const BarChartExample = () => {
 export default BarChartExample;
 ```
 
+### Line Chart
+A component for rendering basic line chart.
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+
+**Example usage of Line chart:**
+
+```jsx
+import React from 'react';
+import { Line } from 'akvo-charts';
+
+const LineChartExample = () => {
+  const data = [
+    { label: 'January', value: 30 },
+    { label: 'February', value: 20 },
+    // ...
+  ];
+
+  const config = {
+    title: 'Monthly Sales',
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Sales'
+  };
+
+  return <Line config={config} data={data} />;
+};
+
+export default LineChartExample;
+```
+
 ### Pie Chart
-A component for rendering pie chart.
+A component for rendering basic pie chart.
 
 #### Props:
 
@@ -163,7 +198,7 @@ export default PieChartExample;
 
 
 ### Doughnut Chart
-A component for rendering doughnut chart.
+A component for rendering basic doughnut chart.
 
 #### Props:
 
@@ -195,5 +230,112 @@ const DoughnutChartExample = () => {
 
 export default DoughnutChartExample;
 ```
+
+### Stack Bar Chart
+
+A component for rendering stacked bar chart.
+
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `stackMapping` |	object	| The configuration of stack for the data in stack bar chart (optional). If not provided, the chart will be rendered as one stack. |
+
+**Example of stackMapping props:**
+
+```jsx
+const data = [
+    ['product', '2015', '2016', '2017', '2018'],
+    ['Matcha Latte', 43.3, 85.8, 93.7, 90],
+    ['Milk Tea', 83.1, 73.4, 55.1, 78],
+    ['Cheese Cocoa', 86.4, 65.2, 82.5, 44.3],
+    ['Walnut Brownie', 72.4, 53.9, 39.1, 55.5]
+];
+
+const stackMapping = {
+  'stack1': [2015, 2016],
+  'stack2': [2017, 2018],
+}
+```
+
+
+**Example usage of StackBar chart:**
+
+```jsx
+import React from 'react';
+import { StackBar } from 'akvo-charts';
+
+const StackBarChartExample = () => {
+  const data = [
+      ['product', '2015', '2016', '2017', '2018'],
+      ['Matcha Latte', 43.3, 85.8, 93.7, 90],
+      ['Milk Tea', 83.1, 73.4, 55.1, 78],
+      ['Cheese Cocoa', 86.4, 65.2, 82.5, 44.3],
+      ['Walnut Brownie', 72.4, 53.9, 39.1, 55.5]
+  ];
+
+  const stackMapping = {
+    'stack1': [2015, 2016],
+    'stack2': [2017, 2018],
+  }
+
+  const config = {
+    title: 'Product Sales Stack Bar',
+    xAxisLabel: 'Product',
+    yAxisLabel: 'Sales'
+  };
+
+  return <StackBar config={config} data={data} stackMapping={stackMapping} />;
+};
+
+export default StackBarChartExample;
+```
+
+
+### Stack Cluster Column
+
+A component for rendering stakc cluster column. Basically this chart is like stack bar chart but stacked into a group of bar chart.
+
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+
+
+**Example usage of StackBar chart:**
+
+```jsx
+import React from 'react';
+import { StackClusterColumn } from 'akvo-charts';
+
+const StackClusterColumnChartExample = () => {
+  const data = [
+      ['product', '2015', '2016', '2017', '2018'],
+      ['Matcha Latte', 43.3, 85.8, 93.7, 90],
+      ['Milk Tea', 83.1, 73.4, 55.1, 78],
+      ['Cheese Cocoa', 86.4, 65.2, 82.5, 44.3],
+      ['Walnut Brownie', 72.4, 53.9, 39.1, 55.5]
+  ];
+
+  const config = {
+    title: 'Product Sales Stack Bar',
+    xAxisLabel: 'Product',
+    yAxisLabel: 'Sales'
+  };
+
+  return <StackClusterColumn config={config} data={data} />;
+};
+
+export default StackClusterColumnChartExample;
+```
+
 
 ---
