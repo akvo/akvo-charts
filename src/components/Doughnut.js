@@ -6,7 +6,7 @@ const MAX = 70;
 
 const getOptions = ({ dimensions = [], radius }) => {
   const itemName = dimensions[0];
-  const value = dimensions.slice(`-${dimensions.length - 1}`);
+  const value = dimensions.slice(1);
   return {
     series: [
       {

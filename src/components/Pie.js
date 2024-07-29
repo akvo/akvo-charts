@@ -4,7 +4,7 @@ import styles from '../styles.module.css';
 
 const getOptions = ({ dimensions = [] }) => {
   const itemName = dimensions[0];
-  const value = dimensions.slice(`-${dimensions.length - 1}`);
+  const value = dimensions.slice(1);
   return {
     series: [
       {
