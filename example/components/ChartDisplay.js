@@ -1,5 +1,12 @@
 'use client';
-import { Bar, Doughnut, Line, Pie } from 'akvo-charts';
+import {
+  Bar,
+  Doughnut,
+  Line,
+  Pie,
+  StackBar,
+  StackClusterColumn
+} from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
 
 const ChartDisplay = () => {
@@ -15,6 +22,10 @@ const ChartDisplay = () => {
       return <Pie {...props} />;
     case 'doughnut':
       return <Doughnut {...props} />;
+    case 'stack':
+      return <StackBar {...props} />;
+    case 'stackCluster':
+      return <StackClusterColumn {...props} />;
     default:
       return null;
   }
