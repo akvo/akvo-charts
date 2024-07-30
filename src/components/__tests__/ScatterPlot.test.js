@@ -4,8 +4,10 @@ import renderer from 'react-test-renderer';
 
 import ScatterPlot from '../ScatterPlot';
 
+jest.useFakeTimers();
+
 describe('ScatterPlot', () => {
-  it('renders ScatterPlot correctly', () => {
+  it('renders ScatterPlot correctly', async () => {
     const data = [
       [10.0, 8.04],
       [8.07, 6.95],
@@ -17,19 +19,56 @@ describe('ScatterPlot', () => {
       title: 'ScatterPlot Chart Example'
     };
 
+    let instance = null;
     render(
       <ScatterPlot
         config={config}
         data={data}
         symbolSize={25}
+        ref={(el) => {
+          instance = el;
+        }}
+        isTest
       />
     );
 
-    const chartContainer = screen.getByRole('figure');
-    expect(chartContainer).toBeInTheDocument();
+    await waitFor(() => {
+      const chartContainer = screen.getByRole('figure');
+      expect(chartContainer).toBeInTheDocument();
+      expect(instance).toBeDefined();
+      expect(instance.getChartInstance().renderToSVGString()).toContain('9.05');
+    });
   });
 
-  it('matches ScatterPlot snapshot', () => {
+  it('renders ScatterPlot incorrectly', async () => {
+    const data = [{ label: 'x', value: 9.05 }];
+
+    const config = {
+      title: 'ScatterPlot Chart Example'
+    };
+
+    let instance = null;
+    render(
+      <ScatterPlot
+        config={config}
+        data={data}
+        symbolSize={25}
+        ref={(el) => {
+          instance = el;
+        }}
+        isTest
+      />
+    );
+
+    await waitFor(() => {
+      expect(instance).toBeDefined();
+      expect(instance.getChartInstance().renderToSVGString()).not.toContain(
+        '9.05'
+      );
+    });
+  });
+
+  it('matches ScatterPlot snapshot', async () => {
     const data = [
       [10.0, 8.04],
       [8.07, 6.95],
@@ -40,16 +79,16 @@ describe('ScatterPlot', () => {
     const config = {
       title: 'ScatterPlot Chart Example'
     };
-
-    const tree = renderer
-      .create(
-        <ScatterPlot
-          config={config}
-          data={data}
-          symbolSize={25}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const { container } = render(
+      <ScatterPlot
+        config={config}
+        data={data}
+        symbolSize={25}
+        isTest
+      />
+    );
+    await waitFor(() => {
+      expect(container).toMatchSnapshot();
+    });
   });
 });

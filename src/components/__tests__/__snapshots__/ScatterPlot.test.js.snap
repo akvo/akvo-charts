@@ -1,9 +1,219 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ScatterPlot matches ScatterPlot snapshot 1`] = `
-<div
-  className="container"
-  data-testid="scatter-plot"
-  role="figure"
-/>
+<div>
+  <div
+    _echarts_instance_="ec_1722351297256"
+    class="container"
+    data-testid="scatter-plot"
+    role="figure"
+    style="position: relative;"
+  >
+    <div
+      style="position: relative; overflow: hidden; width: 400px; height: 400px;"
+    >
+      <svg
+        baseProfile="full"
+        height="400"
+        style="position: absolute; left: 0px; top: 0px; user-select: none;"
+        version="1.1"
+        width="400"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      >
+        <rect
+          fill="none"
+          height="400"
+          width="400"
+          x="0"
+          y="0"
+        />
+        <g>
+          <path
+            d="M33.44 368.5L384 368.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 302.5L384 302.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 237.5L384 237.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 171.5L384 171.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 105.5L384 105.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 40.5L384 40.5"
+            fill="transparent"
+            stroke="#E0E6F1"
+          />
+          <path
+            d="M33.44 368.5L384 368.5"
+            fill="transparent"
+            stroke="#000"
+            stroke-linecap="round"
+          />
+          <path
+            d="M33.5 368L33.5 373"
+            fill="transparent"
+            stroke="#000"
+          />
+          <path
+            d="M121.5 368L121.5 373"
+            fill="transparent"
+            stroke="#000"
+          />
+          <path
+            d="M208.5 368L208.5 373"
+            fill="transparent"
+            stroke="#000"
+          />
+          <path
+            d="M296.5 368L296.5 373"
+            fill="transparent"
+            stroke="#000"
+          />
+          <path
+            d="M384.5 368L384.5 373"
+            fill="transparent"
+            stroke="#000"
+          />
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 368)"
+          >
+            0
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 302.4)"
+          >
+            2
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 236.8)"
+          >
+            4
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 171.2)"
+          >
+            6
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 105.6)"
+          >
+            8
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="end"
+            transform="translate(25.44 40)"
+          >
+            10
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="middle"
+            transform="translate(77.26 376)"
+            y="6"
+          >
+            10
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="middle"
+            transform="translate(164.9 376)"
+            y="6"
+          >
+            8.07
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="middle"
+            transform="translate(252.54 376)"
+            y="6"
+          >
+            13
+          </text>
+          <text
+            dominant-baseline="central"
+            fill="#000"
+            style="font-size: 12px; font-family: sans-serif; font-weight: bold;"
+            text-anchor="middle"
+            transform="translate(340.18 376)"
+            y="6"
+          >
+            9.05
+          </text>
+          <path
+            d="M1 0A1 1 0 1 1 1 -0.0001"
+            fill="#4475B4"
+            fill-opacity="0"
+            transform="matrix(0,0,0,0,77.26,104.288)"
+          />
+          <path
+            d="M1 0A1 1 0 1 1 1 -0.0001"
+            fill="#4475B4"
+            fill-opacity="0"
+            transform="matrix(0,0,0,0,164.9,140.04)"
+          />
+          <path
+            d="M1 0A1 1 0 1 1 1 -0.0001"
+            fill="#4475B4"
+            fill-opacity="0"
+            transform="matrix(0,0,0,0,252.54,119.376)"
+          />
+          <path
+            d="M1 0A1 1 0 1 1 1 -0.0001"
+            fill="#4475B4"
+            fill-opacity="0"
+            transform="matrix(0,0,0,0,340.18,79.032)"
+          />
+        </g>
+      </svg>
+    </div>
+    <div
+      class=""
+    />
+  </div>
+</div>
 `;
