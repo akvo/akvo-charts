@@ -88,6 +88,7 @@
   ],
   "dependencies": {
     "echarts": "^5.5.1",
+    "jest-canvas-mock": "^2.5.2",
     "postcss-flexbugs-fixes": "^5.0.2"
   }
 }
