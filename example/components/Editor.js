@@ -13,7 +13,7 @@ const Editor = () => {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-20px)] min-w-1/2 flex flex-col gap-0">
+    <div className="w-full lg:w-1/2 h-[calc(100vh-20px)] flex flex-col gap-0">
       <div
         className={`w-full bg-neutral-800 border-b border-zinc-300 overflow-y-scroll ${showAll ? 'h-[50%]' : 'h-full'} ${!showJson ? 'hidden animate-fadeIn' : ''} transition-all`}
       >
