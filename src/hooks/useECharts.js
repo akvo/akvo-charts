@@ -11,7 +11,9 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
 
     if (chartRef.current) {
       setTimeout(() => {
-        chart = echarts.init(chartRef.current);
+        if (!chart && chartRef.current) {
+          chart = echarts.init(chartRef.current);
+        }
         const { dimensions, source } = normalizeData(data);
         const options = {
           ...transformConfig({ ...config, dimensions }),
@@ -21,7 +23,9 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
           },
           ...getOptions({ dimensions })
         };
-        chart.setOption(options);
+        if (chart) {
+          chart.setOption(options);
+        }
       }, 0);
     }
 
