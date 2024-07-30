@@ -18,6 +18,17 @@ yarn add akvo-charts
 
 ## API
 
+### Chart Types
+
+| type	| Component |
+|-------|-------------|
+| bar	| [Bar](#bar-chart) |
+| line	| [Line](#line-chart) |
+| pie	| [Pie](#pie-chart) |
+| doughnut	| [Doughnut](#doughnut-chart) |
+| stack	| [StackBar](#stack-bar-chart) |
+| stackCluster	| [StackCluster](#stack-cluster-column) |
+
 ### Config
 
 | Prop	| Description |	Type | Default |

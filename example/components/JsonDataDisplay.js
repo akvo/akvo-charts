@@ -94,19 +94,22 @@ const JsonDataDisplay = () => {
 
   return (
     <div className="w-full relative">
-      <div className="w-fit flex absolute top-2 right-2 text-right bg-white z-[99] rounded-sm text-lg">
-        {isRaw && (
-          <a
-            href="https://echarts.apache.org/en/option.html#title"
-            target="_blank"
-            className="w-fit h-auto flex items-center gap-2 px-4 py-1 hover:bg-gray-200"
-            rel="noreferrer"
-          >
-            <BookOpenIcon />
-            <span>Read Docs</span>
-          </a>
-        )}
-        <div className="px-3 py-1">
+      <div className="w-full flex justify-end sticky top-2 right-2 z-[99] rounded-sm text-lg">
+        <a
+          href={
+            isRaw
+              ? 'https://echarts.apache.org/en/option.html#title'
+              : 'https://github.com/akvo/akvo-charts/blob/main/README.md'
+          }
+          target="_blank"
+          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
+          rel="noreferrer"
+          data-testid="link-rtd"
+        >
+          <BookOpenIcon />
+          <span>Read Docs</span>
+        </a>
+        <div className="px-3 py-1 bg-white">
           <input
             type="checkbox"
             id="raw"
@@ -121,7 +124,7 @@ const JsonDataDisplay = () => {
         </div>
         <button
           type="button"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 hover:bg-gray-200"
+          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
           onClick={onClearClick}
         >
           <TrashIcon />

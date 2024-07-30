@@ -9,11 +9,9 @@ exports[`renders homepage unchanged 1`] = `
       class="w-full h-[calc(100vh-20px)] bg-white space-y-3 border-r border-zinc-300"
     >
       <div
-        class="ae-test"
-      >
-        Example Component: 
-        Akvo Chart
-      </div>
+        class="_styles-module__container__1Lxpd"
+        role="figure"
+      />
     </div>
   </div>
 </div>

@@ -1,31 +1,49 @@
 'use client';
-import { Bar } from 'akvo-charts';
+
+import { useEffect, useState } from 'react';
+import {
+  Bar,
+  Doughnut,
+  Line,
+  Pie,
+  StackBar,
+  StackClusterColumn
+} from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
+import { useDisplayContext } from '../context/DisplayContextProvider';
 
 const ChartDisplay = () => {
   const { isRaw, rawConfig, defaultConfig } = useChartContext();
-  const chartData = isRaw ? rawConfig : defaultConfig;
+  const { type, ...props } = isRaw ? rawConfig : defaultConfig;
+  const { showJson, showCode } = useDisplayContext();
 
-  const data = [
-    { label: 'A', value: 10 },
-    { label: 'B', value: 20 },
-    { label: 'C', value: 30 }
-  ];
+  const [fullscreen, setFullscreen] = useState(false);
 
-  const config = {
-    title: 'Bar Chart Example',
-    xAxisLabel: 'Categories',
-    yAxisLabel: 'Values'
-  };
+  useEffect(() => {
+    if (!showJson && !showCode && !fullscreen) {
+      setFullscreen(true);
+    }
+    if ((showJson || showCode) && fullscreen) {
+      setFullscreen(false);
+    }
+  }, [showJson, showCode, fullscreen]);
 
-  return (
-    <>
-      <Bar
-        config={config}
-        data={data}
-      />
-    </>
-  );
+  switch (type) {
+    case 'bar':
+      return <Bar {...props} />;
+    case 'line':
+      return <Line {...props} />;
+    case 'pie':
+      return <Pie {...props} />;
+    case 'doughnut':
+      return <Doughnut {...props} />;
+    case 'stack':
+      return <StackBar {...props} />;
+    case 'stackCluster':
+      return <StackClusterColumn {...props} />;
+    default:
+      return null;
+  }
 };
 
 export default ChartDisplay;

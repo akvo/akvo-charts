@@ -27,17 +27,21 @@ const normalizeData = (data) => {
       };
     } else if (data.length > 0 && typeof data[0] === 'object') {
       // Handle key-value format (Row based key-value format (object array))
-      const keys = Array.from(new Set(data.flatMap(Object.keys)));
+      const keys = Array.from(
+        new Set(data.flatMap((d) => (d ? Object.keys(d) : [])))
+      );
       const sortedKeys = sortKeys(keys);
 
       const dimensions = sortedKeys;
-      const source = data.map((item) => {
-        const obj = {};
-        sortedKeys.forEach((key) => {
-          obj[key] = item[key] !== undefined ? item[key] : 0;
+      const source = data
+        .filter((i) => i)
+        .map((item) => {
+          const obj = {};
+          sortedKeys.forEach((key) => {
+            obj[key] = item[key] !== undefined ? item[key] : 0;
+          });
+          return obj;
         });
-        return obj;
-      });
 
       return {
         dimensions,
