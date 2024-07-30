@@ -1,11 +1,13 @@
 import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
+import { Tooltip } from '../utils/basicChartStyle';
 
 const getOptions = ({ horizontal = false, dimensions = [] }) => {
   const series = dimensions.slice(1).map((dim) => ({
     name: dim,
-    type: 'line',
+    type: 'bar',
+    barGap: 0,
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
@@ -13,11 +15,15 @@ const getOptions = ({ horizontal = false, dimensions = [] }) => {
   }));
 
   return {
+    tooltip: {
+      ...Tooltip,
+      trigger: 'axis'
+    },
     series
   };
 };
 
-const Line = ({ config, data, horizontal = false }) => {
+const StackClusterColumn = ({ config, data, horizontal = false }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
@@ -33,4 +39,4 @@ const Line = ({ config, data, horizontal = false }) => {
   );
 };
 
-export default Line;
+export default StackClusterColumn;

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import transformConfig from '../utils/transformConfig';
+import normalizeData from '../utils/normalizeData';
 
 const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
   const chartRef = useRef(null);
@@ -11,9 +12,14 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
     if (chartRef.current) {
       setTimeout(() => {
         chart = echarts.init(chartRef.current);
+        const { dimensions, source } = normalizeData(data);
         const options = {
-          ...transformConfig({ ...config }),
-          ...getOptions({ data })
+          ...transformConfig({ ...config, dimensions }),
+          dataset: {
+            dimensions,
+            source
+          },
+          ...getOptions({ dimensions })
         };
         chart.setOption(options);
       }, 0);
