@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Doughnut from '../Doughnut';
+import StackBar from '../StackBar';
 import renderer from 'react-test-renderer';
 
-describe('Doughnut chart', () => {
-  test('renders Doughnut component with 2d array data format', () => {
+describe('StackBar chart', () => {
+  test('renders StackBar component with 2d array data format', () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -14,11 +14,13 @@ describe('Doughnut chart', () => {
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'StackBar Chart Example',
+      xAxisLabel: 'Categories',
+      yAxisLabel: 'Values'
     };
 
     render(
-      <Doughnut
+      <StackBar
         config={config}
         data={data}
       />
@@ -28,7 +30,7 @@ describe('Doughnut chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('renders Doughnut component with row based key-value format (object array)', () => {
+  test('renders StackBar component with row based key-value format (object array)', () => {
     const data = [
       { product: 'Matcha Latte', count: 823, score: 95.8 },
       { product: 'Milk Tea', count: 235, score: 81.4 },
@@ -37,11 +39,13 @@ describe('Doughnut chart', () => {
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'StackBar Chart Example',
+      xAxisLabel: 'Categories',
+      yAxisLabel: 'Values'
     };
 
     render(
-      <Doughnut
+      <StackBar
         config={config}
         data={data}
       />
@@ -51,7 +55,7 @@ describe('Doughnut chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('renders Doughnut component with column based key-value format', () => {
+  test('renders StackBar component with column based key-value format', () => {
     const data = {
       product: ['Matcha Latte', 'Milk Tea', 'Cheese Cocoa', 'Walnut Brownie'],
       count: [823, 235, 1042, 988],
@@ -59,14 +63,22 @@ describe('Doughnut chart', () => {
     };
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'StackBar Chart Example',
+      xAxisLabel: 'Categories',
+      yAxisLabel: 'Values'
+    };
+
+    const stackMapping = {
+      group1: [2015, 2016],
+      group2: [2017, 2018]
     };
 
     render(
-      <Doughnut
+      <StackBar
         config={config}
         data={data}
-        size={50}
+        stackMapping={stackMapping}
+        horizontal={false}
       />
     );
 
@@ -74,7 +86,7 @@ describe('Doughnut chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches Doughnut snapshot', () => {
+  test('matches StackBar snapshot', () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -84,12 +96,14 @@ describe('Doughnut chart', () => {
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'StackBar Chart Example',
+      xAxisLabel: 'Categories',
+      yAxisLabel: 'Values'
     };
 
     const tree = renderer
       .create(
-        <Doughnut
+        <StackBar
           config={config}
           data={data}
         />

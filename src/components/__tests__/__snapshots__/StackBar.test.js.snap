@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Pie chart matches Pie snapshot 1`] = `
+exports[`StackBar chart matches StackBar snapshot 1`] = `
 <div
   className="container"
   role="figure"

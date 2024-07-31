@@ -7,11 +7,18 @@ const ChartDispatchContext = createContext(null);
 const initalChartState = {
   rawConfig: {},
   defaultConfig: {
-    id: null,
-    title: 'Akvo Chart',
-    type: 'default',
-    series: [],
-    dataset: []
+    type: 'bar',
+    config: {
+      title: 'Akvo Chart',
+      xAxisLabel: 'Year',
+      yAxisLabel: 'Income',
+      horizontal: false
+    },
+    data: [
+      { label: 'January', value: 30 },
+      { label: 'February', value: 20 },
+      { label: 'March', value: 50 }
+    ]
   },
   mapConfig: {},
   mapRawConfig: {},
