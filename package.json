@@ -43,7 +43,7 @@
     "test:build": "run-s build",
     "test:lint": "eslint --config .eslintrc.json ./src/ --ext .js,.jsx",
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
+    "test:watch": "react-scripts test --env=jsdom --u",
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build --nojekyll"
   },
