@@ -1,72 +1,32 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef
-} from 'react';
-import * as echarts from 'echarts';
-import transformConfig from '../utils/transformConfig';
-
+import React from 'react';
+import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const getOptions = ({ data = [], symbolSize = 10 }) => {
+const getOptions = (symbolSize) => {
   return {
     series: [
       {
-        symbolSize,
-        data: data.filter((d) => Array.isArray(d)),
-        type: 'scatter'
+        type: 'scatter',
+        symbolSize
       }
     ]
   };
 };
 
-const ScatterPlot = forwardRef(
-  ({ config, data, symbolSize = 10, isTest = false }, ref) => {
-    const chartRef = useRef(null);
+const ScatterPlot = ({ config, data, symbolSize = 10 }) => {
+  const chartRef = useECharts({
+    config,
+    data,
+    getOptions: () => getOptions(symbolSize)
+  });
 
-    useImperativeHandle(ref, () => ({
-      getChartInstance: () => {
-        return chartRef.current
-          ? echarts.getInstanceByDom(chartRef.current)
-          : null;
-      }
-    }));
-
-    useEffect(() => {
-      let chart;
-
-      if (chartRef.current) {
-        chart = isTest
-          ? echarts.init(chartRef.current, 'light', {
-              renderer: 'svg',
-              width: 400,
-              height: 400
-            })
-          : echarts.init(chartRef.current, 'light', { renderer: 'svg' });
-        const options = {
-          ...transformConfig(config),
-          ...getOptions({ data, symbolSize })
-        };
-        chart.setOption(options);
-      }
-
-      return () => {
-        if (chart) {
-          chart.dispose();
-        }
-      };
-    }, [config, data, isTest, symbolSize]);
-
-    return (
-      <div
-        ref={chartRef}
-        role="figure"
-        className={styles.container}
-        data-testid="scatter-plot"
-      />
-    );
-  }
-);
+  return (
+    <div
+      ref={chartRef}
+      role="figure"
+      className={styles.container}
+    />
+  );
+};
 
 export default ScatterPlot;

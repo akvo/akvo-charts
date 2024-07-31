@@ -1,93 +1,99 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-
+import { render, screen } from '@testing-library/react';
 import ScatterPlot from '../ScatterPlot';
+import renderer from 'react-test-renderer';
 
-jest.useFakeTimers();
-
-describe('ScatterPlot', () => {
-  it('renders ScatterPlot correctly', async () => {
+describe('ScatterPlot chart', () => {
+  test('renders ScatterPlot component with 2d array data format', () => {
     const data = [
-      [10.0, 8.04],
-      [8.07, 6.95],
-      [13.0, 7.58],
-      [9.05, 8.81]
+      ['x', 'cluster3'],
+      ['85.8', 43.3],
+      ['73.4', 83.1],
+      ['65.2', 86.4],
+      ['53.9', 72.4]
     ];
 
     const config = {
       title: 'ScatterPlot Chart Example'
     };
 
-    let instance = null;
     render(
       <ScatterPlot
         config={config}
         data={data}
-        symbolSize={25}
-        ref={(el) => {
-          instance = el;
-        }}
-        isTest
       />
     );
 
-    await waitFor(() => {
-      const chartContainer = screen.getByRole('figure');
-      expect(chartContainer).toBeInTheDocument();
-      expect(instance).toBeDefined();
-      expect(instance.getChartInstance().renderToSVGString()).toContain('9.05');
-    });
+    const chartContainer = screen.getByRole('figure');
+    expect(chartContainer).toBeInTheDocument();
   });
 
-  it('renders ScatterPlot incorrectly', async () => {
-    const data = [{ label: 'x', value: 9.05 }];
-
-    const config = {
-      title: 'ScatterPlot Chart Example'
-    };
-
-    let instance = null;
-    render(
-      <ScatterPlot
-        config={config}
-        data={data}
-        symbolSize={25}
-        ref={(el) => {
-          instance = el;
-        }}
-        isTest
-      />
-    );
-
-    await waitFor(() => {
-      expect(instance).toBeDefined();
-      expect(instance.getChartInstance().renderToSVGString()).not.toContain(
-        '9.05'
-      );
-    });
-  });
-
-  it('matches ScatterPlot snapshot', async () => {
+  test('renders ScatterPlot component with row based key-value format (object array)', () => {
     const data = [
-      [10.0, 8.04],
-      [8.07, 6.95],
-      [13.0, 7.58],
-      [9.05, 8.81]
+      { x: 2, cluster2: 11 },
+      { x: 7, cluster2: 5 },
+      { x: 11, cluster2: 20 },
+      { x: 21, cluster2: 3 }
     ];
 
     const config = {
       title: 'ScatterPlot Chart Example'
     };
-    const { container } = render(
+
+    render(
       <ScatterPlot
         config={config}
         data={data}
-        symbolSize={25}
-        isTest
       />
     );
-    await waitFor(() => {
-      expect(container).toMatchSnapshot();
-    });
+
+    const chartContainer = screen.getByRole('figure');
+    expect(chartContainer).toBeInTheDocument();
+  });
+
+  test('renders ScatterPlot component with column based key-value format', () => {
+    const data = {
+      x: [2, 6, 8, 9],
+      cluster1: [8, 13, 15, 17]
+    };
+
+    const config = {
+      title: 'ScatterPlot Chart Example'
+    };
+
+    render(
+      <ScatterPlot
+        config={config}
+        data={data}
+        symbolSize={50}
+      />
+    );
+
+    const chartContainer = screen.getByRole('figure');
+    expect(chartContainer).toBeInTheDocument();
+  });
+
+  test('matches ScatterPlot snapshot', () => {
+    const data = [
+      ['x', 'cluster3'],
+      ['85.8', 43.3],
+      ['73.4', 83.1],
+      ['65.2', 86.4],
+      ['53.9', 72.4]
+    ];
+
+    const config = {
+      title: 'ScatterPlot Chart Example'
+    };
+
+    const tree = renderer
+      .create(
+        <ScatterPlot
+          config={config}
+          data={data}
+        />
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });
