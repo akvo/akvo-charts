@@ -25,7 +25,9 @@ const renderCodes = (type, props) => {
             : `${p}={${props[p]}}`
           : ''
     )
-    .join(` `);
+    .join(` `)
+    .trim()
+    .replace(/\s+/g, ' ');
 
   switch (type) {
     case 'bar':

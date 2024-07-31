@@ -153,6 +153,7 @@ const JsonDataDisplay = () => {
         </button>
       </div>
       <ReactJson
+        name="props"
         src={isRaw ? rawConfig : transformDefaultConfig}
         theme="monokai"
         displayDataTypes={false}
