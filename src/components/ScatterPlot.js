@@ -9,7 +9,7 @@ import transformConfig from '../utils/transformConfig';
 
 import styles from '../styles.module.css';
 
-const getOptions = ({ data = [], symbolSize = 20 }) => {
+const getOptions = ({ data = [], symbolSize = 10 }) => {
   return {
     series: [
       {
@@ -22,7 +22,7 @@ const getOptions = ({ data = [], symbolSize = 20 }) => {
 };
 
 const ScatterPlot = forwardRef(
-  ({ config, data, symbolSize = 20, isTest = false }, ref) => {
+  ({ config, data, symbolSize = 10, isTest = false }, ref) => {
     const chartRef = useRef(null);
 
     useImperativeHandle(ref, () => ({
@@ -45,8 +45,8 @@ const ScatterPlot = forwardRef(
             })
           : echarts.init(chartRef.current, 'light', { renderer: 'svg' });
         const options = {
-          ...transformConfig({ ...config, symbolSize }),
-          ...getOptions({ data })
+          ...transformConfig(config),
+          ...getOptions({ data, symbolSize })
         };
         chart.setOption(options);
       }
