@@ -420,68 +420,34 @@ var Doughnut = function Doughnut(_ref2) {
   });
 };
 
-var getOptions = function getOptions(_ref) {
-  var _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data,
-    _ref$symbolSize = _ref.symbolSize,
-    symbolSize = _ref$symbolSize === void 0 ? 20 : _ref$symbolSize;
+var _getOptions$4 = function getOptions(symbolSize) {
   return {
     series: [{
-      symbolSize: symbolSize,
-      data: data.filter(function (d) {
-        return Array.isArray(d);
-      }),
-      type: 'scatter'
+      type: 'scatter',
+      symbolSize: symbolSize
     }]
   };
 };
-var ScatterPlot = React.forwardRef(function (_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    _ref2$symbolSize = _ref2.symbolSize,
-    symbolSize = _ref2$symbolSize === void 0 ? 20 : _ref2$symbolSize,
-    _ref2$isTest = _ref2.isTest,
-    isTest = _ref2$isTest === void 0 ? false : _ref2$isTest;
-  var chartRef = React.useRef(null);
-  React.useImperativeHandle(ref, function () {
-    return {
-      getChartInstance: function getChartInstance() {
-        return chartRef.current ? echarts.getInstanceByDom(chartRef.current) : null;
-      }
-    };
-  });
-  React.useEffect(function () {
-    var chart;
-    if (chartRef.current) {
-      chart = isTest ? echarts.init(chartRef.current, 'light', {
-        renderer: 'svg',
-        width: 400,
-        height: 400
-      }) : echarts.init(chartRef.current, 'light', {
-        renderer: 'svg'
-      });
-      var options = _extends({}, transformConfig(_extends({}, config, {
-        symbolSize: symbolSize
-      })), getOptions({
-        data: data
-      }));
-      chart.setOption(options);
+var ScatterPlot = function ScatterPlot(_ref) {
+  var config = _ref.config,
+    data = _ref.data,
+    _ref$symbolSize = _ref.symbolSize,
+    symbolSize = _ref$symbolSize === void 0 ? 10 : _ref$symbolSize;
+  var chartRef = useECharts({
+    config: config,
+    data: data,
+    getOptions: function getOptions() {
+      return _getOptions$4(symbolSize);
     }
-    return function () {
-      if (chart) {
-        chart.dispose();
-      }
-    };
-  }, [config, data, isTest, symbolSize]);
+  });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
     role: "figure",
-    className: styles.container,
-    "data-testid": "scatter-plot"
+    className: styles.container
   });
-});
+};
 
-var _getOptions$4 = function getOptions(_ref) {
+var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     stackMapping = _ref.stackMapping,
     _ref$horizontal = _ref.horizontal,
@@ -524,7 +490,7 @@ var StackBar = function StackBar(_ref2) {
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
-      return _getOptions$4({
+      return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
         horizontal: horizontal
@@ -538,7 +504,7 @@ var StackBar = function StackBar(_ref2) {
   });
 };
 
-var _getOptions$5 = function getOptions(_ref) {
+var _getOptions$6 = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
@@ -573,7 +539,7 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
-      return _getOptions$5({
+      return _getOptions$6({
         horizontal: horizontal,
         dimensions: dimensions
       });
