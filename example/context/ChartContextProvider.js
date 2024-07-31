@@ -7,7 +7,6 @@ const ChartDispatchContext = createContext(null);
 const initalChartState = {
   rawConfig: {},
   defaultConfig: {
-    type: 'bar',
     config: {
       title: 'Akvo Chart',
       xAxisLabel: 'Year',

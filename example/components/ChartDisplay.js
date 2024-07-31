@@ -14,8 +14,8 @@ import { useDisplayContext } from '../context/DisplayContextProvider';
 
 const ChartDisplay = () => {
   const { isRaw, rawConfig, defaultConfig } = useChartContext();
-  const { type, ...props } = isRaw ? rawConfig : defaultConfig;
-  const { showJson, showCode } = useDisplayContext();
+  const { ...props } = isRaw ? rawConfig : defaultConfig;
+  const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -28,7 +28,7 @@ const ChartDisplay = () => {
     }
   }, [showJson, showCode, fullscreen]);
 
-  switch (type) {
+  switch (selectedChartType) {
     case 'bar':
       return <Bar {...props} />;
     case 'line':
@@ -37,9 +37,9 @@ const ChartDisplay = () => {
       return <Pie {...props} />;
     case 'doughnut':
       return <Doughnut {...props} />;
-    case 'stack':
+    case 'stack-bar':
       return <StackBar {...props} />;
-    case 'stackCluster':
+    case 'stack-cluster-column':
       return <StackClusterColumn {...props} />;
     default:
       return null;

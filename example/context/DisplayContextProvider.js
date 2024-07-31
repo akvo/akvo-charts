@@ -5,6 +5,7 @@ const DisplayContext = createContext(null);
 const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
+  selectedChartType: 'bar',
   showJson: true,
   showCode: true
 };
@@ -20,6 +21,11 @@ const displayReducer = (state, action) => {
       return {
         ...state,
         showCode: !state.showCode
+      };
+    case 'SET_SELECTED_CHART_TYPE':
+      return {
+        ...state,
+        selectedChartType: action.payload
       };
     default:
       throw Error(
