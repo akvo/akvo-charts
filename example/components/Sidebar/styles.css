@@ -15,3 +15,6 @@
   background-color: #dee2e6;
   color: #212529;
 }
+.sidebar-item .icon {
+  margin-right: 8px;
+}
