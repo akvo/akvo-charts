@@ -1,11 +1,12 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
+import { chartTypes } from '../static/config';
 
 const DisplayContext = createContext(null);
 const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
-  selectedChartType: 'Bar',
+  selectedChartType: chartTypes.BAR,
   showJson: true,
   showCode: true
 };

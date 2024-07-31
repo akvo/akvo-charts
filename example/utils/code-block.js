@@ -19,7 +19,7 @@ const renderImport = (type) => {
 const renderCodes = (type, props) => {
   const attributes = Object.keys(props)
     .map((p) =>
-      ['config', 'data'].includes(p)
+      ['config', 'data', 'stackMapping'].includes(p)
         ? `${p}={${p}}`
         : props?.[p]
           ? typeof props[p] === 'object'
@@ -49,17 +49,22 @@ const renderCodes = (type, props) => {
   }
 };
 
-const renderVars = ({ config, data }) => {
+const renderVars = ({ config, data, stackMapping }) => {
   if (!config || !data) {
     return null;
   }
   const configStr = obj2String(config);
   const dataStr = obj2String(data);
 
-  const codes = [
+  let codes = [
     `const config = ${configStr};\n\n`,
-    `const data = ${dataStr};\n`
+    `const data = ${dataStr};\n\n`
   ];
+
+  if (stackMapping) {
+    const stackMappingStr = obj2String(stackMapping);
+    codes.push(`const stackMapping = ${stackMappingStr};\n\n`);
+  }
   return codes.join('');
 };
 
@@ -69,7 +74,7 @@ const codeBlock = ({ type, ...props }) => {
     codes.push(`${renderImport(type)}\n\n`);
   }
   if (renderVars(props)) {
-    codes.push(`${renderVars(props)}\n`);
+    codes.push(`${renderVars(props)}`);
   }
 
   if (renderCodes(type, props)) {

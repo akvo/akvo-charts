@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   Bar,
   Doughnut,
@@ -11,14 +11,43 @@ import {
 } from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
 import { useDisplayContext } from '../context/DisplayContextProvider';
-import { chartTypes } from '../static/config';
+import {
+  chartTypes,
+  excludeStackMapping,
+  excludeHorizontal,
+  basicChart,
+  stackChartExampleData
+} from '../static/config';
 
 const ChartDisplay = () => {
   const { isRaw, rawConfig, defaultConfig } = useChartContext();
-  const { ...props } = isRaw ? rawConfig : defaultConfig;
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
+
+  const props = useMemo(() => {
+    if (isRaw) {
+      return rawConfig;
+    }
+    let res = { ...defaultConfig };
+    if (!basicChart.includes(selectedChartType)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
+    }
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.stackMapping;
+      res = transform;
+    }
+    return res;
+  }, [selectedChartType, defaultConfig, isRaw]);
 
   useEffect(() => {
     if (!showJson && !showCode && !fullscreen) {

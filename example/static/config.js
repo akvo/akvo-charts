@@ -6,3 +6,72 @@ export const chartTypes = {
   STACK_BAR: 'StackBar',
   STACK_CLUSTER: 'StackClusterColumn'
 };
+
+export const excludeHorizontal = [chartTypes.PIE, chartTypes.DOUGHNUT];
+export const basicChart = [
+  chartTypes.BAR,
+  chartTypes.LINE,
+  chartTypes.PIE,
+  chartTypes.DOUGHNUT
+];
+export const excludeStackMapping = [...basicChart, chartTypes.STACK_CLUSTER];
+
+export const basicChartExampleData = [
+  { month: 'January', totalSales: 30 },
+  { month: 'February', totalSales: 20 },
+  { month: 'March', totalSales: 50 },
+  { month: 'April', totalSales: 45 },
+  { month: 'May', totalSales: 40 },
+  { month: 'June', totalSales: 55 },
+  { month: 'July', totalSales: 60 },
+  { month: 'August', totalSales: 70 },
+  { month: 'September', totalSales: 65 },
+  { month: 'October', totalSales: 75 },
+  { month: 'November', totalSales: 85 },
+  { month: 'December', totalSales: 90 }
+];
+
+export const stackChartExampleData = [
+  {
+    productName: 'Product A',
+    2018: 12000,
+    2019: 15000,
+    2020: 18000,
+    2021: 20000,
+    2022: 22000,
+    2023: 25000
+  },
+  {
+    productName: 'Product B',
+    2018: 8000,
+    2019: 9500,
+    2020: 11000,
+    2021: 13000,
+    2022: 14000,
+    2023: 16000
+  },
+  {
+    productName: 'Product C',
+    2018: 15000,
+    2019: 16000,
+    2020: 17000,
+    2021: 19000,
+    2022: 21000,
+    2023: 23000
+  },
+  {
+    productName: 'Product D',
+    2018: 5000,
+    2019: 7000,
+    2020: 9000,
+    2021: 12000,
+    2022: 15000,
+    2023: 18000
+  }
+];
+
+export const exampleStackMapping = {
+  group1: ['2018', '2019'],
+  group2: ['2020', '2021'],
+  group3: ['2022', '2023']
+};

@@ -10,8 +10,12 @@ import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
-
-const excludeHorizontal = ['pie', 'doughnut'];
+import {
+  excludeHorizontal,
+  excludeStackMapping,
+  basicChart,
+  stackChartExampleData
+} from '../static/config';
 
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
@@ -21,12 +25,24 @@ const JsonDataDisplay = () => {
   const { selectedChartType } = useDisplayContext();
 
   const transformDefaultConfig = useMemo(() => {
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...defaultConfig };
-      delete transform.horizontal;
-      return transform;
+    let res = { ...defaultConfig };
+    if (!basicChart.includes(selectedChartType)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
     }
-    return defaultConfig;
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.stackMapping;
+      res = transform;
+    }
+    return res;
   }, [selectedChartType, defaultConfig]);
 
   const chartDispatch = useChartDispatch();
