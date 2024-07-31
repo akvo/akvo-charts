@@ -5,52 +5,77 @@ describe('transformConfig', () => {
     const config = transformConfig({
       title: 'Vertical Chart',
       xAxisLabel: 'X Axis',
-      yAxisLabel: 'Y Axis'
+      yAxisLabel: 'Y Axis',
+      dimensions: ['name', 'age', 'score']
     });
 
     expect(config).toEqual({
       title: {
-        show: false,
+        show: true,
         text: 'Vertical Chart',
         subtext: '',
         textAlign: 'center',
         left: '50%',
-        textStyle: {
-          color: '#000',
-          fontSize: 14,
-          fontWeight: 'normal'
-        }
+        textStyle: { color: '#000', fontSize: 14, fontWeight: 'bold' }
       },
       grid: {
         containLabel: true,
-        left: '3%',
+        left: '4%',
         right: '4%',
-        bottom: '3%',
-        top: '10%'
+        bottom: '10%',
+        top: '25%'
+      },
+      legend: {
+        show: true,
+        icon: 'circle',
+        top: 35,
+        left: 'center',
+        align: 'left',
+        orient: 'horizontal',
+        itemGap: 10,
+        textStyle: { fontWeight: 'normal', fontSize: 12 },
+        data: ['age', 'score']
       },
       tooltip: {
-        trigger: 'axis',
-        textStyle: {
-          color: '#000',
-          fontSize: 12,
-          fontWeight: 'bold'
-        }
+        trigger: 'item',
+        axisPointer: { type: 'shadow' },
+        textStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' }
       },
       xAxis: {
         type: 'category',
         name: 'X Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLine: { lineStyle: { color: '#000' } },
-        axisTick: { lineStyle: { color: '#000' } }
+        nameGap: 45,
+        nameLocation: 'center',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLine: {
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisTick: {
+          lineStyle: {
+            color: '#000'
+          }
+        }
       },
       yAxis: {
         type: 'value',
         name: 'Y Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLine: { lineStyle: { color: '#000' } },
-        axisTick: { lineStyle: { color: '#000' } }
+        nameGap: 20,
+        nameLocation: 'end',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLine: {
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisTick: {
+          lineStyle: {
+            color: '#000'
+          }
+        }
       },
       series: [],
       color: [
@@ -84,47 +109,71 @@ describe('transformConfig', () => {
 
     expect(config).toEqual({
       title: {
-        show: false,
+        show: true,
         text: 'Horizontal Chart',
         subtext: '',
         textAlign: 'center',
         left: '50%',
-        textStyle: {
-          color: '#000',
-          fontSize: 14,
-          fontWeight: 'normal'
-        }
+        textStyle: { color: '#000', fontSize: 14, fontWeight: 'bold' }
       },
       grid: {
         containLabel: true,
-        left: '3%',
+        left: '4%',
         right: '4%',
-        bottom: '3%',
-        top: '10%'
+        bottom: '10%',
+        top: '25%'
+      },
+      legend: {
+        show: true,
+        icon: 'circle',
+        top: 35,
+        left: 'center',
+        align: 'left',
+        orient: 'horizontal',
+        itemGap: 10,
+        textStyle: { fontWeight: 'normal', fontSize: 12 },
+        data: []
       },
       tooltip: {
-        trigger: 'axis',
-        textStyle: {
-          color: '#000',
-          fontSize: 12,
-          fontWeight: 'bold'
-        }
+        trigger: 'item',
+        axisPointer: { type: 'shadow' },
+        textStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' }
       },
       xAxis: {
         type: 'value',
         name: 'X Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLine: { lineStyle: { color: '#000' } },
-        axisTick: { lineStyle: { color: '#000' } }
+        nameGap: 20,
+        nameLocation: 'end',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLine: {
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisTick: {
+          lineStyle: {
+            color: '#000'
+          }
+        }
       },
       yAxis: {
         type: 'category',
         name: 'Y Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        axisLine: { lineStyle: { color: '#000' } },
-        axisTick: { lineStyle: { color: '#000' } }
+        nameGap: 45,
+        nameLocation: 'center',
+        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLine: {
+          lineStyle: {
+            color: '#000'
+          }
+        },
+        axisTick: {
+          lineStyle: {
+            color: '#000'
+          }
+        }
       },
       series: [],
       color: [

@@ -5,7 +5,7 @@ import ChartContextProvider from '../../context/ChartContextProvider';
 import DisplayContextProvider from '../../context/DisplayContextProvider';
 
 describe('Home', () => {
-  it('renders a chart', async () => {
+  it('renders a homepage completely', async () => {
     render(
       <DisplayContextProvider>
         <ChartContextProvider>
@@ -14,8 +14,8 @@ describe('Home', () => {
       </DisplayContextProvider>
     );
     await waitFor(() => {
-      const chartText = screen.getByText('Example Component: Akvo Chart');
-      expect(chartText).toBeInTheDocument();
+      const chartEl = screen.getByTestId('link-rtd');
+      expect(chartEl).toBeInTheDocument();
     });
   });
 });

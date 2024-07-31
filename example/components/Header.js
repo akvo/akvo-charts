@@ -14,7 +14,7 @@ const Header = () => {
           className="w-full h-auto"
         />
         <img
-          src="https://img.shields.io/npm/v/akvo-charts.svg"
+          src="https://img.shields.io/npm/v/akvo-charts?logo=npm&style=flat-square"
           alt="npm"
         />
       </div>
