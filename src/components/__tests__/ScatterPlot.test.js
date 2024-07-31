@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import renderer from 'react-test-renderer';
 
 import ScatterPlot from '../ScatterPlot';
 
