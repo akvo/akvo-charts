@@ -17,18 +17,11 @@ export const basicChart = [
 export const excludeStackMapping = [...basicChart, chartTypes.STACK_CLUSTER];
 
 export const basicChartExampleData = [
-  { month: 'January', totalSales: 30 },
-  { month: 'February', totalSales: 20 },
-  { month: 'March', totalSales: 50 },
-  { month: 'April', totalSales: 45 },
-  { month: 'May', totalSales: 40 },
-  { month: 'June', totalSales: 55 },
-  { month: 'July', totalSales: 60 },
-  { month: 'August', totalSales: 70 },
-  { month: 'September', totalSales: 65 },
-  { month: 'October', totalSales: 75 },
-  { month: 'November', totalSales: 85 },
-  { month: 'December', totalSales: 90 }
+  { month: 'Product 1', totalSales: 30 },
+  { month: 'Product 2', totalSales: 20 },
+  { month: 'Product 3', totalSales: 50 },
+  { month: 'Product 4', totalSales: 45 },
+  { month: 'Product 5', totalSales: 40 }
 ];
 
 export const stackChartExampleData = [
