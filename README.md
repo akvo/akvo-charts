@@ -345,7 +345,7 @@ A component for rendering basic scatter plot chart.
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config). |
-| `data` |	array |	An array of data points for the scatter plot. Each data point is represented as an array with two numerical values. |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 | `symbolSize` _(optional)_| number |Optional parameter to set the dot size. The default value is `10`|
 
 **Example usage of ScatterPlot chart:**
@@ -356,10 +356,10 @@ import { ScatterPlot } from 'akvo-charts';
 
 const ScatterPlotChartExample = () => {
    const data = [
-      [10.0, 8.04],
-      [8.07, 6.95],
-      [13.0, 7.58],
-      [9.05, 8.81]
+      { x: 2, clusterY: 11 },
+      { x: 7, clusterY: 5 },
+      { x: 11, clusterY: 20 },
+      { x: 21, clusterY: 3 }
     ];
 
     const config = {
