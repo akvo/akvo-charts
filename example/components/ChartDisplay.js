@@ -28,22 +28,26 @@ const ChartDisplay = () => {
     }
   }, [showJson, showCode, fullscreen]);
 
-  switch (selectedChartType) {
-    case 'bar':
-      return <Bar {...props} />;
-    case 'line':
-      return <Line {...props} />;
-    case 'pie':
-      return <Pie {...props} />;
-    case 'doughnut':
-      return <Doughnut {...props} />;
-    case 'stack-bar':
-      return <StackBar {...props} />;
-    case 'stack-cluster-column':
-      return <StackClusterColumn {...props} />;
-    default:
-      return null;
-  }
+  const chartComponent = () => {
+    switch (selectedChartType) {
+      case 'bar':
+        return <Bar {...props} />;
+      case 'line':
+        return <Line {...props} />;
+      case 'pie':
+        return <Pie {...props} />;
+      case 'doughnut':
+        return <Doughnut {...props} />;
+      case 'stack-bar':
+        return <StackBar {...props} />;
+      case 'stack-cluster-column':
+        return <StackClusterColumn {...props} />;
+      default:
+        return null;
+    }
+  };
+
+  return <div class="pt-10">{chartComponent()}</div>;
 };
 
 export default ChartDisplay;

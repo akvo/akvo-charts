@@ -6,8 +6,8 @@ const importBlocks = {
   line: `import { Line } from "akvo-charts";`,
   pie: `import { Pie } from "akvo-charts";`,
   doughnut: `import { Doughnut } from "akvo-charts";`,
-  stack: `import { StackBar } from "akvo-charts";`,
-  stackCluster: `import { StackClusterColumn } from "akvo-charts";`,
+  'stack-bar': `import { StackBar } from "akvo-charts";`,
+  'stack-cluster-column': `import { StackClusterColumn } from "akvo-charts";`
 };
 
 const renderImport = (type) => {
@@ -36,9 +36,9 @@ const renderCodes = (type, props) => {
       return `<Pie ${attributes} />`;
     case 'doughnut':
       return `<Doughnut ${attributes} />`;
-    case 'stack':
+    case 'stack-bar':
       return `<StackBar ${attributes} />`;
-    case 'stackCluster':
+    case 'stack-cluster-column':
       return `<StackClusterColumn ${attributes} />`;
     default:
       return null;

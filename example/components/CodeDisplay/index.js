@@ -6,6 +6,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 
 import SnackBar from '../Snackbar';
 import { useChartContext } from '../../context/ChartContextProvider';
+import { useDisplayContext } from '../../context/DisplayContextProvider';
 import { codeBlock } from '../../utils';
 
 import 'highlight.js/styles/default.css';
@@ -47,9 +48,10 @@ const createHighlight = (content, languange) => {
 const CodeDisplay = () => {
   const [show, setShow] = useState(false);
 
+  const { selectedChartType } = useDisplayContext();
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
   const chartData = isRaw ? rawConfig : defaultConfig;
-  const code = codeBlock(chartData);
+  const code = codeBlock({ type: selectedChartType, ...chartData });
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
@@ -61,7 +63,7 @@ const CodeDisplay = () => {
 
   return (
     <div className="w-full relative hljs">
-      <div className="w-full absolute top-2 right-2 text-right">
+      <div className="w-full absolute top-2 right-2 text-right sticky">
         <button onClick={handleOnCopy}>
           <CopyIcon size={20} />
         </button>
