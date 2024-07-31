@@ -17,7 +17,8 @@ const initalChartState = {
       { label: 'January', value: 30 },
       { label: 'February', value: 20 },
       { label: 'March', value: 50 }
-    ]
+    ],
+    stackMapping: {}
   },
   mapConfig: {},
   mapRawConfig: {},

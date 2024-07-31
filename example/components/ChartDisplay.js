@@ -11,6 +11,7 @@ import {
 } from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
 import { useDisplayContext } from '../context/DisplayContextProvider';
+import { chartTypes } from '../static/config';
 
 const ChartDisplay = () => {
   const { isRaw, rawConfig, defaultConfig } = useChartContext();
@@ -30,24 +31,24 @@ const ChartDisplay = () => {
 
   const chartComponent = () => {
     switch (selectedChartType) {
-      case 'bar':
+      case chartTypes.BAR:
         return <Bar {...props} />;
-      case 'line':
+      case chartTypes.LINE:
         return <Line {...props} />;
-      case 'pie':
+      case chartTypes.PIE:
         return <Pie {...props} />;
-      case 'doughnut':
+      case chartTypes.DOUGHNUT:
         return <Doughnut {...props} />;
-      case 'stack-bar':
+      case chartTypes.STACK_BAR:
         return <StackBar {...props} />;
-      case 'stack-cluster-column':
+      case chartTypes.STACK_CLUSTER:
         return <StackClusterColumn {...props} />;
       default:
         return null;
     }
   };
 
-  return <div class="pt-10">{chartComponent()}</div>;
+  return <div className="pt-10">{chartComponent()}</div>;
 };
 
 export default ChartDisplay;

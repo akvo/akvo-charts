@@ -5,7 +5,7 @@ const DisplayContext = createContext(null);
 const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
-  selectedChartType: 'bar',
+  selectedChartType: 'Bar',
   showJson: true,
   showCode: true
 };

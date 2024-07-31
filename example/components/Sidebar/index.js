@@ -7,35 +7,36 @@ import {
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
 import { BarIcon, LineIcon, PieIcon } from '../Icons';
+import { chartTypes } from '../../static/config';
 
-const chartTypes = [
+const sidebarList = [
   {
-    key: 'bar',
+    key: chartTypes.BAR,
     name: 'Bar',
     icon: <BarIcon />
   },
   {
-    key: 'line',
+    key: chartTypes.LINE,
     name: 'Line',
     icon: <LineIcon />
   },
   {
-    key: 'pie',
+    key: chartTypes.PIE,
     name: 'Pie',
     icon: <PieIcon />
   },
   {
-    key: 'doughnut',
+    key: chartTypes.DOUGHNUT,
     name: 'Doughnut',
     icon: <PieIcon />
   },
   {
-    key: 'stack-bar',
+    key: chartTypes.STACK_BAR,
     name: 'Stack Bar',
     icon: <BarIcon />
   },
   {
-    key: 'stack-cluster-column',
+    key: chartTypes.STACK_CLUSTER,
     name: 'Stack Cluster Column',
     icon: <BarIcon />
   }
@@ -53,16 +54,16 @@ const Sidebar = () => {
   };
 
   return (
-    <div class="sidebar w-80 h-screen text-gray-800 flex flex-col">
-      <div class="p-4 text-xl font-bold">Chart Types</div>
-      <ul class="flex-1 space-y-2 p-4">
-        {chartTypes.map((chartType, index) => (
+    <div className="sidebar w-80 h-screen text-gray-800 flex flex-col">
+      <div className="p-4 text-xl font-bold">Chart Types</div>
+      <ul className="flex-1 space-y-2 p-4">
+        {sidebarList.map((chartType, index) => (
           <li key={index}>
             <button
-              class={`sidebar-item flex items-center w-full text-left p-2 rounded ${chartType.key === selectedChartType ? 'active' : ''}`}
+              className={`sidebar-item flex items-center w-full text-left p-2 rounded ${chartType.key === selectedChartType ? 'active' : ''}`}
               onClick={() => handleOnSidebarClick(chartType)}
             >
-              <div class="icon h-5 w-5">{chartType.icon}</div>
+              <div className="icon h-5 w-5">{chartType.icon}</div>
               {chartType.name}
             </button>
           </li>

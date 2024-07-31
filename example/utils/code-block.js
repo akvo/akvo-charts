@@ -1,13 +1,15 @@
+import { chartTypes } from '../static/config';
+
 const obj2String = (str, replacer = null, space = 2) =>
   JSON.stringify(str, replacer, space).replace(/"([^(")]+)":/g, '$1:');
 
 const importBlocks = {
-  bar: `import { Bar } from "akvo-charts";`,
-  line: `import { Line } from "akvo-charts";`,
-  pie: `import { Pie } from "akvo-charts";`,
-  doughnut: `import { Doughnut } from "akvo-charts";`,
-  'stack-bar': `import { StackBar } from "akvo-charts";`,
-  'stack-cluster-column': `import { StackClusterColumn } from "akvo-charts";`
+  [chartTypes.BAR]: `import { ${chartTypes.BAR} } from "akvo-charts";`,
+  [chartTypes.LINE]: `import { ${chartTypes.LINE} } from "akvo-charts";`,
+  [chartTypes.PIE]: `import { ${chartTypes.PIE} } from "akvo-charts";`,
+  [chartTypes.DOUGHNUT]: `import { ${chartTypes.DOUGHNUT} } from "akvo-charts";`,
+  [chartTypes.STACK_BAR]: `import { ${chartTypes.STACK_BAR} } from "akvo-charts";`,
+  [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`
 };
 
 const renderImport = (type) => {
@@ -30,20 +32,20 @@ const renderCodes = (type, props) => {
     .replace(/\s+/g, ' ');
 
   switch (type) {
-    case 'bar':
+    case chartTypes.BAR:
       return `<Bar ${attributes} />`;
-    case 'line':
+    case chartTypes.LINE:
       return `<Line ${attributes} />`;
-    case 'pie':
+    case chartTypes.PIE:
       return `<Pie ${attributes} />`;
-    case 'doughnut':
+    case chartTypes.DOUGHNUT:
       return `<Doughnut ${attributes} />`;
-    case 'stack-bar':
+    case chartTypes.STACK_BAR:
       return `<StackBar ${attributes} />`;
-    case 'stack-cluster-column':
+    case chartTypes.STACK_CLUSTER:
       return `<StackClusterColumn ${attributes} />`;
     default:
-      return null;
+      return 'Undefined chart type.';
   }
 };
 
@@ -55,7 +57,7 @@ const renderVars = ({ config, data }) => {
   const dataStr = obj2String(data);
 
   const codes = [
-    `const config = ${configStr};\n`,
+    `const config = ${configStr};\n\n`,
     `const data = ${dataStr};\n`
   ];
   return codes.join('');
