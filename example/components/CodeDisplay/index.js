@@ -63,7 +63,7 @@ const CodeDisplay = () => {
 
   return (
     <div className="w-full relative hljs">
-      <div className="w-full absolute top-2 right-2 text-right sticky">
+      <div className="w-full top-2 right-2 text-right sticky">
         <button onClick={handleOnCopy}>
           <CopyIcon size={20} />
         </button>

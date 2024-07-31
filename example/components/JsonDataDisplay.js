@@ -1,25 +1,38 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import ReactJson from 'react-json-view';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
+import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
+
+const excludeHorizontal = ['pie', 'doughnut'];
 
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
 
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { selectedChartType } = useDisplayContext();
+
+  const transformDefaultConfig = useMemo(() => {
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...defaultConfig };
+      delete transform.horizontal;
+      return transform;
+    }
+    return defaultConfig;
+  }, [selectedChartType, defaultConfig]);
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage(
     'defaultConfig',
-    defaultConfig
+    transformDefaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
@@ -51,7 +64,7 @@ const JsonDataDisplay = () => {
       if (isRaw) {
         setRawStore(rawConfig);
       } else {
-        setDefaultStore(defaultConfig);
+        setDefaultStore(transformDefaultConfig);
       }
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
@@ -140,7 +153,7 @@ const JsonDataDisplay = () => {
         </button>
       </div>
       <ReactJson
-        src={isRaw ? rawConfig : defaultConfig}
+        src={isRaw ? rawConfig : transformDefaultConfig}
         theme="monokai"
         displayDataTypes={false}
         onEdit={onJsonUpdate}
