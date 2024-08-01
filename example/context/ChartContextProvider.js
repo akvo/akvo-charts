@@ -20,6 +20,15 @@ const initalChartState = {
         fontFamily: 'Arial',
         fontSize: null
       },
+      legend: {
+        show: true,
+        icon: null,
+        top: null,
+        left: null,
+        align: 'left',
+        orient: 'horizontal',
+        itemGap: 15
+      },
       color: []
     },
     data: basicChartExampleData,

@@ -10,6 +10,14 @@ import {
   Legend
 } from './basicChartStyle';
 
+const filterObjNullValue = (obj) =>
+  Object.entries(obj).reduce((acc, [key, value]) => {
+    if (value !== null) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+
 const transformConfig = ({
   title,
   subtitle = null,
@@ -23,63 +31,70 @@ const transformConfig = ({
     fontFamily: null,
     fontSize: null
   },
+  legend = {
+    show: true,
+    icon: null,
+    top: null,
+    left: null,
+    align: null,
+    orient: null,
+    itemGap: null
+  },
   color = [],
   // this is only for inside akvo charts purpose
   dimensions = [],
   showAxis = true
   // eol
 }) => {
-  const filteredTextStyle = Object.entries(textStyle).reduce(
-    (acc, [key, value]) => {
-      if (value !== null) {
-        acc[key] = value;
+  const defaultLegend = showAxis
+    ? {
+        ...Legend,
+        data: dimensions.slice(1)
       }
-      return acc;
-    },
-    {}
-  );
-  const overrideTextStyle = Object.keys(filteredTextStyle).length
-    ? filteredTextStyle
+    : { ...Legend };
+
+  const overrideTextStyle = Object.keys(filterObjNullValue(textStyle)).length
+    ? filterObjNullValue(textStyle)
     : {};
 
   const overrideColor = color.length ? { color } : { ...Colors };
 
-  let legend = {
-    ...Legend,
-    data: dimensions.slice(1)
-  };
-
-  let axis = {
-    xAxis: {
-      type: horizontal ? 'value' : 'category',
-      name: xAxisLabel,
-      nameTextStyle: { ...TextStyle, ...overrideTextStyle },
-      nameLocation: 'center',
-      nameGap: 45,
-      ...Axis,
-      axisLabel: {
-        ...Axis.axisLabel,
-        ...overrideTextStyle
+  const overrideLegend = Object.keys(filterObjNullValue(legend)).length
+    ? {
+        ...defaultLegend,
+        top: subtitle ? 50 : defaultLegend.top,
+        ...filterObjNullValue(legend)
       }
-    },
-    yAxis: {
-      type: horizontal ? 'category' : 'value',
-      name: yAxisLabel,
-      nameTextStyle: { ...TextStyle, ...overrideTextStyle },
-      nameLocation: 'end',
-      nameGap: 20,
-      ...Axis,
-      axisLabel: {
-        ...Axis.axisLabel,
-        ...overrideTextStyle
-      }
-    }
-  };
+    : { ...defaultLegend, top: subtitle ? 50 : defaultLegend.top };
 
-  if (!showAxis) {
-    legend = { ...Legend };
-    axis = {};
-  }
+  const axis = showAxis
+    ? {
+        xAxis: {
+          type: horizontal ? 'value' : 'category',
+          name: xAxisLabel,
+          nameTextStyle: { ...TextStyle, ...overrideTextStyle },
+          nameLocation: 'center',
+          nameGap: 45,
+          ...Axis,
+          axisLabel: {
+            ...Axis.axisLabel,
+            ...overrideTextStyle
+          }
+        },
+        yAxis: {
+          type: horizontal ? 'category' : 'value',
+          name: yAxisLabel,
+          nameTextStyle: { ...TextStyle, ...overrideTextStyle },
+          nameLocation: 'end',
+          nameGap: 20,
+          ...Axis,
+          axisLabel: {
+            ...Axis.axisLabel,
+            ...overrideTextStyle
+          }
+        }
+      }
+    : {};
 
   return {
     title: {
@@ -95,10 +110,9 @@ const transformConfig = ({
       ...Grid
     },
     legend: {
-      ...legend,
-      top: subtitle ? 50 : Legend.top,
+      ...overrideLegend,
       textStyle: {
-        ...legend.textStyle,
+        ...overrideLegend.textStyle,
         ...overrideTextStyle
       }
     },

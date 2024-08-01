@@ -16,7 +16,16 @@ describe('transformConfig', () => {
         fontFamily: 'Arial',
         fontSize: 16
       },
-      color: ['red', 'orange', 'yellow']
+      color: ['red', 'orange', 'yellow'],
+      legend: {
+        show: true,
+        icon: 'triangle',
+        top: 40,
+        left: 'left',
+        align: 'left',
+        orient: 'vertical',
+        itemGap: 15
+      }
     });
 
     expect(config).toEqual({
@@ -43,12 +52,12 @@ describe('transformConfig', () => {
       },
       legend: {
         show: true,
-        icon: 'circle',
-        top: 50,
-        left: 'center',
+        icon: 'triangle',
+        top: 40,
+        left: 'left',
         align: 'left',
-        orient: 'horizontal',
-        itemGap: 10,
+        orient: 'vertical',
+        itemGap: 15,
         textStyle: {
           color: '#ff0000',
           fontStyle: 'italic',
