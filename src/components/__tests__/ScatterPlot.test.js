@@ -5,12 +5,10 @@ import renderer from 'react-test-renderer';
 
 describe('ScatterPlot chart', () => {
   test('renders ScatterPlot component with 2d array data format', () => {
-    const data = [
-      ['x', 'cluster3'],
-      ['85.8', 43.3],
-      ['73.4', 83.1],
-      ['65.2', 86.4],
-      ['53.9', 72.4]
+    const input2D = [
+      ['A', 1, 2],
+      ['B', 1, 3],
+      ['C', 5, 7]
     ];
 
     const config = {
@@ -20,7 +18,7 @@ describe('ScatterPlot chart', () => {
     render(
       <ScatterPlot
         config={config}
-        data={data}
+        data={input2D}
       />
     );
 
@@ -29,13 +27,11 @@ describe('ScatterPlot chart', () => {
   });
 
   test('renders ScatterPlot component with row based key-value format (object array)', () => {
-    const data = [
-      { x: 2, cluster2: 11 },
-      { x: 7, cluster2: 5 },
-      { x: 11, cluster2: 20 },
-      { x: 21, cluster2: 3 }
+    const inputKeyValue = [
+      { label: 'A', x: 1, y: 2 },
+      { label: 'B', x: 1, y: 3 },
+      { label: 'C', x: 5, y: 7 }
     ];
-
     const config = {
       title: 'ScatterPlot Chart Example'
     };
@@ -43,7 +39,7 @@ describe('ScatterPlot chart', () => {
     render(
       <ScatterPlot
         config={config}
-        data={data}
+        data={inputKeyValue}
       />
     );
 
@@ -52,9 +48,10 @@ describe('ScatterPlot chart', () => {
   });
 
   test('renders ScatterPlot component with column based key-value format', () => {
-    const data = {
-      x: [2, 6, 8, 9],
-      cluster1: [8, 13, 15, 17]
+    const inputObj = {
+      A: [1, 2],
+      B: [1, 3],
+      C: [5, 7]
     };
 
     const config = {
@@ -64,7 +61,7 @@ describe('ScatterPlot chart', () => {
     render(
       <ScatterPlot
         config={config}
-        data={data}
+        data={inputObj}
         symbolSize={50}
       />
     );
@@ -75,11 +72,9 @@ describe('ScatterPlot chart', () => {
 
   test('matches ScatterPlot snapshot', () => {
     const data = [
-      ['x', 'cluster3'],
-      ['85.8', 43.3],
-      ['73.4', 83.1],
-      ['65.2', 86.4],
-      ['53.9', 72.4]
+      ['A', 1, 2],
+      ['B', 1, 3],
+      ['C', 5, 7]
     ];
 
     const config = {
