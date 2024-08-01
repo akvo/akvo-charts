@@ -1,22 +1,37 @@
 import transformConfig from '../transformConfig';
 
 describe('transformConfig', () => {
-  it('should transform config correctly for vertical chart', () => {
+  it('should transform config correctly for vertical chart with all properties', () => {
     const config = transformConfig({
       title: 'Vertical Chart',
+      subtitle: 'Subtitle',
       xAxisLabel: 'X Axis',
       yAxisLabel: 'Y Axis',
-      dimensions: ['name', 'age', 'score']
+      dimensions: ['name', 'age', 'score'],
+      showAxis: true,
+      textStyle: {
+        color: '#ff0000',
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontFamily: 'Arial',
+        fontSize: 16
+      }
     });
 
     expect(config).toEqual({
       title: {
         show: true,
         text: 'Vertical Chart',
-        subtext: '',
+        subtext: 'Subtitle',
         textAlign: 'center',
         left: '50%',
-        textStyle: { color: '#000', fontSize: 14, fontWeight: 'bold' }
+        textStyle: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        }
       },
       grid: {
         containLabel: true,
@@ -28,26 +43,50 @@ describe('transformConfig', () => {
       legend: {
         show: true,
         icon: 'circle',
-        top: 35,
+        top: 50,
         left: 'center',
         align: 'left',
         orient: 'horizontal',
         itemGap: 10,
-        textStyle: { fontWeight: 'normal', fontSize: 12 },
+        textStyle: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        },
         data: ['age', 'score']
       },
       tooltip: {
         trigger: 'item',
         axisPointer: { type: 'shadow' },
-        textStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' }
+        textStyle: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        }
       },
       xAxis: {
         type: 'category',
         name: 'X Axis',
-        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameTextStyle: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        },
         nameGap: 45,
         nameLocation: 'center',
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLabel: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        },
         axisLine: {
           lineStyle: {
             color: '#000'
@@ -62,10 +101,22 @@ describe('transformConfig', () => {
       yAxis: {
         type: 'value',
         name: 'Y Axis',
-        nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
+        nameTextStyle: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        },
         nameGap: 20,
         nameLocation: 'end',
-        axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
+        axisLabel: {
+          color: '#ff0000',
+          fontStyle: 'italic',
+          fontWeight: 'bold',
+          fontFamily: 'Arial',
+          fontSize: 16
+        },
         axisLine: {
           lineStyle: {
             color: '#000'
@@ -77,7 +128,17 @@ describe('transformConfig', () => {
           }
         }
       },
-      series: [],
+      series: [
+        {
+          label: {
+            color: '#ff0000',
+            fontStyle: 'italic',
+            fontWeight: 'bold',
+            fontFamily: 'Arial',
+            fontSize: 16
+          }
+        }
+      ],
       color: [
         '#4475B4',
         '#73ADD1',
@@ -99,7 +160,7 @@ describe('transformConfig', () => {
     });
   });
 
-  it('should transform config correctly for horizontal chart', () => {
+  it('should transform config correctly for horizontal chart with default textStyle', () => {
     const config = transformConfig({
       title: 'Horizontal Chart',
       xAxisLabel: 'X Axis',
@@ -175,7 +236,9 @@ describe('transformConfig', () => {
           }
         }
       },
-      series: [],
+      series: [
+        { label: { color: '#000', fontSize: 12, fontWeight: 'normal' } }
+      ],
       color: [
         '#4475B4',
         '#73ADD1',
@@ -197,7 +260,7 @@ describe('transformConfig', () => {
     });
   });
 
-  it('should set show axis options to false when showAxis param false', () => {
+  it('should set show axis options to false when showAxis param is false', () => {
     const config = transformConfig({
       title: 'Horizontal Chart',
       xAxisLabel: 'X Axis',
@@ -237,7 +300,9 @@ describe('transformConfig', () => {
         axisPointer: { type: 'shadow' },
         textStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' }
       },
-      series: [],
+      series: [
+        { label: { color: '#000', fontSize: 12, fontWeight: 'normal' } }
+      ],
       color: [
         '#4475B4',
         '#73ADD1',

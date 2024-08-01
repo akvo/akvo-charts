@@ -12,12 +12,33 @@ import {
 
 const transformConfig = ({
   title,
+  subtitle = null,
   xAxisLabel = null,
   yAxisLabel = null,
   horizontal = false,
   dimensions = [],
-  showAxis = true
+  showAxis = true,
+  textStyle = {
+    color: null,
+    fontStyle: null,
+    fontWeight: null,
+    fontFamily: null,
+    fontSize: null
+  }
 }) => {
+  const filteredTextStyle = Object.entries(textStyle).reduce(
+    (acc, [key, value]) => {
+      if (value !== null) {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {}
+  );
+  const overrideTextStyle = Object.keys(filteredTextStyle).length
+    ? filteredTextStyle
+    : {};
+
   let legend = {
     ...Legend,
     data: dimensions.slice(1)
@@ -27,18 +48,26 @@ const transformConfig = ({
     xAxis: {
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
-      nameTextStyle: { ...TextStyle },
+      nameTextStyle: { ...TextStyle, ...overrideTextStyle },
       nameLocation: 'center',
       nameGap: 45,
-      ...Axis
+      ...Axis,
+      axisLabel: {
+        ...Axis.axisLabel,
+        ...overrideTextStyle
+      }
     },
     yAxis: {
       type: horizontal ? 'category' : 'value',
       name: yAxisLabel,
-      nameTextStyle: { ...TextStyle },
+      nameTextStyle: { ...TextStyle, ...overrideTextStyle },
       nameLocation: 'end',
       nameGap: 20,
-      ...Axis
+      ...Axis,
+      axisLabel: {
+        ...Axis.axisLabel,
+        ...overrideTextStyle
+      }
     }
   };
 
@@ -50,17 +79,35 @@ const transformConfig = ({
   return {
     title: {
       ...Title,
-      text: title
+      text: title,
+      subtext: subtitle ? subtitle : '',
+      textStyle: {
+        ...Title.textStyle,
+        ...overrideTextStyle
+      }
     },
     grid: {
       ...Grid
     },
-    legend,
+    legend: {
+      ...legend,
+      top: subtitle ? 50 : Legend.top,
+      textStyle: {
+        ...legend.textStyle,
+        ...overrideTextStyle
+      }
+    },
     tooltip: {
-      ...Tooltip
+      ...Tooltip,
+      textStyle: {
+        ...Tooltip.textStyle,
+        ...overrideTextStyle
+      }
     },
     ...axis,
-    series: [],
+    series: [
+      { label: { ...TextStyle, fontWeight: 'normal', ...overrideTextStyle } }
+    ],
     ...Colors,
     ...backgroundColor,
     ...Animation
