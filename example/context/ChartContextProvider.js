@@ -12,7 +12,14 @@ const initalChartState = {
     config: {
       title: 'Akvo Chart',
       xAxisLabel: 'Product',
-      yAxisLabel: 'Sales'
+      yAxisLabel: 'Sales',
+      textStyle: {
+        color: null,
+        fontStyle: 'normal',
+        fontWeight: null,
+        fontFamily: 'Arial',
+        fontSize: null
+      }
     },
     data: basicChartExampleData,
     stackMapping: exampleStackMapping

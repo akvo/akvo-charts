@@ -16,15 +16,17 @@ const transformConfig = ({
   xAxisLabel = null,
   yAxisLabel = null,
   horizontal = false,
-  dimensions = [],
-  showAxis = true,
   textStyle = {
     color: null,
     fontStyle: null,
     fontWeight: null,
     fontFamily: null,
     fontSize: null
-  }
+  },
+  // this is only for inside akvo charts purpose
+  dimensions = [],
+  showAxis = true
+  // eol
 }) => {
   const filteredTextStyle = Object.entries(textStyle).reduce(
     (acc, [key, value]) => {
