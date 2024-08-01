@@ -1,10 +1,12 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
+import { chartTypes } from '../static/config';
 
 const DisplayContext = createContext(null);
 const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
+  selectedChartType: chartTypes.BAR,
   showJson: true,
   showCode: true
 };
@@ -20,6 +22,11 @@ const displayReducer = (state, action) => {
       return {
         ...state,
         showCode: !state.showCode
+      };
+    case 'SET_SELECTED_CHART_TYPE':
+      return {
+        ...state,
+        selectedChartType: action.payload
       };
     default:
       throw Error(

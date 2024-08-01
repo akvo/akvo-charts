@@ -4,3 +4,4 @@ export { default as JsonDataDisplay } from './JsonDataDisplay';
 export { default as ChartDisplay } from './ChartDisplay';
 export { default as Header } from './Header';
 export { default as ChartWrapper } from './ChartWrapper';
+export { default as Sidebar } from './Sidebar';

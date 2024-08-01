@@ -15,8 +15,38 @@ const transformConfig = ({
   xAxisLabel = null,
   yAxisLabel = null,
   horizontal = false,
-  dimensions = []
+  dimensions = [],
+  showAxis = true
 }) => {
+  let legend = {
+    ...Legend,
+    data: dimensions.slice(1)
+  };
+
+  let axis = {
+    xAxis: {
+      type: horizontal ? 'value' : 'category',
+      name: xAxisLabel,
+      nameTextStyle: { ...TextStyle },
+      nameLocation: 'center',
+      nameGap: 45,
+      ...Axis
+    },
+    yAxis: {
+      type: horizontal ? 'category' : 'value',
+      name: yAxisLabel,
+      nameTextStyle: { ...TextStyle },
+      nameLocation: 'end',
+      nameGap: 20,
+      ...Axis
+    }
+  };
+
+  if (!showAxis) {
+    legend = { ...Legend };
+    axis = {};
+  }
+
   return {
     title: {
       ...Title,
@@ -25,29 +55,11 @@ const transformConfig = ({
     grid: {
       ...Grid
     },
-    legend: {
-      ...Legend,
-      data: dimensions.slice(1)
-    },
+    legend,
     tooltip: {
       ...Tooltip
     },
-    xAxis: {
-      type: horizontal ? 'value' : 'category',
-      name: xAxisLabel,
-      nameTextStyle: { ...TextStyle },
-      nameLocation: horizontal ? 'end' : 'center',
-      nameGap: horizontal ? 20 : 45,
-      ...Axis
-    },
-    yAxis: {
-      type: horizontal ? 'category' : 'value',
-      name: yAxisLabel,
-      nameTextStyle: { ...TextStyle },
-      nameLocation: horizontal ? 'center' : 'end',
-      nameGap: horizontal ? 45 : 20,
-      ...Axis
-    },
+    ...axis,
     series: [],
     ...Colors,
     ...backgroundColor,

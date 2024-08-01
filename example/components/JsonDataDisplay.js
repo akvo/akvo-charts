@@ -1,25 +1,54 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import ReactJson from 'react-json-view';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
+import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
+import {
+  excludeHorizontal,
+  excludeStackMapping,
+  basicChart,
+  stackChartExampleData
+} from '../static/config';
 
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
 
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { selectedChartType } = useDisplayContext();
+
+  const transformDefaultConfig = useMemo(() => {
+    let res = { ...defaultConfig };
+    if (!basicChart.includes(selectedChartType)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
+    }
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.stackMapping;
+      res = transform;
+    }
+    return res;
+  }, [selectedChartType, defaultConfig]);
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage(
     'defaultConfig',
-    defaultConfig
+    transformDefaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
@@ -51,7 +80,7 @@ const JsonDataDisplay = () => {
       if (isRaw) {
         setRawStore(rawConfig);
       } else {
-        setDefaultStore(defaultConfig);
+        setDefaultStore(transformDefaultConfig);
       }
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
@@ -140,7 +169,8 @@ const JsonDataDisplay = () => {
         </button>
       </div>
       <ReactJson
-        src={isRaw ? rawConfig : defaultConfig}
+        name="props"
+        src={isRaw ? rawConfig : transformDefaultConfig}
         theme="monokai"
         displayDataTypes={false}
         onEdit={onJsonUpdate}
