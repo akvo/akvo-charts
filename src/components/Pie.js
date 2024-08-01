@@ -9,6 +9,7 @@ const getOptions = ({ dimensions = [] }) => {
     series: [
       {
         type: 'pie',
+        radius: '60%',
         encode: {
           itemName,
           value
@@ -20,7 +21,7 @@ const getOptions = ({ dimensions = [] }) => {
 
 const Pie = ({ config, data }) => {
   const chartRef = useECharts({
-    config,
+    config: { ...config, showAxis: false },
     data,
     getOptions: ({ dimensions }) => getOptions({ dimensions })
   });

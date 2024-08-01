@@ -15,23 +15,15 @@ const transformConfig = ({
   xAxisLabel = null,
   yAxisLabel = null,
   horizontal = false,
-  dimensions = []
+  dimensions = [],
+  showAxis = true
 }) => {
-  return {
-    title: {
-      ...Title,
-      text: title
-    },
-    grid: {
-      ...Grid
-    },
-    legend: {
-      ...Legend,
-      data: dimensions.slice(1)
-    },
-    tooltip: {
-      ...Tooltip
-    },
+  let legend = {
+    ...Legend,
+    data: dimensions.slice(1)
+  };
+
+  let axis = {
     xAxis: {
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
@@ -47,7 +39,27 @@ const transformConfig = ({
       nameLocation: horizontal ? 'center' : 'end',
       nameGap: horizontal ? 45 : 20,
       ...Axis
+    }
+  };
+
+  if (!showAxis) {
+    legend = { ...Legend };
+    axis = {};
+  }
+
+  return {
+    title: {
+      ...Title,
+      text: title
     },
+    grid: {
+      ...Grid
+    },
+    legend,
+    tooltip: {
+      ...Tooltip
+    },
+    ...axis,
     series: [],
     ...Colors,
     ...backgroundColor,
