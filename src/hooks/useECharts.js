@@ -15,13 +15,14 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
           chart = echarts.init(chartRef.current);
         }
         const { dimensions, source } = normalizeData(data);
+        const transformedConfig = transformConfig({ ...config, dimensions });
         const options = {
-          ...transformConfig({ ...config, dimensions }),
+          ...transformedConfig,
           dataset: {
             dimensions,
             source
           },
-          ...getOptions({ dimensions })
+          ...getOptions({ dimensions, transformedConfig })
         };
         if (chart) {
           chart.setOption(options);
