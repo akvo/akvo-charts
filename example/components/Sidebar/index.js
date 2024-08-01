@@ -7,8 +7,7 @@ import {
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
 import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
-import { chartTypes, scatterPlotExampleData } from '../../static/config';
-import { useChartDispatch } from '../../context/ChartContextProvider';
+import { chartTypes } from '../../static/config';
 
 const sidebarList = [
   {
@@ -54,7 +53,6 @@ const sidebarList = [
 ];
 
 const Sidebar = () => {
-  const chartDispatch = useChartDispatch();
   const displayDispatch = useDisplayDispatch();
   const { selectedChartType } = useDisplayContext();
 
@@ -63,15 +61,6 @@ const Sidebar = () => {
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
     });
-
-    if (key === chartTypes.SCATTER_PLOT) {
-      chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: {
-          data: scatterPlotExampleData
-        }
-      });
-    }
   };
 
   return (

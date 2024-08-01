@@ -16,7 +16,9 @@ import {
   excludeStackMapping,
   excludeHorizontal,
   basicChart,
-  stackChartExampleData
+  stackChartExampleData,
+  chartTypes,
+  scatterPlotExampleData
 } from '../../static/config';
 
 hljs.registerLanguage('javascript', javascript);
@@ -66,6 +68,13 @@ const CodeDisplay = () => {
       res = {
         ...res,
         data: stackChartExampleData
+      };
+    }
+
+    if (selectedChartType === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {

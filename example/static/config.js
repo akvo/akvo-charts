@@ -81,11 +81,9 @@ export const exampleStackMapping = {
 };
 
 export const scatterPlotExampleData = [
-  ['A', 10.0, 8.04],
-  ['B', 1.07, 6.95],
-  ['C', 13.0, 7.58],
-  ['D', 9.05, 8.81],
-  ['E', 3.0, 8.33],
-  ['F', 14.0, 7.66],
-  ['G', 13.4, 6.81]
+  { label: 'Product 1', x: 1, y: 30 },
+  { label: 'Product 2', x: 2, y: 20 },
+  { label: 'Product 3', x: 3, y: 50 },
+  { label: 'Product 4', x: 4, y: 45 },
+  { label: 'Product 5', x: 5, y: 40 }
 ];
