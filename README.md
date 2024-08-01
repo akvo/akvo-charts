@@ -356,10 +356,9 @@ import { ScatterPlot } from 'akvo-charts';
 
 const ScatterPlotChartExample = () => {
    const data = [
-      { x: 2, clusterY: 11 },
-      { x: 7, clusterY: 5 },
-      { x: 11, clusterY: 20 },
-      { x: 21, clusterY: 3 }
+      { label: 'A', x: 1, y: 2 },
+      { label: 'B', x: 1, y: 3 },
+      { label: 'C', x: 5, y: 7 }
     ];
 
     const config = {
