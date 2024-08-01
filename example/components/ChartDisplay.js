@@ -8,7 +8,8 @@ import {
   Pie,
   ScatterPlot,
   StackBar,
-  StackClusterColumn
+  StackClusterColumn,
+  StackLine
 } from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
 import { useDisplayContext } from '../context/DisplayContextProvider';
@@ -75,12 +76,14 @@ const ChartDisplay = () => {
         return <StackClusterColumn {...props} />;
       case chartTypes.SCATTER_PLOT:
         return <ScatterPlot {...props} />;
+      case chartTypes.STACK_LINE:
+        return <StackLine {...props} />;
       default:
         return null;
     }
   };
 
-  return <div className="pt-10">{chartComponent()}</div>;
+  return <div className="pt-10 h-2/3">{chartComponent()}</div>;
 };
 
 export default ChartDisplay;

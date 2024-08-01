@@ -5,7 +5,8 @@ export const chartTypes = {
   DOUGHNUT: 'Doughnut',
   STACK_BAR: 'StackBar',
   STACK_CLUSTER: 'StackClusterColumn',
-  SCATTER_PLOT: 'ScatterPlot'
+  SCATTER_PLOT: 'ScatterPlot',
+  STACK_LINE: 'StackLine'
 };
 
 export const excludeHorizontal = [
@@ -20,7 +21,11 @@ export const basicChart = [
   chartTypes.DOUGHNUT,
   chartTypes.SCATTER_PLOT
 ];
-export const excludeStackMapping = [...basicChart, chartTypes.STACK_CLUSTER];
+export const excludeStackMapping = [
+  ...basicChart,
+  chartTypes.STACK_CLUSTER,
+  chartTypes.STACK_LINE
+];
 
 export const basicChartExampleData = [
   { month: 'Product 1', totalSales: 30 },

@@ -2,15 +2,14 @@ import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const getOptions = ({
-  transformedConfig,
-  horizontal = false,
-  dimensions = []
-}) => {
+const getOptions = ({ dimensions, transformedConfig, horizontal = true }) => {
+  const axis = horizontal ? 'yAxis' : 'xAxis';
+
   const series = dimensions.slice(1).map((dim) => ({
     name: dim,
-    type: 'bar',
-    barGap: 0,
+    type: 'line',
+    stack: 'defaultStack',
+    areaStyle: {},
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
@@ -18,20 +17,28 @@ const getOptions = ({
   }));
 
   return {
+    ...transformedConfig,
     tooltip: {
       ...transformedConfig.tooltip,
-      trigger: 'axis'
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      }
+    },
+    [axis]: {
+      ...transformedConfig[axis],
+      boundaryGap: false
     },
     series
   };
 };
 
-const StackClusterColumn = ({ config, data, horizontal = false }) => {
+const StacLine = ({ config, data, horizontal = true }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
     getOptions: ({ dimensions, transformedConfig }) =>
-      getOptions({ horizontal, dimensions, transformedConfig })
+      getOptions({ dimensions, horizontal, transformedConfig })
   });
 
   return (
@@ -43,4 +50,4 @@ const StackClusterColumn = ({ config, data, horizontal = false }) => {
   );
 };
 
-export default StackClusterColumn;
+export default StacLine;

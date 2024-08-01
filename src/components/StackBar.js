@@ -1,9 +1,13 @@
 import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
-import { Tooltip } from '../utils/basicChartStyle';
 
-const getOptions = ({ dimensions, stackMapping, horizontal = true }) => {
+const getOptions = ({
+  dimensions,
+  stackMapping,
+  transformedConfig,
+  horizontal = true
+}) => {
   // Reverse the stackMapping to get a dimension to stack group map
   const dimensionToStackMap = {};
   Object.keys(stackMapping).forEach((stackGroup) => {
@@ -25,7 +29,7 @@ const getOptions = ({ dimensions, stackMapping, horizontal = true }) => {
 
   return {
     tooltip: {
-      ...Tooltip,
+      ...transformedConfig.tooltip,
       trigger: 'axis'
     },
     series
@@ -36,8 +40,8 @@ const StackBar = ({ config, data, stackMapping = {}, horizontal = true }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ dimensions }) =>
-      getOptions({ dimensions, stackMapping, horizontal })
+    getOptions: ({ dimensions, transformedConfig }) =>
+      getOptions({ dimensions, stackMapping, horizontal, transformedConfig })
   });
 
   return (

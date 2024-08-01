@@ -45,6 +45,11 @@ const sidebarList = [
     key: chartTypes.SCATTER_PLOT,
     name: 'Scatter Plot',
     icon: <ScatterPlotIcon />
+  },
+  {
+    key: chartTypes.STACK_LINE,
+    name: 'Stack Line',
+    icon: <LineIcon />
   }
 ];
 
