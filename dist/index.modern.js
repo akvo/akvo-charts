@@ -102,30 +102,40 @@ var transformConfig = function transformConfig(_ref) {
     _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
-  return _extends({
-    title: _extends({}, Title, {
-      text: title
-    }),
-    grid: _extends({}, Grid),
-    legend: _extends({}, Legend, {
-      data: dimensions.slice(1)
-    }),
-    tooltip: _extends({}, Tooltip),
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    _ref$showAxis = _ref.showAxis,
+    showAxis = _ref$showAxis === void 0 ? true : _ref$showAxis;
+  var legend = _extends({}, Legend, {
+    data: dimensions.slice(1)
+  });
+  var axis = {
     xAxis: _extends({
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
       nameTextStyle: _extends({}, TextStyle),
-      nameLocation: horizontal ? 'end' : 'center',
-      nameGap: horizontal ? 20 : 45
+      nameLocation: 'center',
+      nameGap: 45
     }, Axis),
     yAxis: _extends({
       type: horizontal ? 'category' : 'value',
       name: yAxisLabel,
       nameTextStyle: _extends({}, TextStyle),
-      nameLocation: horizontal ? 'center' : 'end',
-      nameGap: horizontal ? 45 : 20
-    }, Axis),
+      nameLocation: 'end',
+      nameGap: 20
+    }, Axis)
+  };
+  if (!showAxis) {
+    legend = _extends({}, Legend);
+    axis = {};
+  }
+  return _extends({
+    title: _extends({}, Title, {
+      text: title
+    }),
+    grid: _extends({}, Grid),
+    legend: legend,
+    tooltip: _extends({}, Tooltip)
+  }, axis, {
     series: []
   }, Colors, backgroundColor, Animation);
 };
@@ -143,6 +153,12 @@ var sortKeys = function sortKeys(keys) {
   return [dynamicKey].concat(otherKeys);
 };
 var normalizeData = function normalizeData(data) {
+  if ((data === null || data === void 0 ? void 0 : data.length) === 0) {
+    return {
+      dimensions: [],
+      source: []
+    };
+  }
   if (Array.isArray(data)) {
     if (data.length > 0 && Array.isArray(data[0])) {
       var categories = data[0],
@@ -343,6 +359,7 @@ var _getOptions$2 = function getOptions(_ref) {
   return {
     series: [{
       type: 'pie',
+      radius: '60%',
       encode: {
         itemName: itemName,
         value: value
@@ -354,7 +371,9 @@ var Pie = function Pie(_ref2) {
   var config = _ref2.config,
     data = _ref2.data;
   var chartRef = useECharts({
-    config: config,
+    config: _extends({}, config, {
+      showAxis: false
+    }),
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
@@ -370,7 +389,7 @@ var Pie = function Pie(_ref2) {
   });
 };
 
-var MAX = 70;
+var MAX = 60;
 var _getOptions$3 = function getOptions(_ref) {
   var _ref$dimensions = _ref.dimensions,
     dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
@@ -394,13 +413,15 @@ var Doughnut = function Doughnut(_ref2) {
     _ref2$size = _ref2.size,
     size = _ref2$size === void 0 ? 40 : _ref2$size;
   var torus = useMemo(function () {
-    if (size >= 70) {
+    if (size >= MAX) {
       return 0;
     }
     return MAX - size;
   }, [size]);
   var chartRef = useECharts({
-    config: config,
+    config: _extends({}, config, {
+      showAxis: false
+    }),
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
@@ -417,24 +438,82 @@ var Doughnut = function Doughnut(_ref2) {
   });
 };
 
-var _getOptions$4 = function getOptions(symbolSize) {
+var scatterTransform = function scatterTransform(input) {
+  if (Array.isArray(input)) {
+    if (Array.isArray(input[0])) {
+      return input.map(function (_ref) {
+        var label = _ref[0],
+          x = _ref[1],
+          y = _ref[2];
+        return [x, y, label];
+      });
+    }
+    if (typeof input[0] === 'object' && !Array.isArray(input[0])) {
+      return input.map(function (_ref2) {
+        var label = _ref2.label,
+          x = _ref2.x,
+          y = _ref2.y;
+        return [x, y, label];
+      });
+    }
+  }
+  if (typeof input === 'object') {
+    return Object.keys(input).map(function (key) {
+      return [].concat(input[key], [key]);
+    });
+  }
+  throw new Error('Invalid input format');
+};
+var _getOptions$4 = function getOptions(_ref3) {
+  var data = _ref3.data,
+    symbolSize = _ref3.symbolSize,
+    showLabel = _ref3.showLabel,
+    xAxis = _ref3.xAxis,
+    yAxis = _ref3.yAxis;
   return {
     series: [{
       type: 'scatter',
-      symbolSize: symbolSize
-    }]
+      symbolSize: symbolSize,
+      emphasis: {
+        focus: 'self'
+      },
+      label: {
+        show: showLabel,
+        formatter: function formatter(p) {
+          return p.data[2];
+        },
+        minMargin: 10,
+        position: 'top'
+      }
+    }],
+    xAxis: xAxis,
+    yAxis: yAxis,
+    dataset: {
+      source: scatterTransform(data)
+    }
   };
 };
-var ScatterPlot = function ScatterPlot(_ref) {
-  var config = _ref.config,
-    data = _ref.data,
-    _ref$symbolSize = _ref.symbolSize,
-    symbolSize = _ref$symbolSize === void 0 ? 10 : _ref$symbolSize;
+var ScatterPlot = function ScatterPlot(_ref4) {
+  var config = _ref4.config,
+    data = _ref4.data,
+    _ref4$symbolSize = _ref4.symbolSize,
+    symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
+    _ref4$showLabel = _ref4.showLabel,
+    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
+    _ref4$xAxis = _ref4.xAxis,
+    xAxis = _ref4$xAxis === void 0 ? {} : _ref4$xAxis,
+    _ref4$yAxis = _ref4.yAxis,
+    yAxis = _ref4$yAxis === void 0 ? {} : _ref4$yAxis;
   var chartRef = useECharts({
     config: config,
-    data: data,
     getOptions: function getOptions() {
-      return _getOptions$4(symbolSize);
+      return _getOptions$4({
+        data: data,
+        symbolSize: symbolSize,
+        showLabel: showLabel,
+        xAxis: xAxis,
+        yAxis: yAxis
+      });
     }
   });
   return /*#__PURE__*/React.createElement("div", {

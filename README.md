@@ -347,6 +347,10 @@ A component for rendering basic scatter plot chart.
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config). |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 | `symbolSize` _(optional)_| number |Optional parameter to set the dot size. The default value is `10`|
+| `showLabel` _(optional)_| boolean |Optional parameter to set the dot size. The default value is `true`|
+| `xAxis` _(optional)_| object |Optional parameter to set the xAxis options. The default value is empty object`{}`. For more details on the xAxis options, see the [Echarts docs](https://echarts.apache.org/en/option.html#xAxis)|
+| `yAxis` _(optional)_| object |Optional parameter to set the yAxis options. The default value is empty object`{}`. For more details on the yAxis options, see the [Echarts docs](https://echarts.apache.org/en/option.html#yAxis)|
+
 
 **Example usage of ScatterPlot chart:**
 
