@@ -15,7 +15,8 @@ describe('transformConfig', () => {
         fontWeight: 'bold',
         fontFamily: 'Arial',
         fontSize: 16
-      }
+      },
+      color: ['red', 'orange', 'yellow']
     });
 
     expect(config).toEqual({
@@ -139,15 +140,7 @@ describe('transformConfig', () => {
           }
         }
       ],
-      color: [
-        '#4475B4',
-        '#73ADD1',
-        '#AAD9E8',
-        '#FEE08F',
-        '#FDAE60',
-        '#F36C42',
-        '#D73027'
-      ],
+      color: ['red', 'orange', 'yellow'],
       backgroundColor: 'transparent',
       animation: true,
       animationThreshold: 2000,

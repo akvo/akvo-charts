@@ -23,6 +23,7 @@ const transformConfig = ({
     fontFamily: null,
     fontSize: null
   },
+  color = [],
   // this is only for inside akvo charts purpose
   dimensions = [],
   showAxis = true
@@ -40,6 +41,8 @@ const transformConfig = ({
   const overrideTextStyle = Object.keys(filteredTextStyle).length
     ? filteredTextStyle
     : {};
+
+  const overrideColor = color.length ? { color } : { ...Colors };
 
   let legend = {
     ...Legend,
@@ -110,7 +113,7 @@ const transformConfig = ({
     series: [
       { label: { ...TextStyle, fontWeight: 'normal', ...overrideTextStyle } }
     ],
-    ...Colors,
+    ...overrideColor,
     ...backgroundColor,
     ...Animation
   };

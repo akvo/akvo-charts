@@ -19,7 +19,8 @@ const initalChartState = {
         fontWeight: null,
         fontFamily: 'Arial',
         fontSize: null
-      }
+      },
+      color: []
     },
     data: basicChartExampleData,
     stackMapping: exampleStackMapping
