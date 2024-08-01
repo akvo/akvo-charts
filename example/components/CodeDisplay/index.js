@@ -1,16 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 
 import SnackBar from '../Snackbar';
 import { useChartContext } from '../../context/ChartContextProvider';
+import { useDisplayContext } from '../../context/DisplayContextProvider';
 import { codeBlock } from '../../utils';
 
 import 'highlight.js/styles/default.css';
 import './styles.css';
 import { CopyIcon } from '../Icons';
+import {
+  excludeStackMapping,
+  excludeHorizontal,
+  basicChart,
+  stackChartExampleData
+} from '../../static/config';
 
 hljs.registerLanguage('javascript', javascript);
 
@@ -47,9 +54,34 @@ const createHighlight = (content, languange) => {
 const CodeDisplay = () => {
   const [show, setShow] = useState(false);
 
+  const { selectedChartType } = useDisplayContext();
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
-  const chartData = isRaw ? rawConfig : defaultConfig;
-  const code = codeBlock(chartData);
+
+  const chartData = useMemo(() => {
+    if (isRaw) {
+      return rawConfig;
+    }
+    let res = { ...defaultConfig };
+    if (!basicChart.includes(selectedChartType)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
+    }
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.stackMapping;
+      res = transform;
+    }
+    return res;
+  }, [selectedChartType, defaultConfig, isRaw]);
+
+  const code = codeBlock({ type: selectedChartType, ...chartData });
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
@@ -61,7 +93,7 @@ const CodeDisplay = () => {
 
   return (
     <div className="w-full relative hljs">
-      <div className="w-full absolute top-2 right-2 text-right">
+      <div className="w-full top-2 right-2 text-right sticky">
         <button onClick={handleOnCopy}>
           <CopyIcon size={20} />
         </button>

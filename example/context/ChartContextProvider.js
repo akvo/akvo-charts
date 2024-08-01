@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
+import { exampleStackMapping, basicChartExampleData } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
@@ -7,18 +8,14 @@ const ChartDispatchContext = createContext(null);
 const initalChartState = {
   rawConfig: {},
   defaultConfig: {
-    type: 'bar',
+    horizontal: false,
     config: {
       title: 'Akvo Chart',
-      xAxisLabel: 'Year',
-      yAxisLabel: 'Income',
-      horizontal: false
+      xAxisLabel: 'Product',
+      yAxisLabel: 'Sales'
     },
-    data: [
-      { label: 'January', value: 30 },
-      { label: 'February', value: 20 },
-      { label: 'March', value: 50 }
-    ]
+    data: basicChartExampleData,
+    stackMapping: exampleStackMapping
   },
   mapConfig: {},
   mapRawConfig: {},

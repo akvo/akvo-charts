@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const MAX = 70;
+const MAX = 60;
 
 const getOptions = ({ dimensions = [], radius }) => {
   const itemName = dimensions[0];
@@ -23,14 +23,14 @@ const getOptions = ({ dimensions = [], radius }) => {
 
 const Doughnut = ({ config, data, size = 40 }) => {
   const torus = useMemo(() => {
-    if (size >= 70) {
+    if (size >= MAX) {
       return 0;
     }
     return MAX - size;
   }, [size]);
 
   const chartRef = useECharts({
-    config,
+    config: { ...config, showAxis: false },
     data,
     getOptions: ({ dimensions }) =>
       getOptions({ dimensions, radius: [`${torus}%`, `${MAX}%`] })
