@@ -79,7 +79,7 @@ const CodeDisplay = () => {
       res = transform;
     }
     return res;
-  }, [selectedChartType, defaultConfig, isRaw]);
+  }, [selectedChartType, defaultConfig, isRaw, rawConfig]);
 
   const code = codeBlock({ type: selectedChartType, ...chartData });
 
