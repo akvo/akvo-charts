@@ -39,6 +39,11 @@ const sidebarList = [
     key: chartTypes.STACK_CLUSTER,
     name: 'Stack Cluster Column',
     icon: <BarIcon />
+  },
+  {
+    key: chartTypes.STACK_LINE,
+    name: 'Stack Line',
+    icon: <LineIcon />
   }
 ];
 

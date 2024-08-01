@@ -7,7 +7,8 @@ import {
   Line,
   Pie,
   StackBar,
-  StackClusterColumn
+  StackClusterColumn,
+  StackLine
 } from 'akvo-charts';
 import { useChartContext } from '../context/ChartContextProvider';
 import { useDisplayContext } from '../context/DisplayContextProvider';
@@ -72,6 +73,8 @@ const ChartDisplay = () => {
         return <StackBar {...props} />;
       case chartTypes.STACK_CLUSTER:
         return <StackClusterColumn {...props} />;
+      case chartTypes.STACK_LINE:
+        return <StackLine {...props} />;
       default:
         return null;
     }

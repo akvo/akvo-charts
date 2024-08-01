@@ -9,7 +9,8 @@ const importBlocks = {
   [chartTypes.PIE]: `import { ${chartTypes.PIE} } from "akvo-charts";`,
   [chartTypes.DOUGHNUT]: `import { ${chartTypes.DOUGHNUT} } from "akvo-charts";`,
   [chartTypes.STACK_BAR]: `import { ${chartTypes.STACK_BAR} } from "akvo-charts";`,
-  [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`
+  [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`,
+  [chartTypes.STACK_LINE]: `import { ${chartTypes.STACK_LINE} } from "akvo-charts";`
 };
 
 const renderImport = (type) => {
@@ -44,6 +45,8 @@ const renderCodes = (type, props) => {
       return `<StackBar ${attributes} />`;
     case chartTypes.STACK_CLUSTER:
       return `<StackClusterColumn ${attributes} />`;
+    case chartTypes.STACK_LINE:
+      return `<StackLine ${attributes} />`;
     default:
       return 'Undefined chart type.';
   }
