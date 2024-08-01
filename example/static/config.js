@@ -4,15 +4,21 @@ export const chartTypes = {
   PIE: 'Pie',
   DOUGHNUT: 'Doughnut',
   STACK_BAR: 'StackBar',
-  STACK_CLUSTER: 'StackClusterColumn'
+  STACK_CLUSTER: 'StackClusterColumn',
+  SCATTER_PLOT: 'ScatterPlot'
 };
 
-export const excludeHorizontal = [chartTypes.PIE, chartTypes.DOUGHNUT];
+export const excludeHorizontal = [
+  chartTypes.PIE,
+  chartTypes.DOUGHNUT,
+  chartTypes.SCATTER_PLOT
+];
 export const basicChart = [
   chartTypes.BAR,
   chartTypes.LINE,
   chartTypes.PIE,
-  chartTypes.DOUGHNUT
+  chartTypes.DOUGHNUT,
+  chartTypes.SCATTER_PLOT
 ];
 export const excludeStackMapping = [...basicChart, chartTypes.STACK_CLUSTER];
 
@@ -68,3 +74,13 @@ export const exampleStackMapping = {
   group2: ['2020', '2021'],
   group3: ['2022', '2023']
 };
+
+export const scatterPlotExampleData = [
+  ['A', 10.0, 8.04],
+  ['B', 1.07, 6.95],
+  ['C', 13.0, 7.58],
+  ['D', 9.05, 8.81],
+  ['E', 3.0, 8.33],
+  ['F', 14.0, 7.66],
+  ['G', 13.4, 6.81]
+];
