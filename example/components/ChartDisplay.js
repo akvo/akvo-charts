@@ -80,7 +80,7 @@ const ChartDisplay = () => {
     }
   };
 
-  return <div className="pt-10">{chartComponent()}</div>;
+  return <div className="pt-10 h-2/3">{chartComponent()}</div>;
 };
 
 export default ChartDisplay;
