@@ -6,6 +6,7 @@ import {
   Doughnut,
   Line,
   Pie,
+  ScatterPlot,
   StackBar,
   StackClusterColumn,
   StackLine
@@ -17,7 +18,8 @@ import {
   excludeStackMapping,
   excludeHorizontal,
   basicChart,
-  stackChartExampleData
+  stackChartExampleData,
+  scatterPlotExampleData
 } from '../static/config';
 
 const ChartDisplay = () => {
@@ -37,6 +39,13 @@ const ChartDisplay = () => {
         data: stackChartExampleData
       };
     }
+
+    if (selectedChartType === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData,
+      };
+    }
     if (excludeHorizontal.includes(selectedChartType)) {
       const transform = { ...res };
       delete transform.horizontal;
@@ -48,7 +57,7 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [selectedChartType, defaultConfig, isRaw]);
+  }, [isRaw, defaultConfig, selectedChartType, rawConfig]);
 
   useEffect(() => {
     if (!showJson && !showCode && !fullscreen) {
@@ -73,6 +82,8 @@ const ChartDisplay = () => {
         return <StackBar {...props} />;
       case chartTypes.STACK_CLUSTER:
         return <StackClusterColumn {...props} />;
+      case chartTypes.SCATTER_PLOT:
+        return <ScatterPlot {...props} />;
       case chartTypes.STACK_LINE:
         return <StackLine {...props} />;
       default:

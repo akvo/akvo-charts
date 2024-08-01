@@ -7,6 +7,12 @@ const sortKeys = (keys = []) => {
 };
 
 const normalizeData = (data) => {
+  if (data?.length === 0) {
+    return {
+      dimensions: [],
+      source: []
+    };
+  }
   if (Array.isArray(data)) {
     if (data.length > 0 && Array.isArray(data[0])) {
       // Handle tabular format (2d array)

@@ -14,7 +14,9 @@ import {
   excludeHorizontal,
   excludeStackMapping,
   basicChart,
-  stackChartExampleData
+  stackChartExampleData,
+  chartTypes,
+  scatterPlotExampleData
 } from '../static/config';
 
 const JsonDataDisplay = () => {
@@ -30,6 +32,13 @@ const JsonDataDisplay = () => {
       res = {
         ...res,
         data: stackChartExampleData
+      };
+    }
+
+    if (selectedChartType === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {

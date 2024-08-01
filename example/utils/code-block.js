@@ -10,6 +10,7 @@ const importBlocks = {
   [chartTypes.DOUGHNUT]: `import { ${chartTypes.DOUGHNUT} } from "akvo-charts";`,
   [chartTypes.STACK_BAR]: `import { ${chartTypes.STACK_BAR} } from "akvo-charts";`,
   [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`,
+  [chartTypes.SCATTER_PLOT]: `import { ${chartTypes.SCATTER_PLOT} } from "akvo-charts";`,
   [chartTypes.STACK_LINE]: `import { ${chartTypes.STACK_LINE} } from "akvo-charts";`
 };
 
@@ -45,6 +46,8 @@ const renderCodes = (type, props) => {
       return `<StackBar ${attributes} />`;
     case chartTypes.STACK_CLUSTER:
       return `<StackClusterColumn ${attributes} />`;
+    case chartTypes.SCATTER_PLOT:
+      return `<ScatterPlot ${attributes} />`;
     case chartTypes.STACK_LINE:
       return `<StackLine ${attributes} />`;
     default:

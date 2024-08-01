@@ -16,7 +16,9 @@ import {
   excludeStackMapping,
   excludeHorizontal,
   basicChart,
-  stackChartExampleData
+  stackChartExampleData,
+  chartTypes,
+  scatterPlotExampleData
 } from '../../static/config';
 
 hljs.registerLanguage('javascript', javascript);
@@ -68,6 +70,13 @@ const CodeDisplay = () => {
         data: stackChartExampleData
       };
     }
+
+    if (selectedChartType === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData
+      };
+    }
     if (excludeHorizontal.includes(selectedChartType)) {
       const transform = { ...res };
       delete transform.horizontal;
@@ -79,7 +88,7 @@ const CodeDisplay = () => {
       res = transform;
     }
     return res;
-  }, [selectedChartType, defaultConfig, isRaw]);
+  }, [selectedChartType, defaultConfig, isRaw, rawConfig]);
 
   const code = codeBlock({ type: selectedChartType, ...chartData });
 

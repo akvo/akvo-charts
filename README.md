@@ -18,17 +18,6 @@ yarn add akvo-charts
 
 ## API
 
-### Chart Types
-
-| type	| Component |
-|-------|-------------|
-| bar	| [Bar](#bar-chart) |
-| line	| [Line](#line-chart) |
-| pie	| [Pie](#pie-chart) |
-| doughnut	| [Doughnut](#doughnut-chart) |
-| stack	| [StackBar](#stack-bar-chart) |
-| stackCluster	| [StackCluster](#stack-cluster-column) |
-
 ### Config
 
 | Prop	| Description |	Type | Default |
@@ -348,5 +337,40 @@ const StackClusterColumnChartExample = () => {
 export default StackClusterColumnChartExample;
 ```
 
+### Scatter Plot Chart
+A component for rendering basic scatter plot chart.
+
+#### Props:
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config). |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `symbolSize` _(optional)_| number |Optional parameter to set the dot size. The default value is `10`|
+| `showLabel` _(optional)_| boolean |Optional parameter to set the dot size. The default value is `true`|
+
+
+**Example usage of ScatterPlot chart:**
+
+```jsx
+import React from 'react';
+import { ScatterPlot } from 'akvo-charts';
+
+const ScatterPlotChartExample = () => {
+   const data = [
+      { label: 'A', x: 1, y: 2 },
+      { label: 'B', x: 1, y: 3 },
+      { label: 'C', x: 5, y: 7 }
+    ];
+
+    const config = {
+      title: 'ScatterPlot Chart Example'
+    };
+
+  return <ScatterPlot config={config} data={data} symbolSize={25} />;
+};
+
+export default ScatterPlotChartExample;
+```
 
 ---
