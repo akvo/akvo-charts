@@ -237,15 +237,17 @@ var useECharts = function useECharts(_ref) {
         var _normalizeData = normalizeData(data),
           dimensions = _normalizeData.dimensions,
           source = _normalizeData.source;
-        var options = _extends({}, transformConfig(_extends({}, config, {
+        var transformedConfig = transformConfig(_extends({}, config, {
           dimensions: dimensions
-        })), {
+        }));
+        var options = _extends({}, transformedConfig, {
           dataset: {
             dimensions: dimensions,
             source: source
           }
         }, getOptions({
-          dimensions: dimensions
+          dimensions: dimensions,
+          transformedConfig: transformedConfig
         }));
         if (chart) {
           chart.setOption(options);
@@ -468,8 +470,7 @@ var _getOptions$4 = function getOptions(_ref3) {
   var data = _ref3.data,
     symbolSize = _ref3.symbolSize,
     showLabel = _ref3.showLabel,
-    xAxis = _ref3.xAxis,
-    yAxis = _ref3.yAxis;
+    transformedConfig = _ref3.transformedConfig;
   return {
     series: [{
       type: 'scatter',
@@ -486,8 +487,11 @@ var _getOptions$4 = function getOptions(_ref3) {
         position: 'top'
       }
     }],
-    xAxis: xAxis,
-    yAxis: yAxis,
+    xAxis: _extends({}, transformedConfig.xAxis, {
+      splitLine: {
+        show: true
+      }
+    }),
     dataset: {
       source: scatterTransform(data)
     }
@@ -499,20 +503,16 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     _ref4$symbolSize = _ref4.symbolSize,
     symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
     _ref4$showLabel = _ref4.showLabel,
-    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
-    _ref4$xAxis = _ref4.xAxis,
-    xAxis = _ref4$xAxis === void 0 ? {} : _ref4$xAxis,
-    _ref4$yAxis = _ref4.yAxis,
-    yAxis = _ref4$yAxis === void 0 ? {} : _ref4$yAxis;
+    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel;
   var chartRef = useECharts({
     config: config,
-    getOptions: function getOptions() {
+    getOptions: function getOptions(_ref5) {
+      var transformedConfig = _ref5.transformedConfig;
       return _getOptions$4({
         data: data,
         symbolSize: symbolSize,
         showLabel: showLabel,
-        xAxis: xAxis,
-        yAxis: yAxis
+        transformedConfig: transformedConfig
       });
     }
   });
@@ -526,6 +526,7 @@ var ScatterPlot = function ScatterPlot(_ref4) {
 var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     stackMapping = _ref.stackMapping,
+    transformedConfig = _ref.transformedConfig,
     _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
   var dimensionToStackMap = {};
@@ -546,7 +547,7 @@ var _getOptions$5 = function getOptions(_ref) {
     };
   });
   return {
-    tooltip: _extends({}, Tooltip, {
+    tooltip: _extends({}, transformedConfig.tooltip, {
       trigger: 'axis'
     }),
     series: series
@@ -565,11 +566,13 @@ var StackBar = function StackBar(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
       return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
-        horizontal: horizontal
+        horizontal: horizontal,
+        transformedConfig: transformedConfig
       });
     }
   });
@@ -581,7 +584,8 @@ var StackBar = function StackBar(_ref2) {
 };
 
 var _getOptions$6 = function getOptions(_ref) {
-  var _ref$horizontal = _ref.horizontal,
+  var transformedConfig = _ref.transformedConfig,
+    _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
     dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
@@ -597,7 +601,7 @@ var _getOptions$6 = function getOptions(_ref) {
     };
   });
   return {
-    tooltip: _extends({}, Tooltip, {
+    tooltip: _extends({}, transformedConfig.tooltip, {
       trigger: 'axis'
     }),
     series: series
@@ -614,10 +618,12 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
       return _getOptions$6({
         horizontal: horizontal,
-        dimensions: dimensions
+        dimensions: dimensions,
+        transformedConfig: transformedConfig
       });
     }
   });
@@ -628,5 +634,62 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
   });
 };
 
-export { Bar, Doughnut, Line, Pie, ScatterPlot, StackBar, StackClusterColumn };
+var _getOptions$7 = function getOptions(_ref) {
+  var _extends2;
+  var dimensions = _ref.dimensions,
+    transformedConfig = _ref.transformedConfig,
+    _ref$horizontal = _ref.horizontal,
+    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
+  var axis = horizontal ? 'yAxis' : 'xAxis';
+  var series = dimensions.slice(1).map(function (dim) {
+    return {
+      name: dim,
+      type: 'line',
+      stack: 'defaultStack',
+      areaStyle: {},
+      encode: {
+        x: horizontal ? dim : 'category',
+        y: horizontal ? 'category' : dim
+      }
+    };
+  });
+  return _extends({}, transformedConfig, (_extends2 = {
+    tooltip: _extends({}, transformedConfig.tooltip, {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      }
+    })
+  }, _extends2[axis] = _extends({}, transformedConfig[axis], {
+    boundaryGap: false
+  }), _extends2.series = series, _extends2));
+};
+var StacLine = function StacLine(_ref2) {
+  var config = _ref2.config,
+    data = _ref2.data,
+    _ref2$horizontal = _ref2.horizontal,
+    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+  var chartRef = useECharts({
+    config: _extends({}, config, {
+      horizontal: horizontal
+    }),
+    data: data,
+    getOptions: function getOptions(_ref3) {
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
+      return _getOptions$7({
+        dimensions: dimensions,
+        horizontal: horizontal,
+        transformedConfig: transformedConfig
+      });
+    }
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    ref: chartRef,
+    role: "figure",
+    className: styles.container
+  });
+};
+
+export { Bar, Doughnut, Line, Pie, ScatterPlot, StackBar, StackClusterColumn, StacLine as StackLine };
 //# sourceMappingURL=index.modern.js.map
