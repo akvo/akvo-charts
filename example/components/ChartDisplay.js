@@ -6,6 +6,7 @@ import {
   Doughnut,
   Line,
   Pie,
+  ScatterPlot,
   StackBar,
   StackClusterColumn
 } from 'akvo-charts';
@@ -47,7 +48,7 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [selectedChartType, defaultConfig, isRaw]);
+  }, [isRaw, defaultConfig, selectedChartType, rawConfig]);
 
   useEffect(() => {
     if (!showJson && !showCode && !fullscreen) {
@@ -72,6 +73,8 @@ const ChartDisplay = () => {
         return <StackBar {...props} />;
       case chartTypes.STACK_CLUSTER:
         return <StackClusterColumn {...props} />;
+      case chartTypes.SCATTER_PLOT:
+        return <ScatterPlot {...props} />;
       default:
         return null;
     }
