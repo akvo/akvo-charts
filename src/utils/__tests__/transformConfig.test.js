@@ -143,8 +143,8 @@ describe('transformConfig', () => {
         type: 'value',
         name: 'X Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        nameGap: 20,
-        nameLocation: 'end',
+        nameGap: 45,
+        nameLocation: 'center',
         axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {
@@ -161,8 +161,8 @@ describe('transformConfig', () => {
         type: 'category',
         name: 'Y Axis',
         nameTextStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' },
-        nameGap: 45,
-        nameLocation: 'center',
+        nameGap: 20,
+        nameLocation: 'end',
         axisLabel: { color: '#000', fontSize: 12, fontWeight: 'normal' },
         axisLine: {
           lineStyle: {

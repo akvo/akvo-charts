@@ -28,16 +28,16 @@ const transformConfig = ({
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
       nameTextStyle: { ...TextStyle },
-      nameLocation: horizontal ? 'end' : 'center',
-      nameGap: horizontal ? 20 : 45,
+      nameLocation: 'center',
+      nameGap: 45,
       ...Axis
     },
     yAxis: {
       type: horizontal ? 'category' : 'value',
       name: yAxisLabel,
       nameTextStyle: { ...TextStyle },
-      nameLocation: horizontal ? 'center' : 'end',
-      nameGap: horizontal ? 45 : 20,
+      nameLocation: 'end',
+      nameGap: 20,
       ...Axis
     }
   };
