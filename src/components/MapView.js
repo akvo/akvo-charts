@@ -6,6 +6,7 @@ import React, {
   useImperativeHandle
 } from 'react';
 import L from 'leaflet';
+import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -89,6 +90,44 @@ const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
         zoom: config?.zoom || 2,
         layers: defaultLayers
       });
+
+      // Create the TopoJSON layer
+      const TopoJSON = L.GeoJSON.extend({
+        addData: (d) => {
+          if (d.type === 'Topology') {
+            for (let kd in d.objects) {
+              if (d.objects.hasOwnProperty(kd)) {
+                const geojson = topojson.feature(d, d.objects[kd]);
+                L.geoJSON(geojson).addTo(map);
+              }
+            }
+          }
+        }
+      });
+
+      L.topoJson = function (d, options) {
+        return new TopoJSON(d, options);
+      };
+
+      // Create an empty GeoJSON layer with a style and a popup on click
+      const geojsonLayer = L.topoJson(null, {
+        style: () => {
+          return {
+            color: '#000',
+            opacity: 1,
+            weight: 1,
+            fillColor: '#35495d',
+            fillOpacity: 0.8
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          layer.bindPopup(feature.properties.name);
+        }
+      }).addTo(map);
+
+      if (window?.topoData) {
+        geojsonLayer.addData(window?.topoData);
+      }
 
       // Add layers controls
       L.control.layers(baseMaps, overlayMaps).addTo(map);
