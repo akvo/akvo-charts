@@ -22,8 +22,10 @@ import {
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
+  const [mapPreload, setMapPreload] = useState(true);
 
-  const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { isMap, mapConfig, isRaw, defaultConfig, rawConfig } =
+    useChartContext();
   const { selectedChartType } = useDisplayContext();
 
   const transformDefaultConfig = useMemo(() => {
@@ -60,10 +62,11 @@ const JsonDataDisplay = () => {
     transformDefaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
+  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
 
   const onJsonUpdate = ({ updated_src: payload }) => {
     chartDispatch({
-      type: 'UPDATE_CHART',
+      type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
       payload
     });
   };
@@ -86,11 +89,16 @@ const JsonDataDisplay = () => {
 
   const onSaveClick = () => {
     try {
-      if (isRaw) {
-        setRawStore(rawConfig);
+      if (isMap) {
+        setMapStore(mapConfig);
       } else {
-        setDefaultStore(transformDefaultConfig);
+        if (isRaw) {
+          setRawStore(rawConfig);
+        } else {
+          setDefaultStore(transformDefaultConfig);
+        }
       }
+
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
         setNotify(null);
@@ -107,6 +115,7 @@ const JsonDataDisplay = () => {
       });
       setRawStore(null);
       setDefaultStore(null);
+      setMapStore(null);
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -124,11 +133,30 @@ const JsonDataDisplay = () => {
         payload: isRaw ? rawStore : defaultStore
       });
     }
-  }, [chartDispatch, rawStore, defaultStore, isRaw, preload]);
+    if (isMap && mapPreload) {
+      setMapPreload(false);
+      chartDispatch({
+        type: 'UPDATE_MAP',
+        payload: mapStore
+      });
+    }
+  }, [
+    chartDispatch,
+    rawStore,
+    defaultStore,
+    isRaw,
+    preload,
+    mapPreload,
+    isMap,
+    mapStore
+  ]);
 
   useEffect(() => {
     firstLoad();
   }, [firstLoad]);
+
+  const chartData = isRaw ? rawConfig : transformDefaultConfig;
+  const jsonData = isMap ? mapConfig : chartData;
 
   return (
     <div className="w-full relative">
@@ -179,7 +207,7 @@ const JsonDataDisplay = () => {
       </div>
       <ReactJson
         name="props"
-        src={isRaw ? rawConfig : transformDefaultConfig}
+        src={jsonData}
         theme="monokai"
         displayDataTypes={false}
         onEdit={onJsonUpdate}
