@@ -27,14 +27,18 @@ const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
 
   useEffect(() => {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      const mapLayers = layers?.map((ly) => {
-        const { tile, ...lyProps } = ly;
-        return L.tileLayer(tile, { ...lyProps });
-      });
+      const mapLayers = layers
+        ?.filter((l) => l?.tile)
+        ?.map((ly) => {
+          const { tile, ...lyProps } = ly;
+          return L.tileLayer(tile, { ...lyProps });
+        });
 
-      const markers = data?.map((d) =>
-        L.marker(d?.point, { icon: defaultIcon }).bindPopup(d?.label)
-      );
+      const markers = data
+        ?.filter((d) => d?.point && d?.label)
+        ?.map((d) =>
+          L.marker(d?.point, { icon: defaultIcon }).bindPopup(d?.label)
+        );
 
       const places = L.layerGroup(markers);
       // Initialize the map only if it hasn't been initialized yet
