@@ -707,7 +707,8 @@ var StacLine = function StacLine(_ref2) {
   });
 };
 
-var _excluded = ["tile"];
+var _excluded = ["url", "source", "name"],
+  _excluded2 = ["url"];
 var defaultIcon = L.icon({
   iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
   shadowUrl: typeof markerShadow === 'object' ? markerShadow === null || markerShadow === void 0 ? void 0 : markerShadow.src : markerShadow,
@@ -716,6 +717,11 @@ var defaultIcon = L.icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
+var getObjectFromString = function getObjectFromString(path) {
+  return path.split('.').reduce(function (obj, key) {
+    return obj && obj[key];
+  }, window);
+};
 var MapView = React.forwardRef(function (_ref, ref) {
   var _ref$data = _ref.data,
     data = _ref$data === void 0 ? [] : _ref$data,
@@ -727,22 +733,65 @@ var MapView = React.forwardRef(function (_ref, ref) {
   var mapInstanceRef = React.useRef(null);
   React.useEffect(function () {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      var mapLayers = layers === null || layers === void 0 ? void 0 : layers.map(function (ly) {
-        var tile = ly.tile,
+      var _layers$filter, _layers$filter$map, _layers$filter$map$fi, _data$filter, _Object$keys, _Object$keys2, _overlayMaps$defaultP;
+      var baseMaps = layers === null || layers === void 0 ? void 0 : (_layers$filter = layers.filter(function (l) {
+        return (l === null || l === void 0 ? void 0 : l.url) || (l === null || l === void 0 ? void 0 : l.source);
+      })) === null || _layers$filter === void 0 ? void 0 : (_layers$filter$map = _layers$filter.map(function (ly, lx) {
+        var tileURL = ly.url,
+          source = ly.source,
+          tn = ly.name,
           lyProps = _objectWithoutPropertiesLoose(ly, _excluded);
-        return L.tileLayer(tile, _extends({}, lyProps));
-      });
-      var markers = data === null || data === void 0 ? void 0 : data.map(function (d) {
-        return L.marker(d === null || d === void 0 ? void 0 : d.point, {
+        var tileName = tn || lx + 1;
+        if (source) {
+          if (!getObjectFromString(source)) {
+            return null;
+          }
+          var _getObjectFromString = getObjectFromString(source),
+            windowURL = _getObjectFromString.url,
+            wProps = _objectWithoutPropertiesLoose(_getObjectFromString, _excluded2);
+          return {
+            name: tileName,
+            tile: L.tileLayer(windowURL, _extends({}, wProps))
+          };
+        }
+        return {
+          name: tileName,
+          tile: L.tileLayer(tileURL, _extends({}, lyProps))
+        };
+      })) === null || _layers$filter$map === void 0 ? void 0 : (_layers$filter$map$fi = _layers$filter$map.filter(function (ly) {
+        return ly === null || ly === void 0 ? void 0 : ly.name;
+      })) === null || _layers$filter$map$fi === void 0 ? void 0 : _layers$filter$map$fi.reduce(function (curr, prev) {
+        curr[prev.name] = prev.tile;
+        return curr;
+      }, {});
+      var groupedMarkers = data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
+        return (d === null || d === void 0 ? void 0 : d.point) && (d === null || d === void 0 ? void 0 : d.label);
+      })) === null || _data$filter === void 0 ? void 0 : _data$filter.reduce(function (curr, prev) {
+        var key = (prev === null || prev === void 0 ? void 0 : prev.groupName) || 'Data';
+        if (!curr[key]) {
+          curr[key] = [];
+        }
+        curr[key].push(L.marker(prev.point, {
           icon: defaultIcon
-        }).bindPopup(d === null || d === void 0 ? void 0 : d.label);
-      });
-      var places = L.layerGroup(markers);
+        }).bindPopup(prev.label));
+        return curr;
+      }, {});
+      var overlayMaps = Object.keys(groupedMarkers).reduce(function (acc, key) {
+        acc[key] = L.layerGroup(groupedMarkers[key]);
+        return acc;
+      }, {});
+      var defaultBkey = (_Object$keys = Object.keys(baseMaps)) === null || _Object$keys === void 0 ? void 0 : _Object$keys[0];
+      var defaultPKey = (_Object$keys2 = Object.keys(overlayMaps)) === null || _Object$keys2 === void 0 ? void 0 : _Object$keys2[0];
+      var defaultLayers = (baseMaps === null || baseMaps === void 0 ? void 0 : baseMaps[defaultBkey]) || [];
+      if (overlayMaps !== null && overlayMaps !== void 0 && (_overlayMaps$defaultP = overlayMaps[defaultPKey]) !== null && _overlayMaps$defaultP !== void 0 && _overlayMaps$defaultP[0]) {
+        defaultLayers.push(overlayMaps[defaultPKey][0]);
+      }
       var map = L.map(mapContainerRef.current, {
         center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
         zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2,
-        layers: [].concat(mapLayers, [places])
+        layers: defaultLayers
       });
+      L.control.layers(baseMaps, overlayMaps).addTo(map);
       mapInstanceRef.current = map;
     }
     return function () {
@@ -775,8 +824,8 @@ var MapView = React.forwardRef(function (_ref, ref) {
   return /*#__PURE__*/React__default.createElement("div", {
     ref: mapContainerRef,
     style: {
-      height: '100vh',
-      width: '100%'
+      height: (config === null || config === void 0 ? void 0 : config.height) || '100vh',
+      width: (config === null || config === void 0 ? void 0 : config.width) || '100%'
     },
     "data-testid": "map-view"
   });
