@@ -17,8 +17,25 @@ const initalChartState = {
     data: basicChartExampleData,
     stackMapping: exampleStackMapping
   },
-  mapConfig: {},
-  mapRawConfig: {},
+  mapConfig: {
+    data: [
+      {
+        point: [39.61, -105.02],
+        label: 'This is Littleton, CO.'
+      }
+    ],
+    config: {
+      center: [39.73, -104.99],
+      zoom: 10
+    },
+    layers: [
+      {
+        tile: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      }
+    ]
+  },
   isRaw: false,
   isMap: false
 };
@@ -28,15 +45,6 @@ const chartReducer = (state, action) => {
     case 'UPDATE_MAP':
       if (!action.payload) {
         return state;
-      }
-      if (state.isRaw) {
-        return {
-          ...state,
-          mapRawConfig: {
-            ...state.mapRawConfig,
-            ...action.payload
-          }
-        };
       }
       return {
         ...state,
@@ -71,13 +79,18 @@ const chartReducer = (state, action) => {
         isRaw: !state.isRaw,
         rawConfig: action.payload || state.rawConfig
       };
-    case 'MAP':
+    case 'MAP_SHOW':
       return {
         ...state,
-        isMap: !state.isMap
+        isMap: true
+      };
+    case 'MAP_HIDE':
+      return {
+        ...state,
+        isMap: false
       };
     case 'DELETE':
-      return initalChartState;
+      return { ...initalChartState, isMap: state?.isMap };
     default:
       throw Error(
         `Unknown action: ${action.type}. Remeber action type must be CAPITAL text.`
