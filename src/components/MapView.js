@@ -21,32 +21,77 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 
+const getObjectFromString = (path) =>
+  path.split('.').reduce((obj, key) => obj && obj[key], window);
+
 const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
 
   useEffect(() => {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      const mapLayers = layers
-        ?.filter((l) => l?.tile)
-        ?.map((ly) => {
-          const { tile, ...lyProps } = ly;
-          return L.tileLayer(tile, { ...lyProps });
-        });
+      const baseMaps = layers
+        ?.filter((l) => l?.url || l?.source)
+        ?.map((ly, lx) => {
+          const { url: tileURL, source, name: tn, ...lyProps } = ly;
 
-      const markers = data
+          const tileName = tn || lx + 1;
+
+          if (source) {
+            if (!getObjectFromString(source)) {
+              return null;
+            }
+            const { url: windowURL, ...wProps } = getObjectFromString(source);
+            return {
+              name: tileName,
+              tile: L.tileLayer(windowURL, { ...wProps })
+            };
+          }
+          return {
+            name: tileName,
+            tile: L.tileLayer(tileURL, { ...lyProps })
+          };
+        })
+        ?.filter((ly) => ly?.name)
+        ?.reduce((curr, prev) => {
+          curr[prev.name] = prev.tile;
+          return curr;
+        }, {});
+
+      const groupedMarkers = data
         ?.filter((d) => d?.point && d?.label)
-        ?.map((d) =>
-          L.marker(d?.point, { icon: defaultIcon }).bindPopup(d?.label)
-        );
+        ?.reduce((curr, prev) => {
+          const key = prev?.groupName || 'Data';
+          if (!curr[key]) {
+            curr[key] = [];
+          }
+          curr[key].push(
+            L.marker(prev.point, { icon: defaultIcon }).bindPopup(prev.label)
+          );
+          return curr;
+        }, {});
 
-      const places = L.layerGroup(markers);
+      const overlayMaps = Object.keys(groupedMarkers).reduce((acc, key) => {
+        acc[key] = L.layerGroup(groupedMarkers[key]);
+        return acc;
+      }, {});
+
+      const defaultBkey = Object.keys(baseMaps)?.[0];
+      const defaultPKey = Object.keys(overlayMaps)?.[0];
+      const defaultLayers = baseMaps?.[defaultBkey] || [];
+      if (overlayMaps?.[defaultPKey]?.[0]) {
+        defaultLayers.push(overlayMaps[defaultPKey][0]);
+      }
+
       // Initialize the map only if it hasn't been initialized yet
       const map = L.map(mapContainerRef.current, {
         center: config?.center || [0, 0],
         zoom: config?.zoom || 2,
-        layers: [...mapLayers, places]
+        layers: defaultLayers
       });
+
+      // Add layers controls
+      L.control.layers(baseMaps, overlayMaps).addTo(map);
 
       // Save the map instance to ref
       mapInstanceRef.current = map;
@@ -83,7 +128,10 @@ const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
   return (
     <div
       ref={mapContainerRef}
-      style={{ height: '100vh', width: '100%' }}
+      style={{
+        height: config?.height || '100vh',
+        width: config?.width || '100%'
+      }}
       data-testid="map-view"
     />
   );
