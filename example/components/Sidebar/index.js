@@ -6,7 +6,8 @@ import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
+import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
+import { useChartDispatch } from '../../context/ChartContextProvider';
 import { chartTypes } from '../../static/config';
 
 const sidebarList = [
@@ -49,14 +50,23 @@ const sidebarList = [
     key: chartTypes.STACK_LINE,
     name: 'Stack Line',
     icon: <LineIcon />
+  },
+  {
+    key: chartTypes.MAP,
+    name: 'GEO/Map',
+    icon: <MapIcon />
   }
 ];
 
 const Sidebar = () => {
+  const chartDispatch = useChartDispatch();
   const displayDispatch = useDisplayDispatch();
   const { selectedChartType } = useDisplayContext();
 
   const handleOnSidebarClick = ({ key }) => {
+    chartDispatch({
+      type: key === chartTypes.MAP ? 'MAP_SHOW' : 'MAP_HIDE'
+    });
     displayDispatch({
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
