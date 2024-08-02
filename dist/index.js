@@ -105,30 +105,40 @@ var transformConfig = function transformConfig(_ref) {
     _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
-  return _extends({
-    title: _extends({}, Title, {
-      text: title
-    }),
-    grid: _extends({}, Grid),
-    legend: _extends({}, Legend, {
-      data: dimensions.slice(1)
-    }),
-    tooltip: _extends({}, Tooltip),
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    _ref$showAxis = _ref.showAxis,
+    showAxis = _ref$showAxis === void 0 ? true : _ref$showAxis;
+  var legend = _extends({}, Legend, {
+    data: dimensions.slice(1)
+  });
+  var axis = {
     xAxis: _extends({
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
       nameTextStyle: _extends({}, TextStyle),
-      nameLocation: horizontal ? 'end' : 'center',
-      nameGap: horizontal ? 20 : 45
+      nameLocation: 'center',
+      nameGap: 45
     }, Axis),
     yAxis: _extends({
       type: horizontal ? 'category' : 'value',
       name: yAxisLabel,
       nameTextStyle: _extends({}, TextStyle),
-      nameLocation: horizontal ? 'center' : 'end',
-      nameGap: horizontal ? 45 : 20
-    }, Axis),
+      nameLocation: 'end',
+      nameGap: 20
+    }, Axis)
+  };
+  if (!showAxis) {
+    legend = _extends({}, Legend);
+    axis = {};
+  }
+  return _extends({
+    title: _extends({}, Title, {
+      text: title
+    }),
+    grid: _extends({}, Grid),
+    legend: legend,
+    tooltip: _extends({}, Tooltip)
+  }, axis, {
     series: []
   }, Colors, backgroundColor, Animation);
 };
@@ -146,6 +156,12 @@ var sortKeys = function sortKeys(keys) {
   return [dynamicKey].concat(otherKeys);
 };
 var normalizeData = function normalizeData(data) {
+  if ((data === null || data === void 0 ? void 0 : data.length) === 0) {
+    return {
+      dimensions: [],
+      source: []
+    };
+  }
   if (Array.isArray(data)) {
     if (data.length > 0 && Array.isArray(data[0])) {
       var categories = data[0],
@@ -224,15 +240,17 @@ var useECharts = function useECharts(_ref) {
         var _normalizeData = normalizeData(data),
           dimensions = _normalizeData.dimensions,
           source = _normalizeData.source;
-        var options = _extends({}, transformConfig(_extends({}, config, {
+        var transformedConfig = transformConfig(_extends({}, config, {
           dimensions: dimensions
-        })), {
+        }));
+        var options = _extends({}, transformedConfig, {
           dataset: {
             dimensions: dimensions,
             source: source
           }
         }, getOptions({
-          dimensions: dimensions
+          dimensions: dimensions,
+          transformedConfig: transformedConfig
         }));
         if (chart) {
           chart.setOption(options);
@@ -346,6 +364,7 @@ var _getOptions$2 = function getOptions(_ref) {
   return {
     series: [{
       type: 'pie',
+      radius: '60%',
       encode: {
         itemName: itemName,
         value: value
@@ -357,7 +376,9 @@ var Pie = function Pie(_ref2) {
   var config = _ref2.config,
     data = _ref2.data;
   var chartRef = useECharts({
-    config: config,
+    config: _extends({}, config, {
+      showAxis: false
+    }),
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
@@ -373,7 +394,7 @@ var Pie = function Pie(_ref2) {
   });
 };
 
-var MAX = 70;
+var MAX = 60;
 var _getOptions$3 = function getOptions(_ref) {
   var _ref$dimensions = _ref.dimensions,
     dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
@@ -397,13 +418,15 @@ var Doughnut = function Doughnut(_ref2) {
     _ref2$size = _ref2.size,
     size = _ref2$size === void 0 ? 40 : _ref2$size;
   var torus = React.useMemo(function () {
-    if (size >= 70) {
+    if (size >= MAX) {
       return 0;
     }
     return MAX - size;
   }, [size]);
   var chartRef = useECharts({
-    config: config,
+    config: _extends({}, config, {
+      showAxis: false
+    }),
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions;
@@ -420,9 +443,93 @@ var Doughnut = function Doughnut(_ref2) {
   });
 };
 
-var _getOptions$4 = function getOptions(_ref) {
+var scatterTransform = function scatterTransform(input) {
+  if (Array.isArray(input)) {
+    if (Array.isArray(input[0])) {
+      return input.map(function (_ref) {
+        var label = _ref[0],
+          x = _ref[1],
+          y = _ref[2];
+        return [x, y, label];
+      });
+    }
+    if (typeof input[0] === 'object' && !Array.isArray(input[0])) {
+      return input.map(function (_ref2) {
+        var label = _ref2.label,
+          x = _ref2.x,
+          y = _ref2.y;
+        return [x, y, label];
+      });
+    }
+  }
+  if (typeof input === 'object') {
+    return Object.keys(input).map(function (key) {
+      return [].concat(input[key], [key]);
+    });
+  }
+  throw new Error('Invalid input format');
+};
+var _getOptions$4 = function getOptions(_ref3) {
+  var data = _ref3.data,
+    symbolSize = _ref3.symbolSize,
+    showLabel = _ref3.showLabel,
+    transformedConfig = _ref3.transformedConfig;
+  return {
+    series: [{
+      type: 'scatter',
+      symbolSize: symbolSize,
+      emphasis: {
+        focus: 'self'
+      },
+      label: {
+        show: showLabel,
+        formatter: function formatter(p) {
+          return p.data[2];
+        },
+        minMargin: 10,
+        position: 'top'
+      }
+    }],
+    xAxis: _extends({}, transformedConfig.xAxis, {
+      splitLine: {
+        show: true
+      }
+    }),
+    dataset: {
+      source: scatterTransform(data)
+    }
+  };
+};
+var ScatterPlot = function ScatterPlot(_ref4) {
+  var config = _ref4.config,
+    data = _ref4.data,
+    _ref4$symbolSize = _ref4.symbolSize,
+    symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
+    _ref4$showLabel = _ref4.showLabel,
+    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel;
+  var chartRef = useECharts({
+    config: config,
+    getOptions: function getOptions(_ref5) {
+      var transformedConfig = _ref5.transformedConfig;
+      return _getOptions$4({
+        data: data,
+        symbolSize: symbolSize,
+        showLabel: showLabel,
+        transformedConfig: transformedConfig
+      });
+    }
+  });
+  return /*#__PURE__*/React__default.createElement("div", {
+    ref: chartRef,
+    role: "figure",
+    className: styles.container
+  });
+};
+
+var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     stackMapping = _ref.stackMapping,
+    transformedConfig = _ref.transformedConfig,
     _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
   var dimensionToStackMap = {};
@@ -443,7 +550,7 @@ var _getOptions$4 = function getOptions(_ref) {
     };
   });
   return {
-    tooltip: _extends({}, Tooltip, {
+    tooltip: _extends({}, transformedConfig.tooltip, {
       trigger: 'axis'
     }),
     series: series
@@ -462,11 +569,13 @@ var StackBar = function StackBar(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
-      return _getOptions$4({
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
+      return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
-        horizontal: horizontal
+        horizontal: horizontal,
+        transformedConfig: transformedConfig
       });
     }
   });
@@ -477,8 +586,9 @@ var StackBar = function StackBar(_ref2) {
   });
 };
 
-var _getOptions$5 = function getOptions(_ref) {
-  var _ref$horizontal = _ref.horizontal,
+var _getOptions$6 = function getOptions(_ref) {
+  var transformedConfig = _ref.transformedConfig,
+    _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
     dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
@@ -494,7 +604,7 @@ var _getOptions$5 = function getOptions(_ref) {
     };
   });
   return {
-    tooltip: _extends({}, Tooltip, {
+    tooltip: _extends({}, transformedConfig.tooltip, {
       trigger: 'axis'
     }),
     series: series
@@ -511,10 +621,69 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
-      return _getOptions$5({
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
+      return _getOptions$6({
         horizontal: horizontal,
-        dimensions: dimensions
+        dimensions: dimensions,
+        transformedConfig: transformedConfig
+      });
+    }
+  });
+  return /*#__PURE__*/React__default.createElement("div", {
+    ref: chartRef,
+    role: "figure",
+    className: styles.container
+  });
+};
+
+var _getOptions$7 = function getOptions(_ref) {
+  var _extends2;
+  var dimensions = _ref.dimensions,
+    transformedConfig = _ref.transformedConfig,
+    _ref$horizontal = _ref.horizontal,
+    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
+  var axis = horizontal ? 'yAxis' : 'xAxis';
+  var series = dimensions.slice(1).map(function (dim) {
+    return {
+      name: dim,
+      type: 'line',
+      stack: 'defaultStack',
+      areaStyle: {},
+      encode: {
+        x: horizontal ? dim : 'category',
+        y: horizontal ? 'category' : dim
+      }
+    };
+  });
+  return _extends({}, transformedConfig, (_extends2 = {
+    tooltip: _extends({}, transformedConfig.tooltip, {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross'
+      }
+    })
+  }, _extends2[axis] = _extends({}, transformedConfig[axis], {
+    boundaryGap: false
+  }), _extends2.series = series, _extends2));
+};
+var StacLine = function StacLine(_ref2) {
+  var config = _ref2.config,
+    data = _ref2.data,
+    _ref2$horizontal = _ref2.horizontal,
+    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+  var chartRef = useECharts({
+    config: _extends({}, config, {
+      horizontal: horizontal
+    }),
+    data: data,
+    getOptions: function getOptions(_ref3) {
+      var dimensions = _ref3.dimensions,
+        transformedConfig = _ref3.transformedConfig;
+      return _getOptions$7({
+        dimensions: dimensions,
+        horizontal: horizontal,
+        transformedConfig: transformedConfig
       });
     }
   });
@@ -529,6 +698,8 @@ exports.Bar = Bar;
 exports.Doughnut = Doughnut;
 exports.Line = Line;
 exports.Pie = Pie;
+exports.ScatterPlot = ScatterPlot;
 exports.StackBar = StackBar;
 exports.StackClusterColumn = StackClusterColumn;
+exports.StackLine = StacLine;
 //# sourceMappingURL=index.js.map

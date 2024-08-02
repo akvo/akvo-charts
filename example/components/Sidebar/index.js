@@ -6,7 +6,7 @@ import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import { BarIcon, LineIcon, PieIcon } from '../Icons';
+import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
 import { chartTypes } from '../../static/config';
 
 const sidebarList = [
@@ -39,6 +39,11 @@ const sidebarList = [
     key: chartTypes.STACK_CLUSTER,
     name: 'Stack Cluster Column',
     icon: <BarIcon />
+  },
+  {
+    key: chartTypes.SCATTER_PLOT,
+    name: 'Scatter Plot',
+    icon: <ScatterPlotIcon />
   },
   {
     key: chartTypes.STACK_LINE,
