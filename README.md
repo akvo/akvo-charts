@@ -15,6 +15,8 @@ Echarts Wrapper for React Component
     - [Config](#config)
       - [Legend](#legend)
       - [Text Style](#text-style)
+      - [Item Style](#item-style)
+      - [Example Config](#example-config)
     - [Data](#data)
       - [2D Array](#2d-array)
       - [Row-Based Key-Value Format](#row-based-key-value-format)
@@ -72,6 +74,7 @@ yarn add akvo-charts
 | `yAxisLabel`	|	A string that specifies the label text for the Y axis of the chart. This helps to describe the data represented along the Y axis. This prop is applicable **only for Bar and Line charts**. | string | - |
 | `legend`	| An object that specifies the legend style for the chart. For detailed configuration options, refer to the [Legend Section](#legend). | object | None |
 | `textStyle` | An object that specifies the general text style options for the entire chart. This textStyle configuration will override all individual text styles within the chart. For detailed configuration options, refer to the [Text Style Section](#text-style). | object | None |
+| `itemStyle` | An object that defines the general styling options for items within the entire series in the chart. For more detailed configuration options, refer to the [Item Style Section](#item-style). | object | None |
 | `color`	| An array that specifies the color list of palette. If no color is set in series, the colors would be adopted sequentially and circularly from this list as the colors of series. | array | `['#4475B4', '#73ADD1', '#AAD9E8', '#FEE08F', '#FDAE60', '#F36C42', '#D73027']` |
 
 #### Legend
@@ -128,7 +131,33 @@ const config = {
 }
 ```
 
-**Example Config**
+#### Item Style
+
+| Prop	| Description |	Type | Default |
+|-------|-------------|------|---------|
+| `color`	| Defines the color of the series. By default, colors from the global palette `color` configuration are used. |	string (hexa) | `auto` |
+| `borderColor`	| Specifies the border color of the series. |	string (hexa) | `'#000'` |
+| `borderWidth`	| Sets the width of the series border. Defaults to no border. | number | `0` |
+| `borderType`	| Determines the type of border for the series. Options include `'solid'`, `'dashed'`, `'dotted'`. |	string | `solid` |
+| `opacity`	| Adjusts the opacity of the component, supporting values from 0 to 1. The component will not be drawn when set to 0. |	number | `1` |
+
+**Example of `itemStyle` config**
+
+```javascript
+const config = {
+  // ...other config
+  itemStyle: {
+    color: '#5470c6',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderType: 'dashed',
+    opacity: 0.6
+  }
+}
+```
+
+
+#### Example Config
 
 ```jsx
 const config = {
@@ -150,6 +179,13 @@ const config = {
     fontWeight: 'bold',
     fontFamily: 'Arial',
     fontSize: 12
+  },
+  itemStyle: {
+    color: '#5470c6',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderType: 'dashed',
+    opacity: 0.6
   },
   color: ['#5470c6', '#91cc75', '#fac858', '#ee6666']
 }
