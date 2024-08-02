@@ -5,7 +5,8 @@ import styles from '../styles.module.css';
 const getOptions = ({
   transformedConfig,
   horizontal = false,
-  dimensions = []
+  dimensions = [],
+  overrideItemStyle
 }) => {
   const series = dimensions.slice(1).map((dim) => ({
     name: dim,
@@ -14,7 +15,8 @@ const getOptions = ({
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
-    }
+    },
+    ...overrideItemStyle
   }));
 
   return {
@@ -30,8 +32,13 @@ const StackClusterColumn = ({ config, data, horizontal = false }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ dimensions, transformedConfig }) =>
-      getOptions({ horizontal, dimensions, transformedConfig })
+    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+      getOptions({
+        horizontal,
+        dimensions,
+        transformedConfig,
+        overrideItemStyle
+      })
   });
 
   return (

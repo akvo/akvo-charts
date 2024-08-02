@@ -13,13 +13,6 @@ const initalChartState = {
       title: 'Akvo Chart',
       xAxisLabel: 'Product',
       yAxisLabel: 'Sales',
-      textStyle: {
-        color: null,
-        fontStyle: 'normal',
-        fontWeight: null,
-        fontFamily: 'Arial',
-        fontSize: null
-      },
       legend: {
         show: true,
         icon: null,
@@ -28,6 +21,20 @@ const initalChartState = {
         align: 'left',
         orient: 'horizontal',
         itemGap: 15
+      },
+      textStyle: {
+        color: null,
+        fontStyle: 'normal',
+        fontWeight: null,
+        fontFamily: 'Arial',
+        fontSize: null
+      },
+      itemStyle: {
+        color: null,
+        borderColor: '#fff',
+        borderWidth: 1,
+        borderType: null,
+        opacity: 0.6
       },
       color: []
     },

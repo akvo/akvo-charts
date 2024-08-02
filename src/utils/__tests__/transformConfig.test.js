@@ -138,17 +138,7 @@ describe('transformConfig', () => {
           }
         }
       },
-      series: [
-        {
-          label: {
-            color: '#ff0000',
-            fontStyle: 'italic',
-            fontWeight: 'bold',
-            fontFamily: 'Arial',
-            fontSize: 16
-          }
-        }
-      ],
+      series: [],
       color: ['red', 'orange', 'yellow'],
       backgroundColor: 'transparent',
       animation: true,
@@ -238,9 +228,7 @@ describe('transformConfig', () => {
           }
         }
       },
-      series: [
-        { label: { color: '#000', fontSize: 12, fontWeight: 'normal' } }
-      ],
+      series: [],
       color: [
         '#4475B4',
         '#73ADD1',
@@ -302,9 +290,7 @@ describe('transformConfig', () => {
         axisPointer: { type: 'shadow' },
         textStyle: { color: '#000', fontSize: 12, fontWeight: 'bold' }
       },
-      series: [
-        { label: { color: '#000', fontSize: 12, fontWeight: 'normal' } }
-      ],
+      series: [],
       color: [
         '#4475B4',
         '#73ADD1',

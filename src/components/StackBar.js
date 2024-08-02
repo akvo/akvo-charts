@@ -6,7 +6,8 @@ const getOptions = ({
   dimensions,
   stackMapping,
   transformedConfig,
-  horizontal = true
+  horizontal = true,
+  overrideItemStyle
 }) => {
   // Reverse the stackMapping to get a dimension to stack group map
   const dimensionToStackMap = {};
@@ -24,7 +25,8 @@ const getOptions = ({
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
-    }
+    },
+    ...overrideItemStyle
   }));
 
   return {
@@ -40,8 +42,14 @@ const StackBar = ({ config, data, stackMapping = {}, horizontal = true }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ dimensions, transformedConfig }) =>
-      getOptions({ dimensions, stackMapping, horizontal, transformedConfig })
+    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+      getOptions({
+        dimensions,
+        stackMapping,
+        horizontal,
+        transformedConfig,
+        overrideItemStyle
+      })
   });
 
   return (

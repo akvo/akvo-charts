@@ -10,7 +10,7 @@ import {
   Legend
 } from './basicChartStyle';
 
-const filterObjNullValue = (obj) =>
+export const filterObjNullValue = (obj) =>
   Object.entries(obj).reduce((acc, [key, value]) => {
     if (value !== null) {
       acc[key] = value;
@@ -124,9 +124,7 @@ const transformConfig = ({
       }
     },
     ...axis,
-    series: [
-      { label: { ...TextStyle, fontWeight: 'normal', ...overrideTextStyle } }
-    ],
+    series: [],
     ...overrideColor,
     ...backgroundColor,
     ...Animation
