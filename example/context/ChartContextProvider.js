@@ -21,18 +21,36 @@ const initalChartState = {
     data: [
       {
         point: [39.61, -105.02],
-        label: 'This is Littleton, CO.'
+        label: 'This is Littleton, CO.',
+        groupName: 'Cities'
+      },
+      {
+        point: [39.73, -104.8],
+        label: 'This is Aurora, CO.',
+        groupName: 'Cities'
+      },
+      {
+        point: [39.68, -105.0],
+        label: 'This is Ruby Hill Park',
+        groupName: 'Parks'
       }
     ],
     config: {
       center: [39.73, -104.99],
-      zoom: 10
+      zoom: 10,
+      height: '100vh',
+      width: '100%'
     },
     layers: [
       {
-        tile: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        name: 'OpenStreetMap',
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         maxZoom: 19,
         attribution: '© OpenStreetMap'
+      },
+      {
+        name: 'TOPOStatic',
+        source: 'window.features.mapFeatures.baseMap'
       }
     ]
   },
