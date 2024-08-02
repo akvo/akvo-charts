@@ -5,6 +5,7 @@ import {
   Bar,
   Doughnut,
   Line,
+  MapView,
   Pie,
   ScatterPlot,
   StackBar,
@@ -23,7 +24,7 @@ import {
 } from '../static/config';
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig } = useChartContext();
+  const { isRaw, rawConfig, defaultConfig, mapConfig } = useChartContext();
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
@@ -86,6 +87,8 @@ const ChartDisplay = () => {
         return <ScatterPlot {...props} />;
       case chartTypes.STACK_LINE:
         return <StackLine {...props} />;
+      case chartTypes.MAP:
+        return <MapView {...mapConfig} />;
       default:
         return null;
     }
