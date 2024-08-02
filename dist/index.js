@@ -3,6 +3,10 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var React__default = _interopDefault(React);
 var echarts = require('echarts');
+var L = _interopDefault(require('leaflet'));
+require('leaflet/dist/leaflet.css');
+var markerIcon = _interopDefault(require('leaflet/dist/images/marker-icon.png'));
+var markerShadow = _interopDefault(require('leaflet/dist/images/marker-shadow.png'));
 
 function _extends() {
   return _extends = Object.assign ? Object.assign.bind() : function (n) {
@@ -12,6 +16,15 @@ function _extends() {
     }
     return n;
   }, _extends.apply(null, arguments);
+}
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (e.includes(n)) continue;
+    t[n] = r[n];
+  }
+  return t;
 }
 
 var backgroundColor = {
@@ -694,9 +707,85 @@ var StacLine = function StacLine(_ref2) {
   });
 };
 
+var _excluded = ["tile"];
+var defaultIcon = L.icon({
+  iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
+  shadowUrl: typeof markerShadow === 'object' ? markerShadow === null || markerShadow === void 0 ? void 0 : markerShadow.src : markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+var MapView = React.forwardRef(function (_ref, ref) {
+  var _ref$data = _ref.data,
+    data = _ref$data === void 0 ? [] : _ref$data,
+    _ref$config = _ref.config,
+    config = _ref$config === void 0 ? {} : _ref$config,
+    _ref$layers = _ref.layers,
+    layers = _ref$layers === void 0 ? [] : _ref$layers;
+  var mapContainerRef = React.useRef(null);
+  var mapInstanceRef = React.useRef(null);
+  React.useEffect(function () {
+    if (mapInstanceRef.current === null && mapContainerRef.current) {
+      var mapLayers = layers === null || layers === void 0 ? void 0 : layers.map(function (ly) {
+        var tile = ly.tile,
+          lyProps = _objectWithoutPropertiesLoose(ly, _excluded);
+        return L.tileLayer(tile, _extends({}, lyProps));
+      });
+      var markers = data === null || data === void 0 ? void 0 : data.map(function (d) {
+        return L.marker(d === null || d === void 0 ? void 0 : d.point, {
+          icon: defaultIcon
+        }).bindPopup(d === null || d === void 0 ? void 0 : d.label);
+      });
+      var places = L.layerGroup(markers);
+      var map = L.map(mapContainerRef.current, {
+        center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
+        zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2,
+        layers: [].concat(mapLayers, [places])
+      });
+      mapInstanceRef.current = map;
+    }
+    return function () {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [data, config, layers]);
+  React.useImperativeHandle(ref, function () {
+    return {
+      zoomIn: function zoomIn() {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.zoomIn();
+        }
+      },
+      zoomOut: function zoomOut() {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.zoomOut();
+        }
+      },
+      getCenter: function getCenter() {
+        if (mapInstanceRef.current) {
+          return mapInstanceRef.current.getCenter();
+        }
+        return null;
+      }
+    };
+  });
+  return /*#__PURE__*/React__default.createElement("div", {
+    ref: mapContainerRef,
+    style: {
+      height: '100vh',
+      width: '100%'
+    },
+    "data-testid": "map-view"
+  });
+});
+
 exports.Bar = Bar;
 exports.Doughnut = Doughnut;
 exports.Line = Line;
+exports.MapView = MapView;
 exports.Pie = Pie;
 exports.ScatterPlot = ScatterPlot;
 exports.StackBar = StackBar;
