@@ -12,7 +12,7 @@ const importBlocks = {
   [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`,
   [chartTypes.SCATTER_PLOT]: `import { ${chartTypes.SCATTER_PLOT} } from "akvo-charts";`,
   [chartTypes.STACK_LINE]: `import { ${chartTypes.STACK_LINE} } from "akvo-charts";`,
-  [chartTypes.MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`,
+  [chartTypes.MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`
 };
 
 const renderImport = (type) => {
@@ -22,7 +22,7 @@ const renderImport = (type) => {
 const renderCodes = (type, props) => {
   const attributes = Object.keys(props)
     .map((p) =>
-      ['config', 'data', 'stackMapping'].includes(p)
+      ['config', 'data', 'stackMapping', 'layers'].includes(p)
         ? `${p}={${p}}`
         : props?.[p]
           ? typeof props[p] === 'object'
@@ -58,14 +58,14 @@ const renderCodes = (type, props) => {
   }
 };
 
-const renderVars = ({ config, data, stackMapping }) => {
+const renderVars = ({ config, data, stackMapping, layers }) => {
   if (!config || !data) {
     return null;
   }
   const configStr = obj2String(config);
   const dataStr = obj2String(data);
 
-  let codes = [
+  const codes = [
     `const config = ${configStr};\n\n`,
     `const data = ${dataStr};\n\n`
   ];
@@ -74,6 +74,12 @@ const renderVars = ({ config, data, stackMapping }) => {
     const stackMappingStr = obj2String(stackMapping);
     codes.push(`const stackMapping = ${stackMappingStr};\n\n`);
   }
+
+  if (layers) {
+    const layersStr = obj2String(layers);
+    codes.push(`const layers = ${layersStr};\n\n`);
+  }
+
   return codes.join('');
 };
 
