@@ -6,7 +6,8 @@ export const chartTypes = {
   STACK_BAR: 'StackBar',
   STACK_CLUSTER: 'StackClusterColumn',
   SCATTER_PLOT: 'ScatterPlot',
-  STACK_LINE: 'StackLine'
+  STACK_LINE: 'StackLine',
+  MAP: 'MapView',
 };
 
 export const excludeHorizontal = [
