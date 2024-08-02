@@ -6,7 +6,47 @@ Echarts Wrapper for React Component
 
 ---
 
-## Install
+# Table of Contents
+
+- [Akvo Charts](#akvo-charts)
+- [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [API](#api)
+    - [Config](#config)
+    - [Data](#data)
+      - [2D Array](#2d-array)
+      - [Row-Based Key-Value Format](#row-based-key-value-format)
+      - [Column-Based Key-Value Format](#column-based-key-value-format)
+  - [Usage](#usage)
+    - [Bar Chart](#bar-chart)
+      - [Props](#props)
+      - [Example usage of Bar chart](#example-usage-of-bar-chart)
+    - [Line Chart](#line-chart)
+      - [Props](#props-1)
+      - [Example usage of Line chart](#example-usage-of-line-chart)
+    - [Pie Chart](#pie-chart)
+      - [Props](#props-2)
+      - [Example usage of Pie chart](#example-usage-of-pie-chart)
+    - [Doughnut Chart](#doughnut-chart)
+      - [Props](#props-3)
+      - [Example usage of Doughnut chart](#example-usage-of-doughnut-chart)
+    - [Stack Bar Chart](#stack-bar-chart)
+      - [Props](#props-4)
+      - [Example of stackMapping props](#example-of-stackmapping-props)
+      - [Example usage of StackBar chart](#example-usage-of-stackbar-chart)
+    - [Stack Cluster Column](#stack-cluster-column)
+      - [Props](#props-5)
+      - [Example usage of StackClusterColumn chart](#example-usage-of-stackclustercolumn-chart)
+    - [Scatter Plot Chart](#scatter-plot-chart)
+      - [Props](#props-6)
+      - [Example usage of ScatterPlot chart](#example-usage-of-scatterplot-chart)
+    - [Stack Line Chart](#stack-line-chart)
+      - [Props](#props-7)
+      - [Example usage of StackLine chart](#example-usage-of-stackline-chart)
+
+---
+
+## Installation
 To get started, install the package via npm or yarn:
 
 ```bash
@@ -94,15 +134,15 @@ An object where each key represents a column of data. The values for each key ar
 ### Bar Chart
 A component for rendering basic bar chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
-**Example usage of Bar chart:**
+#### Example usage of Bar chart
 
 ```jsx
 import React from 'react';
@@ -130,15 +170,15 @@ export default BarChartExample;
 ### Line Chart
 A component for rendering basic line chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
-**Example usage of Line chart:**
+ #### Example usage of Line chart
 
 ```jsx
 import React from 'react';
@@ -166,14 +206,14 @@ export default LineChartExample;
 ### Pie Chart
 A component for rendering basic pie chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 
-**Example usage of Pie chart:**
+#### Example usage of Pie chart
 
 ```jsx
 import React from 'react';
@@ -200,7 +240,7 @@ export default PieChartExample;
 ### Doughnut Chart
 A component for rendering basic doughnut chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
@@ -208,7 +248,7 @@ A component for rendering basic doughnut chart.
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 | `size` | number | The size of the doughnut chart's torus (optional). This value determines the radius of the inner circle of the doughnut chart, affecting the overall appearance and size of the chart. |
 
-**Example usage of Doughnut chart:**
+#### Example usage of Doughnut chart
 
 ```jsx
 import React from 'react';
@@ -236,16 +276,16 @@ export default DoughnutChartExample;
 A component for rendering stacked bar chart.
 
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
-| `stackMapping` |	object	| The configuration of stack for the data in stack bar chart (optional). If not provided, the chart will be rendered as one stack. |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
+| stackMapping _(optional)_ | object | Configuration object for defining the stack groups in a stack bar chart. If not provided, all series will be rendered in a single stack. Refer to the [Example of stackMapping props](#example-of-stackmapping-props) for detailed usage. |
 
-**Example of stackMapping props:**
+#### Example of stackMapping props
 
 ```jsx
 const data = [
@@ -263,7 +303,7 @@ const stackMapping = {
 ```
 
 
-**Example usage of StackBar chart:**
+#### Example usage of StackBar chart
 
 ```jsx
 import React from 'react';
@@ -301,16 +341,16 @@ export default StackBarChartExample;
 A component for rendering stakc cluster column. Basically this chart is like stack bar chart but stacked into a group of bar chart.
 
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
 
-**Example usage of StackBar chart:**
+#### Example usage of StackClusterColumn chart
 
 ```jsx
 import React from 'react';
@@ -338,9 +378,10 @@ export default StackClusterColumnChartExample;
 ```
 
 ### Scatter Plot Chart
+
 A component for rendering basic scatter plot chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
@@ -350,7 +391,7 @@ A component for rendering basic scatter plot chart.
 | `showLabel` _(optional)_| boolean |Optional parameter to set the dot size. The default value is `true`|
 
 
-**Example usage of ScatterPlot chart:**
+#### Example usage of ScatterPlot chart
 
 ```jsx
 import React from 'react';
@@ -371,6 +412,46 @@ const ScatterPlotChartExample = () => {
 };
 
 export default ScatterPlotChartExample;
+```
+
+### Stack Line Chart
+
+A component for rendering stack line chart.
+
+#### Props
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
+
+
+#### Example usage of StackLine chart
+
+```jsx
+import React from 'react';
+import { StackLine } from 'akvo-charts';
+
+const StackLineChartExample = () => {
+  const data = [
+      ['product', '2015', '2016', '2017', '2018'],
+      ['Matcha Latte', 43.3, 85.8, 93.7, 90],
+      ['Milk Tea', 83.1, 73.4, 55.1, 78],
+      ['Cheese Cocoa', 86.4, 65.2, 82.5, 44.3],
+      ['Walnut Brownie', 72.4, 53.9, 39.1, 55.5]
+  ];
+
+  const config = {
+    title: 'Product Sales Stack Bar',
+    xAxisLabel: 'Product',
+    yAxisLabel: 'Sales'
+  };
+
+  return <StackLine config={config} data={data} />;
+};
+
+export default StackLineChartExample;
 ```
 
 ---
