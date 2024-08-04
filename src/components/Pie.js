@@ -2,7 +2,7 @@ import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const getOptions = ({ dimensions = [] }) => {
+const getOptions = ({ dimensions = [], overrideItemStyle }) => {
   const itemName = dimensions[0];
   const value = dimensions.slice(1);
   return {
@@ -13,7 +13,8 @@ const getOptions = ({ dimensions = [] }) => {
         encode: {
           itemName,
           value
-        }
+        },
+        ...overrideItemStyle
       }
     ]
   };
@@ -23,7 +24,8 @@ const Pie = ({ config, data }) => {
   const chartRef = useECharts({
     config: { ...config, showAxis: false },
     data,
-    getOptions: ({ dimensions }) => getOptions({ dimensions })
+    getOptions: ({ dimensions, overrideItemStyle }) =>
+      getOptions({ dimensions, overrideItemStyle })
   });
 
   return (

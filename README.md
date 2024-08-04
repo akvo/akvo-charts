@@ -6,12 +6,58 @@ Echarts Wrapper for React Component
 
 ---
 
-## Install
-To get started, install the package via npm or yarn:
+# Table of Contents
+
+- [Akvo Charts](#akvo-charts)
+- [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [API](#api)
+    - [Config](#config)
+      - [Legend](#legend)
+      - [Text Style](#text-style)
+      - [Item Style](#item-style)
+      - [Example Config](#example-config)
+    - [Data](#data)
+      - [2D Array](#2d-array)
+      - [Row-Based Key-Value Format](#row-based-key-value-format)
+      - [Column-Based Key-Value Format](#column-based-key-value-format)
+  - [Usage](#usage)
+    - [Bar Chart](#bar-chart)
+      - [Props](#props)
+      - [Example usage of Bar chart](#example-usage-of-bar-chart)
+    - [Line Chart](#line-chart)
+      - [Props](#props-1)
+      - [Example usage of Line chart](#example-usage-of-line-chart)
+    - [Pie Chart](#pie-chart)
+      - [Props](#props-2)
+      - [Example usage of Pie chart](#example-usage-of-pie-chart)
+    - [Doughnut Chart](#doughnut-chart)
+      - [Props](#props-3)
+      - [Example usage of Doughnut chart](#example-usage-of-doughnut-chart)
+    - [Stack Bar Chart](#stack-bar-chart)
+      - [Props](#props-4)
+      - [Example of stackMapping props](#example-of-stackmapping-props)
+      - [Example usage of StackBar chart](#example-usage-of-stackbar-chart)
+    - [Stack Cluster Column](#stack-cluster-column)
+      - [Props](#props-5)
+      - [Example usage of StackClusterColumn chart](#example-usage-of-stackclustercolumn-chart)
+    - [Scatter Plot Chart](#scatter-plot-chart)
+      - [Props](#props-6)
+      - [Example usage of ScatterPlot chart](#example-usage-of-scatterplot-chart)
+    - [Stack Line Chart](#stack-line-chart)
+      - [Props](#props-7)
+      - [Example usage of StackLine chart](#example-usage-of-stackline-chart)
+
+---
+
+## Installation
+To get started, install the package via npm:
 
 ```bash
 npm install --save akvo-charts
-# or
+```
+or yarn:
+```bash
 yarn add akvo-charts
 ```
 ---
@@ -23,16 +69,125 @@ yarn add akvo-charts
 | Prop	| Description |	Type | Default |
 |-------|-------------|------|---------|
 | `title`	| A string representing the title of the chart. | string | - |
+| `subtitle`	| A string representing the subtitle of the chart. | string | - |
 | `xAxisLabel`	|	A string that specifies the label text for the X axis of the chart. This helps to describe the data represented along the X axis. This prop is applicable **only for Bar and Line charts**. | string | - |
 | `yAxisLabel`	|	A string that specifies the label text for the Y axis of the chart. This helps to describe the data represented along the Y axis. This prop is applicable **only for Bar and Line charts**. | string | - |
+| `legend`	| An object that specifies the legend style for the chart. For detailed configuration options, refer to the [Legend Section](#legend). | object | None |
+| `textStyle` | An object that specifies the general text style options for the entire chart. This textStyle configuration will override all individual text styles within the chart. For detailed configuration options, refer to the [Text Style Section](#text-style). | object | None |
+| `itemStyle` | An object that defines the general styling options for items within the entire series in the chart. For more detailed configuration options, refer to the [Item Style Section](#item-style). | object | None |
+| `color`	| An array that specifies the color list of palette. If no color is set in series, the colors would be adopted sequentially and circularly from this list as the colors of series. | array | `['#4475B4', '#73ADD1', '#AAD9E8', '#FEE08F', '#FDAE60', '#F36C42', '#D73027']` |
 
-**Example Config:**
+#### Legend
+
+| Prop	| Description |	Type | Default |
+|-------|-------------|------|---------|
+| `show`	| Option to show/hide the legend. |	boolean | `true` |
+| `icon`	| Icon of the legend items. Options are: `'circle'`, `'rect'`, `'roundRect'`, `'triangle'`, `'diamond'`, `'pin'`, `'arrow'`, `'none'`. |	string | `circle` |
+| `top`	| Distance between legend component and the top side of the container. `top` can be a pixel value like `20`, it can also be a percentage value relative to container width like `'20%'`, and it can also be `'top'`, `'middle'`, or `'bottom'`. If the top value is set to be `'top'`, `'middle'`, or `'bottom'`, then the component will be aligned automatically based on position. |	string \| number | `35` |
+| `left`	| Distance between legend component and the left side of the container. `left` can be a pixel value like `20`, it can also be a percentage value relative to container width like `'20%'`, and it can also be `'left'`, `'center'`, or `'right'`. If the left value is set to be `'left'`, `'center'`, or `'right'`, then the component will be aligned automatically based on position. |	string \| number | `'center'` |
+| `align`	| Legend marker and text aligning. Options are: `'auto'`, `'left'`, `'right'`. |	string | `'left'` |
+| `orient`	| The layout orientation of legend. Options are: `'horizontal'`, `'vertical'`. |	string | `'horizontal'` |
+| `itemGap`	| The distance between each legend, horizontal distance in horizontal layout, and vertical distance in vertical layout. |	number | `10` |
+
+**Example of `legend` config**
+
+```javascript
+const config = {
+  // ...other config
+  legend: {
+    show: true,
+    icon: 'pin',
+    top: 40,
+    left: 'left',
+    align: 'left',
+    orient: 'vertical',
+    itemGap: 15
+  }
+}
+```
+
+#### Text Style
+
+| Prop	| Description |	Type | Default |
+|-------|-------------|------|---------|
+| `color`	| The color of the text. |	hexa | `#000` |
+| `fontStyle`	| The font style of the text. Options are: `'normal'`, `'italic'`, `'oblique'`. |	string | None |
+| `fontWeight`	| The font thick weight of the text. Options are: `'normal'`, `'bold'`, `'bolder'`, `'lighter'`, `100 \| 200 \| 200 \| 400...`. |	string \| number | None |
+| `fontFamily`	| The font family of the text. |	string | `sans-serif` |
+| `fontSize`	| The font size of the text. |	number | None |
+
+**Example of `textStyle` config**
+
+```javascript
+const config = {
+  // ...other config
+  textStyle: {
+    color: '#000100',
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    fontFamily: 'Arial',
+    fontSize: 12
+  }
+}
+```
+
+#### Item Style
+
+| Prop	| Description |	Type | Default |
+|-------|-------------|------|---------|
+| `color`	| Defines the color of the series. By default, colors from the global palette `color` configuration are used. |	string (hexa) | `auto` |
+| `borderColor`	| Specifies the border color of the series. |	string (hexa) | `'#000'` |
+| `borderWidth`	| Sets the width of the series border. Defaults to no border. | number | `0` |
+| `borderType`	| Determines the type of border for the series. Options include `'solid'`, `'dashed'`, `'dotted'`. |	string | `solid` |
+| `opacity`	| Adjusts the opacity of the component, supporting values from 0 to 1. The component will not be drawn when set to 0. |	number | `1` |
+
+**Example of `itemStyle` config**
+
+```javascript
+const config = {
+  // ...other config
+  itemStyle: {
+    color: '#5470c6',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderType: 'dashed',
+    opacity: 0.6
+  }
+}
+```
+
+
+#### Example Config
 
 ```jsx
 const config = {
   title: 'Akvo Chart',
   xAxisLabel: 'Year',
   yAxisLabel: 'Income',
+  legend: {
+    show: true,
+    icon: 'pin',
+    top: 40,
+    left: 'left',
+    align: 'left',
+    orient: 'vertical',
+    itemGap: 15
+  },
+  textStyle: {
+    color: '#000100',
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    fontFamily: 'Arial',
+    fontSize: 12
+  },
+  itemStyle: {
+    color: '#5470c6',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderType: 'dashed',
+    opacity: 0.6
+  },
+  color: ['#5470c6', '#91cc75', '#fac858', '#ee6666']
 }
 ```
 
@@ -44,7 +199,7 @@ In Akvo-Charts, we follow the [ECharts dataset format](https://echarts.apache.or
 
 A 2D array where the first row and/or column can contain dimension names. If dimension names are not provided, only the data will be used. This format is useful for simple tabular data representations.
 
-**Example:**
+**Example**
 
 ```jsx
 [
@@ -60,7 +215,7 @@ A 2D array where the first row and/or column can contain dimension names. If dim
 
 An array of objects where each object represents a row of data. The keys in the objects correspond to dimension names, and the values represent the data points. This format is useful for datasets with named dimensions.
 
-**Example:**
+**Example**
 
 ```jsx
 [
@@ -76,7 +231,7 @@ An array of objects where each object represents a row of data. The keys in the 
 
 An object where each key represents a column of data. The values for each key are arrays that correspond to the data in each column. This format is useful for datasets where columns are explicitly defined.
 
-**Example:**
+**Example**
 
 ```jsx
 {
@@ -94,15 +249,15 @@ An object where each key represents a column of data. The values for each key ar
 ### Bar Chart
 A component for rendering basic bar chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
-**Example usage of Bar chart:**
+#### Example usage of Bar chart
 
 ```jsx
 import React from 'react';
@@ -130,15 +285,15 @@ export default BarChartExample;
 ### Line Chart
 A component for rendering basic line chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
-**Example usage of Line chart:**
+ #### Example usage of Line chart
 
 ```jsx
 import React from 'react';
@@ -166,14 +321,14 @@ export default LineChartExample;
 ### Pie Chart
 A component for rendering basic pie chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 
-**Example usage of Pie chart:**
+#### Example usage of Pie chart
 
 ```jsx
 import React from 'react';
@@ -200,7 +355,7 @@ export default PieChartExample;
 ### Doughnut Chart
 A component for rendering basic doughnut chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
@@ -208,7 +363,7 @@ A component for rendering basic doughnut chart.
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
 | `size` | number | The size of the doughnut chart's torus (optional). This value determines the radius of the inner circle of the doughnut chart, affecting the overall appearance and size of the chart. |
 
-**Example usage of Doughnut chart:**
+#### Example usage of Doughnut chart
 
 ```jsx
 import React from 'react';
@@ -236,16 +391,16 @@ export default DoughnutChartExample;
 A component for rendering stacked bar chart.
 
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
-| `stackMapping` |	object	| The configuration of stack for the data in stack bar chart (optional). If not provided, the chart will be rendered as one stack. |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
+| stackMapping _(optional)_ | object | Configuration object for defining the stack groups in a stack bar chart. If not provided, all series will be rendered in a single stack. Refer to the [Example of stackMapping props](#example-of-stackmapping-props) for detailed usage. |
 
-**Example of stackMapping props:**
+#### Example of stackMapping props
 
 ```jsx
 const data = [
@@ -263,7 +418,7 @@ const stackMapping = {
 ```
 
 
-**Example usage of StackBar chart:**
+#### Example usage of StackBar chart
 
 ```jsx
 import React from 'react';
@@ -301,16 +456,16 @@ export default StackBarChartExample;
 A component for rendering stakc cluster column. Basically this chart is like stack bar chart but stacked into a group of bar chart.
 
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` |	boolean	| If `true`, the chart will be rendered with horizontal bars (optional). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
 
-**Example usage of StackBar chart:**
+#### Example usage of StackClusterColumn chart
 
 ```jsx
 import React from 'react';
@@ -338,9 +493,10 @@ export default StackClusterColumnChartExample;
 ```
 
 ### Scatter Plot Chart
+
 A component for rendering basic scatter plot chart.
 
-#### Props:
+#### Props
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
@@ -350,7 +506,7 @@ A component for rendering basic scatter plot chart.
 | `showLabel` _(optional)_| boolean |Optional parameter to set the dot size. The default value is `true`|
 
 
-**Example usage of ScatterPlot chart:**
+#### Example usage of ScatterPlot chart
 
 ```jsx
 import React from 'react';
@@ -371,6 +527,46 @@ const ScatterPlotChartExample = () => {
 };
 
 export default ScatterPlotChartExample;
+```
+
+### Stack Line Chart
+
+A component for rendering stack line chart.
+
+#### Props
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
+| `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
+| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
+
+
+#### Example usage of StackLine chart
+
+```jsx
+import React from 'react';
+import { StackLine } from 'akvo-charts';
+
+const StackLineChartExample = () => {
+  const data = [
+      ['product', '2015', '2016', '2017', '2018'],
+      ['Matcha Latte', 43.3, 85.8, 93.7, 90],
+      ['Milk Tea', 83.1, 73.4, 55.1, 78],
+      ['Cheese Cocoa', 86.4, 65.2, 82.5, 44.3],
+      ['Walnut Brownie', 72.4, 53.9, 39.1, 55.5]
+  ];
+
+  const config = {
+    title: 'Product Sales Stack Bar',
+    xAxisLabel: 'Product',
+    yAxisLabel: 'Sales'
+  };
+
+  return <StackLine config={config} data={data} />;
+};
+
+export default StackLineChartExample;
 ```
 
 ---

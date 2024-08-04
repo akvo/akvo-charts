@@ -2,7 +2,12 @@ import React from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
-const getOptions = ({ dimensions, transformedConfig, horizontal = true }) => {
+const getOptions = ({
+  dimensions,
+  transformedConfig,
+  horizontal = true,
+  overrideItemStyle
+}) => {
   const axis = horizontal ? 'yAxis' : 'xAxis';
 
   const series = dimensions.slice(1).map((dim) => ({
@@ -13,7 +18,8 @@ const getOptions = ({ dimensions, transformedConfig, horizontal = true }) => {
     encode: {
       x: horizontal ? dim : 'category',
       y: horizontal ? 'category' : dim
-    }
+    },
+    ...overrideItemStyle
   }));
 
   return {
@@ -37,8 +43,13 @@ const StacLine = ({ config, data, horizontal = true }) => {
   const chartRef = useECharts({
     config: { ...config, horizontal },
     data,
-    getOptions: ({ dimensions, transformedConfig }) =>
-      getOptions({ dimensions, horizontal, transformedConfig })
+    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+      getOptions({
+        dimensions,
+        horizontal,
+        transformedConfig,
+        overrideItemStyle
+      })
   });
 
   return (

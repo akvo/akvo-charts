@@ -47,8 +47,6 @@ export const Legend = {
 
 export const Title = {
   show: true,
-  text: '',
-  subtext: '',
   textAlign: 'center',
   left: '50%',
   textStyle: {
