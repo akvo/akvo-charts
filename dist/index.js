@@ -788,6 +788,25 @@ var StacLine = function StacLine(_ref2) {
   });
 };
 
+// A type of promise-like that resolves synchronously and supports only one observer
+
+const _iteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.iterator || (Symbol.iterator = Symbol("Symbol.iterator"))) : "@@iterator";
+
+const _asyncIteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.asyncIterator || (Symbol.asyncIterator = Symbol("Symbol.asyncIterator"))) : "@@asyncIterator";
+
+// Asynchronously call a function and send errors to recovery continuation
+function _catch(body, recover) {
+	try {
+		var result = body();
+	} catch(e) {
+		return recover(e);
+	}
+	if (result && result.then) {
+		return result.then(void 0, recover);
+	}
+	return result;
+}
+
 var _excluded = ["url"];
 var defaultIcon = L.icon({
   iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
@@ -815,16 +834,23 @@ var MapView = React.forwardRef(function (_ref, ref) {
   var mapInstanceRef = React.useRef(null);
   var loadGeoDataFromURL = React.useCallback(function () {
     try {
-      var _temp = function () {
+      var _temp2 = function () {
         if (layer !== null && layer !== void 0 && layer.url && !geoData) {
-          return Promise.resolve(fetch(layer.url)).then(function (res) {
-            return Promise.resolve(res.json()).then(function (apiData) {
-              setGeoData(apiData);
+          var _temp = _catch(function () {
+            return Promise.resolve(fetch(layer.url)).then(function (res) {
+              return Promise.resolve(res.json()).then(function (apiData) {
+                if (apiData) {
+                  setGeoData(apiData);
+                }
+              });
             });
+          }, function (err) {
+            console.error('loadGeoDataFromURL', err);
           });
+          if (_temp && _temp.then) return _temp.then(function () {});
         }
       }();
-      return Promise.resolve(_temp && _temp.then ? _temp.then(function () {}) : void 0);
+      return Promise.resolve(_temp2 && _temp2.then ? _temp2.then(function () {}) : void 0);
     } catch (e) {
       return Promise.reject(e);
     }
