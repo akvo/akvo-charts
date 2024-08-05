@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { init } from 'echarts';
 import L from 'leaflet';
+import { feature } from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -60,8 +61,6 @@ var Legend = {
 };
 var Title = {
   show: true,
-  text: '',
-  subtext: '',
   textAlign: 'center',
   left: '50%',
   textStyle: {
@@ -106,51 +105,98 @@ var Axis = {
   }
 };
 
-var transformConfig = function transformConfig(_ref) {
-  var title = _ref.title,
-    _ref$xAxisLabel = _ref.xAxisLabel,
-    xAxisLabel = _ref$xAxisLabel === void 0 ? null : _ref$xAxisLabel,
-    _ref$yAxisLabel = _ref.yAxisLabel,
-    yAxisLabel = _ref$yAxisLabel === void 0 ? null : _ref$yAxisLabel,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
-    _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    _ref$showAxis = _ref.showAxis,
-    showAxis = _ref$showAxis === void 0 ? true : _ref$showAxis;
-  var legend = _extends({}, Legend, {
+var filterObjNullValue = function filterObjNullValue(obj) {
+  return Object.entries(obj).reduce(function (acc, _ref) {
+    var key = _ref[0],
+      value = _ref[1];
+    if (value !== null) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+};
+var transformConfig = function transformConfig(_ref2) {
+  var title = _ref2.title,
+    _ref2$subtitle = _ref2.subtitle,
+    subtitle = _ref2$subtitle === void 0 ? null : _ref2$subtitle,
+    _ref2$xAxisLabel = _ref2.xAxisLabel,
+    xAxisLabel = _ref2$xAxisLabel === void 0 ? null : _ref2$xAxisLabel,
+    _ref2$yAxisLabel = _ref2.yAxisLabel,
+    yAxisLabel = _ref2$yAxisLabel === void 0 ? null : _ref2$yAxisLabel,
+    _ref2$horizontal = _ref2.horizontal,
+    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal,
+    _ref2$textStyle = _ref2.textStyle,
+    textStyle = _ref2$textStyle === void 0 ? {
+      color: null,
+      fontStyle: null,
+      fontWeight: null,
+      fontFamily: null,
+      fontSize: null
+    } : _ref2$textStyle,
+    _ref2$legend = _ref2.legend,
+    legend = _ref2$legend === void 0 ? {
+      show: true,
+      icon: null,
+      top: null,
+      left: null,
+      align: null,
+      orient: null,
+      itemGap: null
+    } : _ref2$legend,
+    _ref2$color = _ref2.color,
+    color = _ref2$color === void 0 ? [] : _ref2$color,
+    _ref2$dimensions = _ref2.dimensions,
+    dimensions = _ref2$dimensions === void 0 ? [] : _ref2$dimensions,
+    _ref2$showAxis = _ref2.showAxis,
+    showAxis = _ref2$showAxis === void 0 ? true : _ref2$showAxis;
+  var defaultLegend = showAxis ? _extends({}, Legend, {
     data: dimensions.slice(1)
+  }) : _extends({}, Legend);
+  var overrideTextStyle = Object.keys(filterObjNullValue(textStyle)).length ? filterObjNullValue(textStyle) : {};
+  var overrideColor = color.length ? {
+    color: color
+  } : _extends({}, Colors);
+  var overrideLegend = Object.keys(filterObjNullValue(legend)).length ? _extends({}, defaultLegend, {
+    top: subtitle ? 50 : defaultLegend.top
+  }, filterObjNullValue(legend)) : _extends({}, defaultLegend, {
+    top: subtitle ? 50 : defaultLegend.top
   });
-  var axis = {
+  var axis = showAxis ? {
     xAxis: _extends({
       type: horizontal ? 'value' : 'category',
       name: xAxisLabel,
-      nameTextStyle: _extends({}, TextStyle),
+      nameTextStyle: _extends({}, TextStyle, overrideTextStyle),
       nameLocation: 'center',
       nameGap: 45
-    }, Axis),
+    }, Axis, {
+      axisLabel: _extends({}, Axis.axisLabel, overrideTextStyle)
+    }),
     yAxis: _extends({
       type: horizontal ? 'category' : 'value',
       name: yAxisLabel,
-      nameTextStyle: _extends({}, TextStyle),
+      nameTextStyle: _extends({}, TextStyle, overrideTextStyle),
       nameLocation: 'end',
       nameGap: 20
-    }, Axis)
-  };
-  if (!showAxis) {
-    legend = _extends({}, Legend);
-    axis = {};
-  }
+    }, Axis, {
+      axisLabel: _extends({}, Axis.axisLabel, overrideTextStyle)
+    })
+  } : {};
   return _extends({
     title: _extends({}, Title, {
-      text: title
+      text: title,
+      subtext: subtitle ? subtitle : '',
+      textStyle: _extends({}, Title.textStyle, overrideTextStyle)
     }),
     grid: _extends({}, Grid),
-    legend: legend,
-    tooltip: _extends({}, Tooltip)
+    legend: _extends({}, overrideLegend, {
+      textStyle: _extends({}, overrideLegend.textStyle, overrideTextStyle)
+    }),
+    tooltip: _extends({}, Tooltip, {
+      textStyle: _extends({}, Tooltip.textStyle, overrideTextStyle)
+    })
   }, axis, {
     series: []
-  }, Colors, backgroundColor, Animation);
+  }, overrideColor, backgroundColor, Animation);
 };
 
 var sortKeys = function sortKeys(keys) {
@@ -247,6 +293,16 @@ var useECharts = function useECharts(_ref) {
         if (!chart && chartRef.current) {
           chart = init(chartRef.current);
         }
+        var itemStyle = config !== null && config !== void 0 && config.itemStyle ? _extends({}, config.itemStyle) : {
+          color: null,
+          borderColor: null,
+          borderWidth: null,
+          borderType: null,
+          opacity: null
+        };
+        var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
+          itemStyle: filterObjNullValue(itemStyle)
+        } : {};
         var _normalizeData = normalizeData(data),
           dimensions = _normalizeData.dimensions,
           source = _normalizeData.source;
@@ -260,7 +316,8 @@ var useECharts = function useECharts(_ref) {
           }
         }, getOptions({
           dimensions: dimensions,
-          transformedConfig: transformedConfig
+          transformedConfig: transformedConfig,
+          overrideItemStyle: overrideItemStyle
         }));
         if (chart) {
           chart.setOption(options);
@@ -282,16 +339,17 @@ var _getOptions = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    overrideItemStyle = _ref.overrideItemStyle;
   var series = dimensions.slice(1).map(function (dim) {
-    return {
+    return _extends({
       name: dim,
       type: 'bar',
       encode: {
         x: horizontal ? dim : 'category',
         y: horizontal ? 'category' : dim
       }
-    };
+    }, overrideItemStyle);
   });
   return {
     series: series
@@ -308,10 +366,12 @@ var Bar = function Bar(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions({
         horizontal: horizontal,
-        dimensions: dimensions
+        dimensions: dimensions,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -326,16 +386,17 @@ var _getOptions$1 = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    overrideItemStyle = _ref.overrideItemStyle;
   var series = dimensions.slice(1).map(function (dim) {
-    return {
+    return _extends({
       name: dim,
       type: 'line',
       encode: {
         x: horizontal ? dim : 'category',
         y: horizontal ? 'category' : dim
       }
-    };
+    }, overrideItemStyle);
   });
   return {
     series: series
@@ -352,10 +413,12 @@ var Line = function Line(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$1({
         horizontal: horizontal,
-        dimensions: dimensions
+        dimensions: dimensions,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -368,18 +431,19 @@ var Line = function Line(_ref2) {
 
 var _getOptions$2 = function getOptions(_ref) {
   var _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    overrideItemStyle = _ref.overrideItemStyle;
   var itemName = dimensions[0];
   var value = dimensions.slice(1);
   return {
-    series: [{
+    series: [_extends({
       type: 'pie',
       radius: '60%',
       encode: {
         itemName: itemName,
         value: value
       }
-    }]
+    }, overrideItemStyle)]
   };
 };
 var Pie = function Pie(_ref2) {
@@ -391,9 +455,11 @@ var Pie = function Pie(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$2({
-        dimensions: dimensions
+        dimensions: dimensions,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -408,18 +474,19 @@ var MAX = 60;
 var _getOptions$3 = function getOptions(_ref) {
   var _ref$dimensions = _ref.dimensions,
     dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    radius = _ref.radius;
+    radius = _ref.radius,
+    overrideItemStyle = _ref.overrideItemStyle;
   var itemName = dimensions[0];
   var value = dimensions.slice(1);
   return {
-    series: [{
+    series: [_extends({
       type: 'pie',
       radius: radius,
       encode: {
         itemName: itemName,
         value: value
       }
-    }]
+    }, overrideItemStyle)]
   };
 };
 var Doughnut = function Doughnut(_ref2) {
@@ -439,10 +506,12 @@ var Doughnut = function Doughnut(_ref2) {
     }),
     data: data,
     getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions;
+      var dimensions = _ref3.dimensions,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$3({
         dimensions: dimensions,
-        radius: [torus + "%", MAX + "%"]
+        radius: [torus + "%", MAX + "%"],
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -483,9 +552,10 @@ var _getOptions$4 = function getOptions(_ref3) {
   var data = _ref3.data,
     symbolSize = _ref3.symbolSize,
     showLabel = _ref3.showLabel,
-    transformedConfig = _ref3.transformedConfig;
+    transformedConfig = _ref3.transformedConfig,
+    overrideItemStyle = _ref3.overrideItemStyle;
   return {
-    series: [{
+    series: [_extends({
       type: 'scatter',
       symbolSize: symbolSize,
       emphasis: {
@@ -499,7 +569,7 @@ var _getOptions$4 = function getOptions(_ref3) {
         minMargin: 10,
         position: 'top'
       }
-    }],
+    }, overrideItemStyle)],
     xAxis: _extends({}, transformedConfig.xAxis, {
       splitLine: {
         show: true
@@ -520,12 +590,14 @@ var ScatterPlot = function ScatterPlot(_ref4) {
   var chartRef = useECharts({
     config: config,
     getOptions: function getOptions(_ref5) {
-      var transformedConfig = _ref5.transformedConfig;
+      var transformedConfig = _ref5.transformedConfig,
+        overrideItemStyle = _ref5.overrideItemStyle;
       return _getOptions$4({
         data: data,
         symbolSize: symbolSize,
         showLabel: showLabel,
-        transformedConfig: transformedConfig
+        transformedConfig: transformedConfig,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -541,7 +613,8 @@ var _getOptions$5 = function getOptions(_ref) {
     stackMapping = _ref.stackMapping,
     transformedConfig = _ref.transformedConfig,
     _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
+    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    overrideItemStyle = _ref.overrideItemStyle;
   var dimensionToStackMap = {};
   Object.keys(stackMapping).forEach(function (stackGroup) {
     stackMapping[stackGroup].forEach(function (dim) {
@@ -549,7 +622,7 @@ var _getOptions$5 = function getOptions(_ref) {
     });
   });
   var series = dimensions.slice(1).map(function (dim) {
-    return {
+    return _extends({
       name: dim,
       type: 'bar',
       stack: dimensionToStackMap[dim] || 'defaultStack',
@@ -557,7 +630,7 @@ var _getOptions$5 = function getOptions(_ref) {
         x: horizontal ? dim : 'category',
         y: horizontal ? 'category' : dim
       }
-    };
+    }, overrideItemStyle);
   });
   return {
     tooltip: _extends({}, transformedConfig.tooltip, {
@@ -580,12 +653,14 @@ var StackBar = function StackBar(_ref2) {
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig;
+        transformedConfig = _ref3.transformedConfig,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
         horizontal: horizontal,
-        transformedConfig: transformedConfig
+        transformedConfig: transformedConfig,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -601,9 +676,10 @@ var _getOptions$6 = function getOptions(_ref) {
     _ref$horizontal = _ref.horizontal,
     horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
     _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions;
+    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
+    overrideItemStyle = _ref.overrideItemStyle;
   var series = dimensions.slice(1).map(function (dim) {
-    return {
+    return _extends({
       name: dim,
       type: 'bar',
       barGap: 0,
@@ -611,7 +687,7 @@ var _getOptions$6 = function getOptions(_ref) {
         x: horizontal ? dim : 'category',
         y: horizontal ? 'category' : dim
       }
-    };
+    }, overrideItemStyle);
   });
   return {
     tooltip: _extends({}, transformedConfig.tooltip, {
@@ -632,11 +708,13 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig;
+        transformedConfig = _ref3.transformedConfig,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$6({
         horizontal: horizontal,
         dimensions: dimensions,
-        transformedConfig: transformedConfig
+        transformedConfig: transformedConfig,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -652,10 +730,11 @@ var _getOptions$7 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     transformedConfig = _ref.transformedConfig,
     _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal;
+    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    overrideItemStyle = _ref.overrideItemStyle;
   var axis = horizontal ? 'yAxis' : 'xAxis';
   var series = dimensions.slice(1).map(function (dim) {
-    return {
+    return _extends({
       name: dim,
       type: 'line',
       stack: 'defaultStack',
@@ -664,7 +743,7 @@ var _getOptions$7 = function getOptions(_ref) {
         x: horizontal ? dim : 'category',
         y: horizontal ? 'category' : dim
       }
-    };
+    }, overrideItemStyle);
   });
   return _extends({}, transformedConfig, (_extends2 = {
     tooltip: _extends({}, transformedConfig.tooltip, {
@@ -689,11 +768,13 @@ var StacLine = function StacLine(_ref2) {
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig;
+        transformedConfig = _ref3.transformedConfig,
+        overrideItemStyle = _ref3.overrideItemStyle;
       return _getOptions$7({
         dimensions: dimensions,
         horizontal: horizontal,
-        transformedConfig: transformedConfig
+        transformedConfig: transformedConfig,
+        overrideItemStyle: overrideItemStyle
       });
     }
   });
@@ -704,8 +785,7 @@ var StacLine = function StacLine(_ref2) {
   });
 };
 
-var _excluded = ["url", "source", "name"],
-  _excluded2 = ["url"];
+var _excluded = ["url"];
 var defaultIcon = L.icon({
   iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
   shadowUrl: typeof markerShadow === 'object' ? markerShadow === null || markerShadow === void 0 ? void 0 : markerShadow.src : markerShadow,
@@ -720,76 +800,66 @@ var getObjectFromString = function getObjectFromString(path) {
   }, window);
 };
 var MapView = forwardRef(function (_ref, ref) {
-  var _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data,
-    _ref$config = _ref.config,
-    config = _ref$config === void 0 ? {} : _ref$config,
-    _ref$layers = _ref.layers,
-    layers = _ref$layers === void 0 ? [] : _ref$layers;
+  var tile = _ref.tile,
+    layer = _ref.layer,
+    config = _ref.config,
+    _ref$data = _ref.data,
+    data = _ref$data === void 0 ? [] : _ref$data;
   var mapContainerRef = useRef(null);
   var mapInstanceRef = useRef(null);
   useEffect(function () {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      var _layers$filter, _layers$filter$map, _layers$filter$map$fi, _data$filter, _Object$keys, _Object$keys2, _overlayMaps$defaultP;
-      var baseMaps = layers === null || layers === void 0 ? void 0 : (_layers$filter = layers.filter(function (l) {
-        return (l === null || l === void 0 ? void 0 : l.url) || (l === null || l === void 0 ? void 0 : l.source);
-      })) === null || _layers$filter === void 0 ? void 0 : (_layers$filter$map = _layers$filter.map(function (ly, lx) {
-        var tileURL = ly.url,
-          source = ly.source,
-          tn = ly.name,
-          lyProps = _objectWithoutPropertiesLoose(ly, _excluded);
-        var tileName = tn || lx + 1;
-        if (source) {
-          if (!getObjectFromString(source)) {
-            return null;
-          }
-          var _getObjectFromString = getObjectFromString(source),
-            windowURL = _getObjectFromString.url,
-            wProps = _objectWithoutPropertiesLoose(_getObjectFromString, _excluded2);
-          return {
-            name: tileName,
-            tile: L.tileLayer(windowURL, _extends({}, wProps))
-          };
-        }
-        return {
-          name: tileName,
-          tile: L.tileLayer(tileURL, _extends({}, lyProps))
-        };
-      })) === null || _layers$filter$map === void 0 ? void 0 : (_layers$filter$map$fi = _layers$filter$map.filter(function (ly) {
-        return ly === null || ly === void 0 ? void 0 : ly.name;
-      })) === null || _layers$filter$map$fi === void 0 ? void 0 : _layers$filter$map$fi.reduce(function (curr, prev) {
-        curr[prev.name] = prev.tile;
-        return curr;
-      }, {});
-      var groupedMarkers = data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
-        return (d === null || d === void 0 ? void 0 : d.point) && (d === null || d === void 0 ? void 0 : d.label);
-      })) === null || _data$filter === void 0 ? void 0 : _data$filter.reduce(function (curr, prev) {
-        var key = (prev === null || prev === void 0 ? void 0 : prev.groupName) || 'Data';
-        if (!curr[key]) {
-          curr[key] = [];
-        }
-        curr[key].push(L.marker(prev.point, {
-          icon: defaultIcon
-        }).bindPopup(prev.label));
-        return curr;
-      }, {});
-      var overlayMaps = Object.keys(groupedMarkers).reduce(function (acc, key) {
-        acc[key] = L.layerGroup(groupedMarkers[key]);
-        return acc;
-      }, {});
-      var defaultBkey = (_Object$keys = Object.keys(baseMaps)) === null || _Object$keys === void 0 ? void 0 : _Object$keys[0];
-      var defaultPKey = (_Object$keys2 = Object.keys(overlayMaps)) === null || _Object$keys2 === void 0 ? void 0 : _Object$keys2[0];
-      var defaultLayers = (baseMaps === null || baseMaps === void 0 ? void 0 : baseMaps[defaultBkey]) || [];
-      if (overlayMaps !== null && overlayMaps !== void 0 && (_overlayMaps$defaultP = overlayMaps[defaultPKey]) !== null && _overlayMaps$defaultP !== void 0 && _overlayMaps$defaultP[0]) {
-        defaultLayers.push(overlayMaps[defaultPKey][0]);
-      }
+      var _data$filter, _layer$source;
       var map = L.map(mapContainerRef.current, {
         center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
-        zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2,
-        layers: defaultLayers
+        zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2
       });
-      L.control.layers(baseMaps, overlayMaps).addTo(map);
       mapInstanceRef.current = map;
+      if (tile !== null && tile !== void 0 && tile.url) {
+        var tileURL = tile.url,
+          tileProps = _objectWithoutPropertiesLoose(tile, _excluded);
+        L.tileLayer(tileURL, _extends({}, tileProps)).addTo(map);
+      }
+      data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
+        return (d === null || d === void 0 ? void 0 : d.point) && (d === null || d === void 0 ? void 0 : d.label);
+      })) === null || _data$filter === void 0 ? void 0 : _data$filter.forEach(function (d) {
+        return L.marker(d === null || d === void 0 ? void 0 : d.point, {
+          icon: defaultIcon
+        }).bindPopup(d === null || d === void 0 ? void 0 : d.label).addTo(map);
+      });
+      var TopoJSON = L.GeoJSON.extend({
+        addData: function addData(d) {
+          if (d.type === 'Topology') {
+            for (var kd in d.objects) {
+              if (d.objects.hasOwnProperty(kd)) {
+                var geojson = feature(d, d.objects[kd]);
+                L.geoJSON(geojson).addTo(map);
+              }
+            }
+          }
+        }
+      });
+      L.topoJson = function (d, options) {
+        return new TopoJSON(d, options);
+      };
+      var geojsonLayer = L.topoJson(null, {
+        style: function style() {
+          return (layer === null || layer === void 0 ? void 0 : layer.style) || {
+            color: '#000',
+            opacity: 1,
+            weight: 1
+          };
+        },
+        onEachFeature: function onEachFeature(feature, layer) {
+          layer.bindPopup(feature.properties.name);
+        }
+      }).addTo(map);
+      if (layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
+        var topoData = getObjectFromString(layer.source);
+        if (topoData) {
+          geojsonLayer.addData(topoData);
+        }
+      }
     }
     return function () {
       if (mapInstanceRef.current) {
@@ -797,7 +867,7 @@ var MapView = forwardRef(function (_ref, ref) {
         mapInstanceRef.current = null;
       }
     };
-  }, [data, config, layers]);
+  }, [config === null || config === void 0 ? void 0 : config.center, config === null || config === void 0 ? void 0 : config.zoom, data, layer.source, layer === null || layer === void 0 ? void 0 : layer.style, layer.url, tile]);
   useImperativeHandle(ref, function () {
     return {
       zoomIn: function zoomIn() {
