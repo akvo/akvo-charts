@@ -22,7 +22,7 @@ const renderImport = (type) => {
 const renderCodes = (type, props) => {
   const attributes = Object.keys(props)
     .map((p) =>
-      ['config', 'data', 'stackMapping', 'layers'].includes(p)
+      ['config', 'data', 'stackMapping', 'layer', 'tile'].includes(p)
         ? `${p}={${p}}`
         : props?.[p]
           ? typeof props[p] === 'object'
@@ -52,13 +52,13 @@ const renderCodes = (type, props) => {
     case chartTypes.STACK_LINE:
       return `<StackLine ${attributes} />`;
     case chartTypes.MAP:
-      return `<Map ${attributes} />`;
+      return `<MapView ${attributes} />`;
     default:
       return 'Undefined chart type.';
   }
 };
 
-const renderVars = ({ config, data, stackMapping, layers }) => {
+const renderVars = ({ config, data, stackMapping, layer, tile }) => {
   if (!config || !data) {
     return null;
   }
@@ -75,9 +75,14 @@ const renderVars = ({ config, data, stackMapping, layers }) => {
     codes.push(`const stackMapping = ${stackMappingStr};\n\n`);
   }
 
-  if (layers) {
-    const layersStr = obj2String(layers);
-    codes.push(`const layers = ${layersStr};\n\n`);
+  if (layer) {
+    const layerStr = obj2String(layer);
+    codes.push(`const layer = ${layerStr};\n\n`);
+  }
+
+  if (tile) {
+    const tileStr = obj2String(tile);
+    codes.push(`const tile = ${tileStr};\n\n`);
   }
 
   return codes.join('');
