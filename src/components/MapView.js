@@ -25,72 +25,41 @@ const defaultIcon = L.icon({
 const getObjectFromString = (path) =>
   path.split('.').reduce((obj, key) => obj && obj[key], window);
 
-const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
+// const getGeoData = async (url) => {
+//   const response = await fetch(url);
+//   const data = await response.json();
+//   return data;
+// };
+
+const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
 
   useEffect(() => {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      const baseMaps = layers
-        ?.filter((l) => l?.url || l?.source)
-        ?.map((ly, lx) => {
-          const { url: tileURL, source, name: tn, ...lyProps } = ly;
-
-          const tileName = tn || lx + 1;
-
-          if (source) {
-            if (!getObjectFromString(source)) {
-              return null;
-            }
-            const { url: windowURL, ...wProps } = getObjectFromString(source);
-            return {
-              name: tileName,
-              tile: L.tileLayer(windowURL, { ...wProps })
-            };
-          }
-          return {
-            name: tileName,
-            tile: L.tileLayer(tileURL, { ...lyProps })
-          };
-        })
-        ?.filter((ly) => ly?.name)
-        ?.reduce((curr, prev) => {
-          curr[prev.name] = prev.tile;
-          return curr;
-        }, {});
-
-      const groupedMarkers = data
-        ?.filter((d) => d?.point && d?.label)
-        ?.reduce((curr, prev) => {
-          const key = prev?.groupName || 'Data';
-          if (!curr[key]) {
-            curr[key] = [];
-          }
-          curr[key].push(
-            L.marker(prev.point, { icon: defaultIcon }).bindPopup(prev.label)
-          );
-          return curr;
-        }, {});
-
-      const overlayMaps = Object.keys(groupedMarkers).reduce((acc, key) => {
-        acc[key] = L.layerGroup(groupedMarkers[key]);
-        return acc;
-      }, {});
-
-      const defaultBkey = Object.keys(baseMaps)?.[0];
-      const defaultPKey = Object.keys(overlayMaps)?.[0];
-      const defaultLayers = baseMaps?.[defaultBkey] || [];
-      if (overlayMaps?.[defaultPKey]?.[0]) {
-        defaultLayers.push(overlayMaps[defaultPKey][0]);
-      }
-
       // Initialize the map only if it hasn't been initialized yet
       const map = L.map(mapContainerRef.current, {
         center: config?.center || [0, 0],
-        zoom: config?.zoom || 2,
-        layers: defaultLayers
+        zoom: config?.zoom || 2
       });
 
+      // Save the map instance to ref
+      mapInstanceRef.current = map;
+
+      // Add a tile layer to the map
+      if (tile?.url) {
+        const { url: tileURL, ...tileProps } = tile;
+        L.tileLayer(tileURL, { ...tileProps }).addTo(map);
+      }
+
+      // Add a marker to the map
+      data
+        ?.filter((d) => d?.point && d?.label)
+        ?.forEach((d) =>
+          L.marker(d?.point, { icon: defaultIcon })
+            .bindPopup(d?.label)
+            .addTo(map)
+        );
       // Create the TopoJSON layer
       const TopoJSON = L.GeoJSON.extend({
         addData: (d) => {
@@ -111,29 +80,26 @@ const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
 
       // Create an empty GeoJSON layer with a style and a popup on click
       const geojsonLayer = L.topoJson(null, {
-        style: () => {
-          return {
+        style: () =>
+          layer?.style || {
             color: '#000',
             opacity: 1,
-            weight: 1,
-            fillColor: '#35495d',
-            fillOpacity: 0.8
-          };
-        },
+            weight: 1
+          },
         onEachFeature: (feature, layer) => {
           layer.bindPopup(feature.properties.name);
         }
       }).addTo(map);
 
-      if (window?.topoData) {
-        geojsonLayer.addData(window?.topoData);
+      if (layer?.source?.includes('window')) {
+        const topoData = getObjectFromString(layer.source);
+        if (topoData) {
+          geojsonLayer.addData(topoData);
+        }
       }
-
-      // Add layers controls
-      L.control.layers(baseMaps, overlayMaps).addTo(map);
-
-      // Save the map instance to ref
-      mapInstanceRef.current = map;
+      // if (layer?.url) {
+      //   getGeoData(layer.url).then((r) => geojsonLayer.addData(r));
+      // }
     }
 
     // Cleanup function to remove map instance on unmount
@@ -143,7 +109,15 @@ const MapView = forwardRef(({ data = [], config = {}, layers = [] }, ref) => {
         mapInstanceRef.current = null;
       }
     };
-  }, [data, config, layers]);
+  }, [
+    config?.center,
+    config?.zoom,
+    data,
+    layer.source,
+    layer?.style,
+    layer.url,
+    tile
+  ]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
