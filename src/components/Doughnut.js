@@ -4,7 +4,7 @@ import styles from '../styles.module.css';
 
 const MAX = 60;
 
-const getOptions = ({ dimensions = [], radius }) => {
+const getOptions = ({ dimensions = [], radius, overrideItemStyle }) => {
   const itemName = dimensions[0];
   const value = dimensions.slice(1);
   return {
@@ -15,7 +15,8 @@ const getOptions = ({ dimensions = [], radius }) => {
         encode: {
           itemName,
           value
-        }
+        },
+        ...overrideItemStyle
       }
     ]
   };
@@ -32,8 +33,12 @@ const Doughnut = ({ config, data, size = 40 }) => {
   const chartRef = useECharts({
     config: { ...config, showAxis: false },
     data,
-    getOptions: ({ dimensions }) =>
-      getOptions({ dimensions, radius: [`${torus}%`, `${MAX}%`] })
+    getOptions: ({ dimensions, overrideItemStyle }) =>
+      getOptions({
+        dimensions,
+        radius: [`${torus}%`, `${MAX}%`],
+        overrideItemStyle
+      })
   });
 
   return (

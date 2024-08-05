@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
-import transformConfig from '../utils/transformConfig';
+import transformConfig, { filterObjNullValue } from '../utils/transformConfig';
 import normalizeData from '../utils/normalizeData';
 
 const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
@@ -14,6 +14,21 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
         if (!chart && chartRef.current) {
           chart = echarts.init(chartRef.current);
         }
+        // handle itemStyle
+        const itemStyle = config?.itemStyle
+          ? { ...config.itemStyle }
+          : {
+              color: null,
+              borderColor: null,
+              borderWidth: null,
+              borderType: null,
+              opacity: null
+            };
+        const overrideItemStyle = Object.keys(filterObjNullValue(itemStyle))
+          .length
+          ? { itemStyle: filterObjNullValue(itemStyle) }
+          : {};
+        // eol handle item style
         const { dimensions, source } = normalizeData(data);
         const transformedConfig = transformConfig({ ...config, dimensions });
         const options = {
@@ -22,7 +37,7 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
             dimensions,
             source
           },
-          ...getOptions({ dimensions, transformedConfig })
+          ...getOptions({ dimensions, transformedConfig, overrideItemStyle })
         };
         if (chart) {
           chart.setOption(options);

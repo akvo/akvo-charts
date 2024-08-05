@@ -23,7 +23,13 @@ const scatterTransform = (input) => {
   throw new Error('Invalid input format');
 };
 
-const getOptions = ({ data, symbolSize, showLabel, transformedConfig }) => {
+const getOptions = ({
+  data,
+  symbolSize,
+  showLabel,
+  transformedConfig,
+  overrideItemStyle
+}) => {
   return {
     series: [
       {
@@ -37,7 +43,8 @@ const getOptions = ({ data, symbolSize, showLabel, transformedConfig }) => {
           formatter: (p) => p.data[2],
           minMargin: 10,
           position: 'top'
-        }
+        },
+        ...overrideItemStyle
       }
     ],
     xAxis: {
@@ -55,8 +62,14 @@ const getOptions = ({ data, symbolSize, showLabel, transformedConfig }) => {
 const ScatterPlot = ({ config, data, symbolSize = 10, showLabel = true }) => {
   const chartRef = useECharts({
     config,
-    getOptions: ({ transformedConfig }) =>
-      getOptions({ data, symbolSize, showLabel, transformedConfig })
+    getOptions: ({ transformedConfig, overrideItemStyle }) =>
+      getOptions({
+        data,
+        symbolSize,
+        showLabel,
+        transformedConfig,
+        overrideItemStyle
+      })
   });
 
   return (
