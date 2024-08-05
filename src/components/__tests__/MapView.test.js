@@ -5,23 +5,30 @@ import MapView from '../MapView';
 describe('MapView chart', () => {
   test('renders MapView correctly', async () => {
     const props = {
+      tile: {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      },
+      layer: {
+        source: 'window.topoData'
+      },
       data: [
         {
           point: [39.61, -105.02],
           label: 'This is Littleton, CO.'
+        },
+        {
+          point: [39.73, -104.8],
+          label: 'This is Aurora, CO.'
         }
       ],
       config: {
         center: [39.73, -104.99],
-        zoom: 10
-      },
-      layers: [
-        {
-          tile: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          maxZoom: 19,
-          attribution: '© OpenStreetMap'
-        }
-      ]
+        zoom: 10,
+        height: '100vh',
+        width: '100%'
+      }
     };
     let instance = null;
     render(
@@ -45,23 +52,30 @@ describe('MapView chart', () => {
 
   test('matches MapView snapshot', async () => {
     const props = {
+      tile: {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      },
+      layer: {
+        source: 'window.topoData'
+      },
       data: [
         {
           point: [39.61, -105.02],
           label: 'This is Littleton, CO.'
+        },
+        {
+          point: [39.73, -104.8],
+          label: 'This is Aurora, CO.'
         }
       ],
       config: {
         center: [39.73, -104.99],
-        zoom: 10
-      },
-      layers: [
-        {
-          tile: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          maxZoom: 19,
-          attribution: '© OpenStreetMap'
-        }
-      ]
+        zoom: 10,
+        height: '100vh',
+        width: '100%'
+      }
     };
 
     let instance = null;
