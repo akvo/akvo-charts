@@ -585,7 +585,8 @@ A component for rendering an interactive Leaflet map. It extends [Leaflet](https
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
-| `source` | string |	Sets the topojson source from the window object. Eg: `window.topoData` |
+| `source` | string |	Sets the topojson/geojson source from the window object. Eg: `window.topoData` |
+| `url` | string |	Sets the topojson/geojson source from the URL. |
 | `style` _(optional)_ | object |	Styling GeoJSON lines and polygons with [Path options](https://leafletjs.com/reference.html#path-option) |
 
 
@@ -621,6 +622,11 @@ const MapViewExample = () => {
 
   const layer = {
     source: "window.topoData",
+    style: {
+      color: '#0ea5e9',
+      weight: 1,
+      fillColor: '#38bdf8'
+    }
   };
   const data = [
     {
