@@ -48,8 +48,13 @@ const initalChartState = {
       attribution: '© OpenStreetMap'
     },
     layer: {
-      source: 'window.topoData'
-      // url: 'https://gist.githubusercontent.com/hpfast/2fb8de57c356d8c45ce511189eec5d6a/raw/ea3c117cec1a75dbd1de80f683397a16a6a81efc/gemeenten2017.topojson'
+      source: 'window.topoData',
+      url: 'https://gist.githubusercontent.com/Ziqinwang/8fd1173db43e28362dc6842395199612/raw/937765607ff3d98e561ccd0c1d752ffd23726020/denver.geojson',
+      style: {
+        color: '#0ea5e9',
+        weight: 1,
+        fillColor: '#38bdf8'
+      }
     },
     data: [
       {
