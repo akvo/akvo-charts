@@ -42,21 +42,27 @@ const initalChartState = {
     stackMapping: exampleStackMapping
   },
   mapConfig: {
+    tile: {
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    },
+    layer: {
+      source: 'window.topoData'
+      // url: 'https://gist.githubusercontent.com/hpfast/2fb8de57c356d8c45ce511189eec5d6a/raw/ea3c117cec1a75dbd1de80f683397a16a6a81efc/gemeenten2017.topojson'
+    },
     data: [
       {
         point: [39.61, -105.02],
-        label: 'This is Littleton, CO.',
-        groupName: 'Cities'
+        label: 'This is Littleton, CO.'
       },
       {
         point: [39.73, -104.8],
-        label: 'This is Aurora, CO.',
-        groupName: 'Cities'
+        label: 'This is Aurora, CO.'
       },
       {
         point: [39.68, -105.0],
-        label: 'This is Ruby Hill Park',
-        groupName: 'Parks'
+        label: 'This is Ruby Hill Park'
       }
     ],
     config: {
@@ -64,19 +70,7 @@ const initalChartState = {
       zoom: 10,
       height: '100vh',
       width: '100%'
-    },
-    layers: [
-      {
-        name: 'OpenStreetMap',
-        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-      },
-      {
-        name: 'TOPOStatic',
-        source: 'window.features.mapFeatures.baseMap'
-      }
-    ]
+    }
   },
   isRaw: false,
   isMap: false
