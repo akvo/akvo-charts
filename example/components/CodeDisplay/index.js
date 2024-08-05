@@ -96,7 +96,7 @@ const CodeDisplay = () => {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full bg-gray-100 pb-3">
       <div className="absolute top-2 right-2">
         <button
           onClick={handleOnCopy}

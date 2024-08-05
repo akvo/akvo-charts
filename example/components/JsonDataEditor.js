@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState, useMemo } from 'react';
-import ReactJson from 'react-json-view';
 import {
   useChartContext,
   useChartDispatch
@@ -18,10 +17,16 @@ import {
   chartTypes,
   scatterPlotExampleData
 } from '../static/config';
+import dynamic from 'next/dynamic';
 
-const JsonDataDisplay = () => {
+const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
+  ssr: false
+});
+
+const JsonDataEditor = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
+  const [editorContent, setEditorContent] = useState('');
 
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
   const { selectedChartType } = useDisplayContext();
@@ -61,6 +66,12 @@ const JsonDataDisplay = () => {
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
+  useEffect(() => {
+    setEditorContent(
+      JSON.stringify(isRaw ? rawConfig : transformDefaultConfig, null, 2)
+    );
+  }, [isRaw, rawConfig, transformDefaultConfig]);
+
   const onJsonUpdate = ({ updated_src: payload }) => {
     chartDispatch({
       type: 'UPDATE_CHART',
@@ -82,22 +93,6 @@ const JsonDataDisplay = () => {
       setNotify(null);
     }, 1000);
     console.error(errorMessage, error);
-  };
-
-  const onSaveClick = () => {
-    try {
-      if (isRaw) {
-        setRawStore(rawConfig);
-      } else {
-        setDefaultStore(transformDefaultConfig);
-      }
-      setNotify(`Configuration successfully saved`);
-      setTimeout(() => {
-        setNotify(null);
-      }, 1000);
-    } catch (error) {
-      handleOnError(error);
-    }
   };
 
   const onClearClick = () => {
@@ -129,6 +124,19 @@ const JsonDataDisplay = () => {
   useEffect(() => {
     firstLoad();
   }, [firstLoad]);
+
+  const handleEditorChange = (value) => {
+    setEditorContent(value);
+    try {
+      const parsedOptions = JSON.parse(value);
+      chartDispatch({
+        type: 'UPDATE_CHART',
+        payload: parsedOptions
+      });
+    } catch (error) {
+      console.error('Invalid JSON:', error);
+    }
+  };
 
   return (
     <div className="relative w-full h-[calc(100vh-20px)]">
@@ -168,29 +176,15 @@ const JsonDataDisplay = () => {
           <TrashIcon />
           <span>Clear</span>
         </button>
-        <button
-          type="button"
-          className="flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded shadow-md"
-          onClick={onSaveClick}
-        >
-          <CheckIcon />
-          <span>Save</span>
-        </button>
       </div>
-      <div className=" bg-neutral-800 p-3">
-        <ReactJson
-          name="props"
-          src={isRaw ? rawConfig : transformDefaultConfig}
-          theme="monokai"
-          displayDataTypes={false}
-          onEdit={onJsonUpdate}
-          onAdd={onJsonUpdate}
-          indentWidth={2}
-        />
-      </div>
+      <MonacoEditor
+        language="json"
+        value={editorContent}
+        onChange={handleEditorChange}
+      />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>
     </div>
   );
 };
 
-export default JsonDataDisplay;
+export default JsonDataEditor;
