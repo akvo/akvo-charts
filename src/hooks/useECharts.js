@@ -14,21 +14,32 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
         if (!chart && chartRef.current) {
           chart = echarts.init(chartRef.current);
         }
+
+        // handle horizontal
+        let horizontal = false;
+        if (config?.horizontal) {
+          horizontal = config.horizontal;
+        }
+        // eol handle horizontal
+
         // handle itemStyle
-        const itemStyle = config?.itemStyle
-          ? { ...config.itemStyle }
-          : {
-              color: null,
-              borderColor: null,
-              borderWidth: null,
-              borderType: null,
-              opacity: null
-            };
+        let itemStyle = {
+          color: null,
+          borderColor: null,
+          borderWidth: null,
+          borderType: null,
+          opacity: null
+        };
+        if (config?.itemStyle) {
+          itemStyle = { ...config.itemStyle };
+          delete config.itemStyle;
+        }
         const overrideItemStyle = Object.keys(filterObjNullValue(itemStyle))
           .length
           ? { itemStyle: filterObjNullValue(itemStyle) }
           : {};
         // eol handle item style
+
         const { dimensions, source } = normalizeData(data);
         const transformedConfig = transformConfig({ ...config, dimensions });
         const options = {
@@ -37,7 +48,12 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
             dimensions,
             source
           },
-          ...getOptions({ dimensions, transformedConfig, overrideItemStyle })
+          ...getOptions({
+            dimensions,
+            transformedConfig,
+            overrideItemStyle,
+            horizontal
+          })
         };
         if (chart) {
           chart.setOption(options);

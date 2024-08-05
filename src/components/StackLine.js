@@ -39,11 +39,16 @@ const getOptions = ({
   };
 };
 
-const StacLine = ({ config, data, horizontal = true }) => {
+const StacLine = ({ config, data }) => {
   const chartRef = useECharts({
-    config: { ...config, horizontal },
+    config,
     data,
-    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) =>
       getOptions({
         dimensions,
         horizontal,

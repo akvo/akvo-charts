@@ -38,11 +38,16 @@ const getOptions = ({
   };
 };
 
-const StackBar = ({ config, data, stackMapping = {}, horizontal = true }) => {
+const StackBar = ({ config, data, stackMapping = {} }) => {
   const chartRef = useECharts({
-    config: { ...config, horizontal },
+    config,
     data,
-    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) =>
       getOptions({
         dimensions,
         stackMapping,

@@ -8,11 +8,11 @@ const ChartDispatchContext = createContext(null);
 const initalChartState = {
   rawConfig: {},
   defaultConfig: {
-    horizontal: false,
     config: {
       title: 'Akvo Chart',
       xAxisLabel: 'Product',
       yAxisLabel: 'Sales',
+      horizontal: false,
       legend: {
         show: true,
         icon: null,
