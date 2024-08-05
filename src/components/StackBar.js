@@ -6,7 +6,7 @@ const getOptions = ({
   dimensions,
   stackMapping,
   transformedConfig,
-  horizontal = true,
+  horizontal,
   overrideItemStyle
 }) => {
   // Reverse the stackMapping to get a dimension to stack group map

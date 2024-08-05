@@ -5,7 +5,7 @@ import styles from '../styles.module.css';
 const getOptions = ({
   dimensions,
   transformedConfig,
-  horizontal = true,
+  horizontal,
   overrideItemStyle
 }) => {
   const axis = horizontal ? 'yAxis' : 'xAxis';
