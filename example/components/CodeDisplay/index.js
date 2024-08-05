@@ -27,11 +27,6 @@ const createHighlight = (content, languange) => {
   let lineNumber = 0;
   const highlightedContent = hljs.highlightAuto(content, [languange]).value;
 
-  /* Highlight.js wraps comment blocks inside <span class="hljs-comment"></span>.
-     However, when the multi-line comment block is broken down into diffirent
-     table rows, only the first row, which is appended by the <span> tag, is
-     highlighted. The following code fixes it by appending <span> to each line
-     of the comment block. */
   const commentPattern = /<span class="hljs-comment">(.|\n)*?<\/span>/g;
   const adaptedHighlightedContent = highlightedContent.replace(
     commentPattern,
@@ -101,9 +96,12 @@ const CodeDisplay = () => {
   };
 
   return (
-    <div className="w-full relative hljs">
-      <div className="w-full top-2 right-2 text-right sticky">
-        <button onClick={handleOnCopy}>
+    <div className="relative w-full">
+      <div className="absolute top-2 right-2">
+        <button
+          onClick={handleOnCopy}
+          className="bg-white p-2 rounded shadow-md hover:bg-gray-100 focus:outline-none"
+        >
           <CopyIcon size={20} />
         </button>
       </div>

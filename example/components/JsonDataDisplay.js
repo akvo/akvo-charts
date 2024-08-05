@@ -131,8 +131,8 @@ const JsonDataDisplay = () => {
   }, [firstLoad]);
 
   return (
-    <div className="w-full relative">
-      <div className="w-full flex justify-end sticky top-2 right-2 z-[99] rounded-sm text-lg">
+    <div className="relative w-full h-[calc(100vh-20px)]">
+      <div className="absolute top-2 right-2 z-[99] flex gap-2">
         <a
           href={
             isRaw
@@ -140,14 +140,14 @@ const JsonDataDisplay = () => {
               : 'https://github.com/akvo/akvo-charts/blob/main/README.md'
           }
           target="_blank"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
           rel="noreferrer"
           data-testid="link-rtd"
         >
           <BookOpenIcon />
           <span>Read Docs</span>
         </a>
-        <div className="px-3 py-1 bg-white">
+        <div className="flex items-center px-3 py-1 bg-white rounded shadow-md">
           <input
             type="checkbox"
             id="raw"
@@ -162,7 +162,7 @@ const JsonDataDisplay = () => {
         </div>
         <button
           type="button"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
           onClick={onClearClick}
         >
           <TrashIcon />
@@ -170,7 +170,7 @@ const JsonDataDisplay = () => {
         </button>
         <button
           type="button"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700"
+          className="flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded shadow-md"
           onClick={onSaveClick}
         >
           <CheckIcon />
@@ -185,6 +185,7 @@ const JsonDataDisplay = () => {
         onEdit={onJsonUpdate}
         onAdd={onJsonUpdate}
         indentWidth={2}
+        className="p-4"
       />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>
     </div>

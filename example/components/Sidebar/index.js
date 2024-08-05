@@ -64,7 +64,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="sidebar w-80 h-screen text-gray-800 flex flex-col">
+    <div className="sidebar w-80 h-[calc(100vh-20px)] text-gray-800 flex flex-col">
       <div className="p-4 text-xl font-bold">Chart Types</div>
       <ul className="flex-1 space-y-2 p-4">
         {sidebarList.map((chartType, index) => (
