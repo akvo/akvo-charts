@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, useMemo, forwardRef, useState, useCallback, useImperativeHandle } from 'react';
 import { init } from 'echarts';
 import L from 'leaflet';
 import { feature } from 'topojson-client';
@@ -805,8 +805,30 @@ var MapView = forwardRef(function (_ref, ref) {
     config = _ref.config,
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? [] : _ref$data;
+  var _useState = useState(null),
+    geoData = _useState[0],
+    setGeoData = _useState[1];
   var mapContainerRef = useRef(null);
   var mapInstanceRef = useRef(null);
+  var loadGeoDataFromURL = useCallback(function () {
+    try {
+      var _temp = function () {
+        if (layer !== null && layer !== void 0 && layer.url && !geoData) {
+          return Promise.resolve(fetch(layer.url)).then(function (res) {
+            return Promise.resolve(res.json()).then(function (apiData) {
+              setGeoData(apiData);
+            });
+          });
+        }
+      }();
+      return Promise.resolve(_temp && _temp.then ? _temp.then(function () {}) : void 0);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }, [layer.url, geoData]);
+  useEffect(function () {
+    loadGeoDataFromURL();
+  }, [loadGeoDataFromURL]);
   useEffect(function () {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
       var _data$filter, _layer$source;
@@ -833,32 +855,34 @@ var MapView = forwardRef(function (_ref, ref) {
             for (var kd in d.objects) {
               if (d.objects.hasOwnProperty(kd)) {
                 var geojson = feature(d, d.objects[kd]);
-                L.geoJSON(geojson).addTo(map);
+                L.geoJSON(geojson, {
+                  style: function style() {
+                    return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
+                  }
+                }).addTo(map);
               }
             }
+          } else {
+            L.geoJSON(d, {
+              style: function style() {
+                return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
+              }
+            }).addTo(map);
           }
         }
       });
       L.topoJson = function (d, options) {
         return new TopoJSON(d, options);
       };
-      var geojsonLayer = L.topoJson(null, {
-        style: function style() {
-          return (layer === null || layer === void 0 ? void 0 : layer.style) || {
-            color: '#000',
-            opacity: 1,
-            weight: 1
-          };
-        },
-        onEachFeature: function onEachFeature(feature, layer) {
-          layer.bindPopup(feature.properties.name);
-        }
-      }).addTo(map);
+      var geojsonLayer = L.topoJson(null).addTo(map);
       if (layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
         var topoData = getObjectFromString(layer.source);
         if (topoData) {
           geojsonLayer.addData(topoData);
         }
+      }
+      if (geoData) {
+        geojsonLayer.addData(geoData);
       }
     }
     return function () {
@@ -867,7 +891,7 @@ var MapView = forwardRef(function (_ref, ref) {
         mapInstanceRef.current = null;
       }
     };
-  }, [config === null || config === void 0 ? void 0 : config.center, config === null || config === void 0 ? void 0 : config.zoom, data, layer.source, layer === null || layer === void 0 ? void 0 : layer.style, layer.url, tile]);
+  }, [config === null || config === void 0 ? void 0 : config.center, config === null || config === void 0 ? void 0 : config.zoom, data, layer.source, layer === null || layer === void 0 ? void 0 : layer.style, layer.url, tile, geoData]);
   useImperativeHandle(ref, function () {
     return {
       zoomIn: function zoomIn() {
