@@ -6,6 +6,7 @@ import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
+import { useChartDispatch } from '../../context/ChartContextProvider';
 import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
 import { chartTypes } from '../../static/config';
 
@@ -55,11 +56,16 @@ const sidebarList = [
 const Sidebar = () => {
   const displayDispatch = useDisplayDispatch();
   const { selectedChartType } = useDisplayContext();
+  const chartDispatch = useChartDispatch();
 
   const handleOnSidebarClick = ({ key }) => {
     displayDispatch({
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
+    });
+    chartDispatch({
+      type: 'SET_EDITED',
+      payload: false
     });
   };
 

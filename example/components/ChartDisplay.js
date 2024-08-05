@@ -19,11 +19,12 @@ import {
   excludeHorizontal,
   basicChart,
   stackChartExampleData,
-  scatterPlotExampleData
+  scatterPlotExampleData,
+  basicChartExampleData
 } from '../static/config';
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig } = useChartContext();
+  const { isRaw, rawConfig, defaultConfig, isEdited } = useChartContext();
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
@@ -36,14 +37,14 @@ const ChartDisplay = () => {
     if (!basicChart.includes(selectedChartType)) {
       res = {
         ...res,
-        data: stackChartExampleData
+        data: isEdited ? res.data : stackChartExampleData
       };
     }
 
     if (selectedChartType === chartTypes.SCATTER_PLOT) {
       res = {
         ...res,
-        data: scatterPlotExampleData,
+        data: isEdited ? res.data : scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {
@@ -57,7 +58,7 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [isRaw, defaultConfig, selectedChartType, rawConfig]);
+  }, [isRaw, defaultConfig, selectedChartType, rawConfig, isEdited]);
 
   useEffect(() => {
     if (!showJson && !showCode && !fullscreen) {

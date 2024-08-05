@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
 import { useDisplayContext } from '../context/DisplayContextProvider';
-import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
+import { BookOpenIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
 import {
@@ -25,8 +25,8 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 const JsonDataEditor = () => {
   const [notify, setNotify] = useState(null);
-  const [preload, setPreload] = useState(true);
   const [editorContent, setEditorContent] = useState('');
+  const [initialized, setInitialized] = useState(false);
 
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
   const { selectedChartType } = useDisplayContext();
@@ -67,17 +67,47 @@ const JsonDataEditor = () => {
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
   useEffect(() => {
-    setEditorContent(
-      JSON.stringify(isRaw ? rawConfig : transformDefaultConfig, null, 2)
-    );
-  }, [isRaw, rawConfig, transformDefaultConfig]);
+    if (!initialized) {
+      const initialContent = JSON.stringify(
+        isRaw ? rawConfig : defaultStore,
+        null,
+        2
+      );
+      setEditorContent(initialContent);
+      setInitialized(true);
+    }
+  }, [initialized, isRaw, rawConfig, defaultStore]);
 
-  const onJsonUpdate = ({ updated_src: payload }) => {
-    chartDispatch({
-      type: 'UPDATE_CHART',
-      payload
-    });
-  };
+  useEffect(() => {
+    if (initialized) {
+      const updatedContent = JSON.stringify(
+        isRaw ? rawConfig : defaultStore,
+        null,
+        2
+      );
+      setEditorContent(updatedContent);
+    }
+  }, [selectedChartType, isRaw, rawConfig, defaultStore, initialized]);
+
+  const handleEditorChange = useCallback(
+    (value) => {
+      setEditorContent(value);
+      try {
+        const parsedOptions = JSON.parse(value);
+        chartDispatch({
+          type: 'SET_EDITED',
+          payload: true
+        });
+        chartDispatch({
+          type: 'UPDATE_CHART',
+          payload: parsedOptions
+        });
+      } catch (error) {
+        console.error('Invalid JSON:', error);
+      }
+    },
+    [chartDispatch]
+  );
 
   const onRawClick = () => {
     chartDispatch({
@@ -98,43 +128,20 @@ const JsonDataEditor = () => {
   const onClearClick = () => {
     try {
       chartDispatch({
+        type: 'SET_EDITED',
+        payload: false
+      });
+      chartDispatch({
         type: 'DELETE'
       });
       setRawStore(null);
-      setDefaultStore(null);
+      setDefaultStore(null); // Clear defaultStore in local storage
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
       }, 1000);
     } catch (error) {
       handleOnError(error);
-    }
-  };
-
-  const firstLoad = useCallback(() => {
-    if (preload) {
-      setPreload(false);
-      chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: isRaw ? rawStore : defaultStore
-      });
-    }
-  }, [chartDispatch, rawStore, defaultStore, isRaw, preload]);
-
-  useEffect(() => {
-    firstLoad();
-  }, [firstLoad]);
-
-  const handleEditorChange = (value) => {
-    setEditorContent(value);
-    try {
-      const parsedOptions = JSON.parse(value);
-      chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: parsedOptions
-      });
-    } catch (error) {
-      console.error('Invalid JSON:', error);
     }
   };
 

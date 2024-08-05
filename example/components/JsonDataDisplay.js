@@ -63,6 +63,10 @@ const JsonDataDisplay = () => {
 
   const onJsonUpdate = ({ updated_src: payload }) => {
     chartDispatch({
+      type: 'SET_EDITED',
+      payload: true
+    });
+    chartDispatch({
       type: 'UPDATE_CHART',
       payload
     });
@@ -102,6 +106,10 @@ const JsonDataDisplay = () => {
 
   const onClearClick = () => {
     try {
+      chartDispatch({
+        type: 'SET_EDITED',
+        payload: false
+      });
       chartDispatch({
         type: 'DELETE'
       });

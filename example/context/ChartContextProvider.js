@@ -44,7 +44,8 @@ const initalChartState = {
   mapConfig: {},
   mapRawConfig: {},
   isRaw: false,
-  isMap: false
+  isMap: false,
+  isEdited: false
 };
 
 const chartReducer = (state, action) => {
@@ -102,6 +103,11 @@ const chartReducer = (state, action) => {
       };
     case 'DELETE':
       return initalChartState;
+    case 'SET_EDITED':
+      return {
+        ...state,
+        isEdited: action.payload
+      };
     default:
       throw Error(
         `Unknown action: ${action.type}. Remeber action type must be CAPITAL text.`
