@@ -72,6 +72,7 @@ yarn add akvo-charts
 | `subtitle`	| A string representing the subtitle of the chart. | string | - |
 | `xAxisLabel`	|	A string that specifies the label text for the X axis of the chart. This helps to describe the data represented along the X axis. This prop is applicable **only for Bar and Line charts**. | string | - |
 | `yAxisLabel`	|	A string that specifies the label text for the Y axis of the chart. This helps to describe the data represented along the Y axis. This prop is applicable **only for Bar and Line charts**. | string | - |
+| `horizontal` _(optional)_ | If true, the chart will be rendered with horizontal bars. This option is **only applicable for Bar and Line chart** types. | boolean | `false` |
 | `legend`	| An object that specifies the legend style for the chart. For detailed configuration options, refer to the [Legend Section](#legend). | object | None |
 | `textStyle` | An object that specifies the general text style options for the entire chart. This textStyle configuration will override all individual text styles within the chart. For detailed configuration options, refer to the [Text Style Section](#text-style). | object | None |
 | `itemStyle` | An object that defines the general styling options for items within the entire series in the chart. For more detailed configuration options, refer to the [Item Style Section](#item-style). | object | None |
@@ -255,7 +256,6 @@ A component for rendering basic bar chart.
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
 #### Example usage of Bar chart
 
@@ -291,7 +291,6 @@ A component for rendering basic line chart.
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
  #### Example usage of Line chart
 
@@ -397,7 +396,6 @@ A component for rendering stacked bar chart.
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 | stackMapping _(optional)_ | object | Configuration object for defining the stack groups in a stack bar chart. If not provided, all series will be rendered in a single stack. Refer to the [Example of stackMapping props](#example-of-stackmapping-props) for detailed usage. |
 
 #### Example of stackMapping props
@@ -462,7 +460,6 @@ A component for rendering stakc cluster column. Basically this chart is like sta
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
 
 #### Example usage of StackClusterColumn chart
@@ -539,7 +536,6 @@ A component for rendering stack line chart.
 |-------|------|--------------|
 | `config` | object |	Configuration options for the chart. For detailed information on the available configuration options, see the [Config Section](#config).  |
 | `data` |	array |	Data to be displayed in the chart. For more details on the data format, see the [Data Section](#data). |
-| `horizontal` _(optional)_ |	boolean	| If `true`, the chart will be rendered with horizontal bars. The default value is `false`. |
 
 
 #### Example usage of StackLine chart
