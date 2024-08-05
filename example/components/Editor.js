@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CodeDisplay from './CodeDisplay';
 import JsonDataDisplay from './JsonDataDisplay';
 import JsonDataEditor from './JsonDataEditor';
@@ -9,6 +9,10 @@ import { useDisplayContext } from '../context/DisplayContextProvider';
 const Editor = () => {
   const { showJson, showCode } = useDisplayContext();
   const [activeTab, setActiveTab] = useState('json');
+
+  useEffect(() => {
+    setActiveTab(showJson ? 'json' : showCode ? 'code' : 'code');
+  }, [showJson, showCode]);
 
   if (!showJson && !showCode) {
     return null;
