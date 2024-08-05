@@ -24,7 +24,8 @@ import {
 } from '../static/config';
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig, mapConfig } = useChartContext();
+  const { isRaw, rawConfig, defaultConfig, mapConfig, isMap } =
+    useChartContext();
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
@@ -44,7 +45,7 @@ const ChartDisplay = () => {
     if (selectedChartType === chartTypes.SCATTER_PLOT) {
       res = {
         ...res,
-        data: scatterPlotExampleData,
+        data: scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {
@@ -94,7 +95,9 @@ const ChartDisplay = () => {
     }
   };
 
-  return <div className="pt-10 h-2/3">{chartComponent()}</div>;
+  return (
+    <div className={`${isMap ? '' : 'pt-10'} h-2/3`}>{chartComponent()}</div>
+  );
 };
 
 export default ChartDisplay;
