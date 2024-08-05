@@ -35,9 +35,15 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
 
   const loadGeoDataFromURL = useCallback(async () => {
     if (layer?.url && !geoData) {
-      const res = await fetch(layer.url);
-      const apiData = await res.json();
-      setGeoData(apiData);
+      try {
+        const res = await fetch(layer.url);
+        const apiData = await res.json();
+        if (apiData) {
+          setGeoData(apiData);
+        }
+      } catch (err) {
+        console.error('loadGeoDataFromURL', err);
+      }
     }
   }, [layer.url, geoData]);
 
