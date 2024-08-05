@@ -3,7 +3,9 @@ import React, {
   useEffect,
   useRef,
   forwardRef,
-  useImperativeHandle
+  useImperativeHandle,
+  useState,
+  useCallback
 } from 'react';
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
@@ -25,15 +27,23 @@ const defaultIcon = L.icon({
 const getObjectFromString = (path) =>
   path.split('.').reduce((obj, key) => obj && obj[key], window);
 
-// const getGeoData = async (url) => {
-//   const response = await fetch(url);
-//   const data = await response.json();
-//   return data;
-// };
-
 const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
+  const [geoData, setGeoData] = useState(null);
+
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
+
+  const loadGeoDataFromURL = useCallback(async () => {
+    if (layer?.url && !geoData) {
+      const res = await fetch(layer.url);
+      const apiData = await res.json();
+      setGeoData(apiData);
+    }
+  }, [layer.url, geoData]);
+
+  useEffect(() => {
+    loadGeoDataFromURL();
+  }, [loadGeoDataFromURL]);
 
   useEffect(() => {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
@@ -67,9 +77,13 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
             for (let kd in d.objects) {
               if (d.objects.hasOwnProperty(kd)) {
                 const geojson = topojson.feature(d, d.objects[kd]);
-                L.geoJSON(geojson).addTo(map);
+                L.geoJSON(geojson, { style: () => layer?.style || {} }).addTo(
+                  map
+                );
               }
             }
+          } else {
+            L.geoJSON(d, { style: () => layer?.style || {} }).addTo(map);
           }
         }
       });
@@ -79,17 +93,7 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
       };
 
       // Create an empty GeoJSON layer with a style and a popup on click
-      const geojsonLayer = L.topoJson(null, {
-        style: () =>
-          layer?.style || {
-            color: '#000',
-            opacity: 1,
-            weight: 1
-          },
-        onEachFeature: (feature, layer) => {
-          layer.bindPopup(feature.properties.name);
-        }
-      }).addTo(map);
+      const geojsonLayer = L.topoJson(null).addTo(map);
 
       if (layer?.source?.includes('window')) {
         const topoData = getObjectFromString(layer.source);
@@ -97,9 +101,10 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
           geojsonLayer.addData(topoData);
         }
       }
-      // if (layer?.url) {
-      //   getGeoData(layer.url).then((r) => geojsonLayer.addData(r));
-      // }
+
+      if (geoData) {
+        geojsonLayer.addData(geoData);
+      }
     }
 
     // Cleanup function to remove map instance on unmount
@@ -116,7 +121,8 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
     layer.source,
     layer?.style,
     layer.url,
-    tile
+    tile,
+    geoData
   ]);
 
   useImperativeHandle(ref, () => ({
