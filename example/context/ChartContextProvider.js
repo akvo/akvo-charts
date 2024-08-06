@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
-import { exampleStackMapping, basicChartExampleData } from '../static/config';
+import { basicChartExampleData } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
@@ -39,7 +39,7 @@ const initalChartState = {
       color: []
     },
     data: basicChartExampleData,
-    stackMapping: exampleStackMapping
+    stackMapping: {}
   },
   mapConfig: {},
   mapRawConfig: {},
@@ -86,7 +86,6 @@ const chartReducer = (state, action) => {
       return {
         ...state,
         defaultConfig: {
-          ...state.defaultConfig,
           ...action.payload
         }
       };

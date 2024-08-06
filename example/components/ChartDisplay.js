@@ -19,8 +19,7 @@ import {
   excludeHorizontal,
   basicChart,
   stackChartExampleData,
-  scatterPlotExampleData,
-  basicChartExampleData
+  scatterPlotExampleData
 } from '../static/config';
 
 const ChartDisplay = () => {

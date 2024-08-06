@@ -1,14 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import './styles.css';
 import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import { useChartDispatch } from '../../context/ChartContextProvider';
+import {
+  useChartDispatch,
+  useChartContext
+} from '../../context/ChartContextProvider';
 import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
-import { chartTypes } from '../../static/config';
+import {
+  excludeHorizontal,
+  excludeStackMapping,
+  basicChart,
+  stackChartExampleData,
+  chartTypes,
+  scatterPlotExampleData,
+  basicChartExampleData,
+  exampleStackMapping
+} from '../../static/config';
+import { useLocalStorage } from '../../utils';
+import { useECharts } from '../../../src/hooks';
 
 const sidebarList = [
   {
@@ -57,8 +71,52 @@ const Sidebar = () => {
   const displayDispatch = useDisplayDispatch();
   const { selectedChartType } = useDisplayContext();
   const chartDispatch = useChartDispatch();
+  const { defaultConfig } = useChartContext();
+  const [_, setDefaultStore] = useLocalStorage('defaultConfig', null);
+  const [__, setRawStore] = useLocalStorage('rawConfig', null);
+
+  useEffect(() => {
+    const res = { ...defaultConfig, data: basicChartExampleData };
+    delete res.stackMapping;
+    chartDispatch({
+      type: 'UPDATE_CHART',
+      payload: res
+    });
+    setDefaultStore(res);
+  }, []);
 
   const handleOnSidebarClick = ({ key }) => {
+    // set default value
+    let res = { ...defaultConfig, data: basicChartExampleData };
+    if (!basicChart.includes(key)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
+    }
+    if (key === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData
+      };
+    }
+    if (excludeHorizontal.includes(key)) {
+      const transform = { ...res };
+      delete transform.config.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(key)) {
+      const transform2 = { ...res };
+      delete transform2.stackMapping;
+      res = transform2;
+    }
+    if (!excludeStackMapping.includes(key)) {
+      res = { ...res, stackMapping: exampleStackMapping };
+    }
+    chartDispatch({
+      type: 'UPDATE_CHART',
+      payload: res
+    });
     displayDispatch({
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
@@ -67,6 +125,8 @@ const Sidebar = () => {
       type: 'SET_EDITED',
       payload: false
     });
+    setDefaultStore(res);
+    setRawStore(null);
   };
 
   return (

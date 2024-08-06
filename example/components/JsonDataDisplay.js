@@ -1,63 +1,25 @@
 'use client';
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
-import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
-import {
-  excludeHorizontal,
-  excludeStackMapping,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData
-} from '../static/config';
 
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
 
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
-  const { selectedChartType } = useDisplayContext();
-
-  const transformDefaultConfig = useMemo(() => {
-    let res = { ...defaultConfig };
-    if (!basicChart.includes(selectedChartType)) {
-      res = {
-        ...res,
-        data: stackChartExampleData
-      };
-    }
-
-    if (selectedChartType === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.stackMapping;
-      res = transform;
-    }
-    return res;
-  }, [selectedChartType, defaultConfig]);
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage(
     'defaultConfig',
-    transformDefaultConfig
+    defaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
@@ -93,7 +55,7 @@ const JsonDataDisplay = () => {
       if (isRaw) {
         setRawStore(rawConfig);
       } else {
-        setDefaultStore(transformDefaultConfig);
+        setDefaultStore(defaultConfig);
       }
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
@@ -105,16 +67,19 @@ const JsonDataDisplay = () => {
   };
 
   const onClearClick = () => {
+    let currDefaultStore = window.localStorage.getItem('defaultConfig');
+    currDefaultStore = currDefaultStore ? JSON.parse(currDefaultStore) : null;
     try {
       chartDispatch({
         type: 'SET_EDITED',
         payload: false
       });
       chartDispatch({
-        type: 'DELETE'
+        type: 'UPDATE_CHART',
+        payload: currDefaultStore
       });
       setRawStore(null);
-      setDefaultStore(null);
+      setDefaultStore(currDefaultStore);
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -129,10 +94,10 @@ const JsonDataDisplay = () => {
       setPreload(false);
       chartDispatch({
         type: 'UPDATE_CHART',
-        payload: isRaw ? rawStore : defaultStore
+        payload: isRaw ? rawStore : defaultConfig
       });
     }
-  }, [chartDispatch, rawStore, defaultStore, isRaw, preload]);
+  }, [chartDispatch, rawStore, defaultConfig, isRaw, preload]);
 
   useEffect(() => {
     firstLoad();
@@ -188,7 +153,7 @@ const JsonDataDisplay = () => {
       <div className=" bg-neutral-800 p-3">
         <ReactJson
           name="props"
-          src={isRaw ? rawConfig : transformDefaultConfig}
+          src={isRaw ? rawConfig : defaultConfig}
           theme="monokai"
           displayDataTypes={false}
           onEdit={onJsonUpdate}

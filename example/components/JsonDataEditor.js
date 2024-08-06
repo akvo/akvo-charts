@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   useChartContext,
   useChartDispatch
@@ -9,14 +9,6 @@ import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
-import {
-  excludeHorizontal,
-  excludeStackMapping,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData
-} from '../static/config';
 import dynamic from 'next/dynamic';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -31,39 +23,8 @@ const JsonDataEditor = () => {
   const { isRaw, defaultConfig, rawConfig } = useChartContext();
   const { selectedChartType } = useDisplayContext();
 
-  const transformDefaultConfig = useMemo(() => {
-    let res = { ...defaultConfig };
-    if (!basicChart.includes(selectedChartType)) {
-      res = {
-        ...res,
-        data: stackChartExampleData
-      };
-    }
-
-    if (selectedChartType === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.stackMapping;
-      res = transform;
-    }
-    return res;
-  }, [selectedChartType, defaultConfig]);
-
   const chartDispatch = useChartDispatch();
-  const [defaultStore, setDefaultStore] = useLocalStorage(
-    'defaultConfig',
-    transformDefaultConfig
-  );
+  const [defaultStore, setDefaultStore] = useLocalStorage('defaultConfig');
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
 
   useEffect(() => {
@@ -81,13 +42,13 @@ const JsonDataEditor = () => {
   useEffect(() => {
     if (initialized) {
       const updatedContent = JSON.stringify(
-        isRaw ? rawConfig : defaultStore,
+        isRaw ? rawConfig : defaultConfig,
         null,
         2
       );
       setEditorContent(updatedContent);
     }
-  }, [selectedChartType, isRaw, rawConfig, defaultStore, initialized]);
+  }, [selectedChartType, isRaw, initialized]);
 
   const handleEditorChange = useCallback(
     (value) => {
@@ -126,16 +87,20 @@ const JsonDataEditor = () => {
   };
 
   const onClearClick = () => {
+    let currDefaultStore = window.localStorage.getItem('defaultConfig');
+    currDefaultStore = currDefaultStore ? JSON.parse(currDefaultStore) : null;
     try {
       chartDispatch({
         type: 'SET_EDITED',
         payload: false
       });
       chartDispatch({
-        type: 'DELETE'
+        type: 'UPDATE_CHART',
+        payload: currDefaultStore
       });
       setRawStore(null);
-      setDefaultStore(null); // Clear defaultStore in local storage
+      setDefaultStore(currDefaultStore);
+      setEditorContent(JSON.stringify(currDefaultStore, null, 2));
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
