@@ -20,7 +20,8 @@ import {
   excludeHorizontal,
   basicChart,
   stackChartExampleData,
-  scatterPlotExampleData
+  scatterPlotExampleData,
+  basePath
 } from '../static/config';
 
 const ChartDisplay = () => {
@@ -89,7 +90,26 @@ const ChartDisplay = () => {
       case chartTypes.STACK_LINE:
         return <StackLine {...props} />;
       case chartTypes.MAP:
-        return <MapView {...mapConfig} />;
+        const { layer, ...mapProps } = mapConfig;
+        /**
+         * Add a basePath prefix for the production environment
+         * since it cannot automatically point to the GitHub Pages
+         * when requesting a /static asset URL.
+         */
+        const mapLayer = {
+          ...layer,
+          url:
+            layer?.url?.includes('/static') &&
+            process.env.NODE_ENV === 'production'
+              ? `${basePath}${layer.url}`
+              : layer?.url
+        };
+        return (
+          <MapView
+            layer={mapLayer}
+            {...mapProps}
+          />
+        );
       default:
         return null;
     }
