@@ -857,7 +857,7 @@ var MapView = forwardRef(function (_ref, ref) {
   }, [loadGeoDataFromURL]);
   useEffect(function () {
     if (mapInstanceRef.current === null && mapContainerRef.current) {
-      var _data$filter, _layer$source;
+      var _data$filter;
       var map = L.map(mapContainerRef.current, {
         center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
         zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2
@@ -877,7 +877,7 @@ var MapView = forwardRef(function (_ref, ref) {
       });
       var TopoJSON = L.GeoJSON.extend({
         addData: function addData(d) {
-          if (d.type === 'Topology') {
+          if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
             for (var kd in d.objects) {
               if (d.objects.hasOwnProperty(kd)) {
                 var geojson = feature(d, d.objects[kd]);
@@ -888,7 +888,8 @@ var MapView = forwardRef(function (_ref, ref) {
                 }).addTo(map);
               }
             }
-          } else {
+          }
+          if (d !== null && d !== void 0 && d.type) {
             L.geoJSON(d, {
               style: function style() {
                 return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
@@ -901,11 +902,19 @@ var MapView = forwardRef(function (_ref, ref) {
         return new TopoJSON(d, options);
       };
       var geojsonLayer = L.topoJson(null).addTo(map);
-      if (layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
-        var topoData = getObjectFromString(layer.source);
-        if (topoData) {
-          geojsonLayer.addData(topoData);
+      try {
+        var _layer$source;
+        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'string' && layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
+          var topoData = getObjectFromString(layer.source);
+          if (topoData) {
+            geojsonLayer.addData(topoData);
+          }
         }
+        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'object') {
+          geojsonLayer.addData(layer.source);
+        }
+      } catch (err) {
+        console.error('geojsonLayer', err);
       }
       if (geoData) {
         geojsonLayer.addData(geoData);
