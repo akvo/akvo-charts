@@ -24,8 +24,13 @@ const defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 
-const getObjectFromString = (path) =>
-  path.split('.').reduce((obj, key) => obj && obj[key], window);
+const getObjectFromString = (path) => {
+  const obj = path.split('.').reduce((obj, key) => obj && obj[key], window);
+  if (typeof obj === 'undefined' || typeof obj === 'string') {
+    return null;
+  }
+  return obj;
+};
 
 const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
   const [geoData, setGeoData] = useState(null);
@@ -89,8 +94,8 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
               }
             }
           }
-
-          if (d?.type) {
+          // Make sure `d` is an object that has a type but is not equal to "Topology"
+          if (d?.type && d?.type !== 'Topology') {
             L.geoJSON(d, { style: () => layer?.style || {} }).addTo(map);
           }
         }
