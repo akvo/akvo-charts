@@ -32,7 +32,6 @@ const useECharts = ({ config = {}, data = [], getOptions = () => {} }) => {
         };
         if (config?.itemStyle) {
           itemStyle = { ...config.itemStyle };
-          delete config.itemStyle;
         }
         const overrideItemStyle = Object.keys(filterObjNullValue(itemStyle))
           .length
