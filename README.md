@@ -585,8 +585,8 @@ A component for rendering an interactive Leaflet map. It extends [Leaflet](https
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
-| `source` | string |	Sets the topojson/geojson source from the window object. Eg: `window.topoData` |
-| `url` | string |	Sets the topojson/geojson source from the URL. |
+| `source` | string _or_ object [(GeoJSON/TopoJSON)](https://en.wikipedia.org/wiki/GeoJSON)  |	Sets the source from the window object variable name. eg: `window.topoData` or GeoJSON/TopoJSON object directly. |
+| `url` | string |	Sets the GeoJSON/TopoJSON source from the URL. |
 | `style` _(optional)_ | object |	Styling GeoJSON lines and polygons with [Path options](https://leafletjs.com/reference.html#path-option) |
 
 
