@@ -814,9 +814,13 @@ var defaultIcon = L.icon({
   shadowSize: [41, 41]
 });
 var getObjectFromString = function getObjectFromString(path) {
-  return path.split('.').reduce(function (obj, key) {
+  var obj = path.split('.').reduce(function (obj, key) {
     return obj && obj[key];
   }, window);
+  if (typeof obj === 'undefined' || typeof obj === 'string') {
+    return null;
+  }
+  return obj;
 };
 var MapView = forwardRef(function (_ref, ref) {
   var tile = _ref.tile,
@@ -889,7 +893,7 @@ var MapView = forwardRef(function (_ref, ref) {
               }
             }
           }
-          if (d !== null && d !== void 0 && d.type) {
+          if (d !== null && d !== void 0 && d.type && (d === null || d === void 0 ? void 0 : d.type) !== 'Topology') {
             L.geoJSON(d, {
               style: function style() {
                 return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
