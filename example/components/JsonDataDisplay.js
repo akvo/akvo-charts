@@ -104,8 +104,8 @@ const JsonDataDisplay = () => {
   }, [firstLoad]);
 
   return (
-    <div className="relative w-full h-[calc(100vh-20px)]">
-      <div className="absolute top-2 right-2 z-[99] flex gap-2">
+    <div className="relative w-full h-[calc(100vh-20px)] bg-stone-800">
+      <div className="sticky top-2 right-2 z-[99] flex gap-2 justify-end">
         <a
           href={
             isRaw

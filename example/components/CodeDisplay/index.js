@@ -23,9 +23,9 @@ import {
 
 hljs.registerLanguage('javascript', javascript);
 
-const createHighlight = (content, languange) => {
+const createHighlight = (content, language) => {
   let lineNumber = 0;
-  const highlightedContent = hljs.highlightAuto(content, [languange]).value;
+  const highlightedContent = hljs.highlightAuto(content, [language]).value;
 
   const commentPattern = /<span class="hljs-comment">(.|\n)*?<\/span>/g;
   const adaptedHighlightedContent = highlightedContent.replace(
@@ -52,7 +52,7 @@ const CodeDisplay = () => {
   const [show, setShow] = useState(false);
 
   const { selectedChartType } = useDisplayContext();
-  const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { isRaw, defaultConfig, rawConfig, isEdited } = useChartContext();
 
   const chartData = useMemo(() => {
     if (isRaw) {
@@ -62,14 +62,14 @@ const CodeDisplay = () => {
     if (!basicChart.includes(selectedChartType)) {
       res = {
         ...res,
-        data: stackChartExampleData
+        data: isEdited ? res.data : stackChartExampleData
       };
     }
 
     if (selectedChartType === chartTypes.SCATTER_PLOT) {
       res = {
         ...res,
-        data: scatterPlotExampleData
+        data: isEdited ? res.data : scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {
@@ -97,7 +97,7 @@ const CodeDisplay = () => {
 
   return (
     <div className="relative w-full bg-gray-100 pb-3">
-      <div className="absolute top-2 right-2">
+      <div className="sticky top-2 right-2 z-10 flex justify-end">
         <button
           onClick={handleOnCopy}
           className="bg-white p-2 rounded shadow-md hover:bg-gray-100 focus:outline-none"
