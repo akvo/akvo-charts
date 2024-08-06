@@ -49,30 +49,30 @@ const initalChartState = {
     },
     layer: {
       source: 'window.topoData',
-      url: 'https://gist.githubusercontent.com/Ziqinwang/8fd1173db43e28362dc6842395199612/raw/937765607ff3d98e561ccd0c1d752ffd23726020/denver.geojson',
+      url: '/static/geojson/indonesia-prov.geojson',
       style: {
-        color: '#0ea5e9',
+        color: '#f59e0b',
         weight: 1,
-        fillColor: '#38bdf8'
+        fillColor: '#fbbf24'
       }
     },
     data: [
       {
-        point: [39.61, -105.02],
-        label: 'This is Littleton, CO.'
+        point: [-6.170166, 106.831375],
+        label: 'Istiqlal Mosque'
       },
       {
-        point: [39.73, -104.8],
-        label: 'This is Aurora, CO.'
+        point: [-6.174596, 106.830407],
+        label: 'Gambir Station'
       },
       {
-        point: [39.68, -105.0],
-        label: 'This is Ruby Hill Park'
+        point: [-6.175414, 106.827175],
+        label: 'The National Monument'
       }
     ],
     config: {
-      center: [39.73, -104.99],
-      zoom: 10,
+      center: [-6.200000, 106.816666],
+      zoom: 12,
       height: '100vh',
       width: '100%'
     }
