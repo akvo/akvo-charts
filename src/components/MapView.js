@@ -79,7 +79,7 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
       // Create the TopoJSON layer
       const TopoJSON = L.GeoJSON.extend({
         addData: (d) => {
-          if (d.type === 'Topology') {
+          if (d?.type === 'Topology') {
             for (let kd in d.objects) {
               if (d.objects.hasOwnProperty(kd)) {
                 const geojson = topojson.feature(d, d.objects[kd]);
@@ -88,7 +88,9 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
                 );
               }
             }
-          } else {
+          }
+
+          if (d?.type) {
             L.geoJSON(d, { style: () => layer?.style || {} }).addTo(map);
           }
         }
@@ -101,11 +103,23 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
       // Create an empty GeoJSON layer with a style and a popup on click
       const geojsonLayer = L.topoJson(null).addTo(map);
 
-      if (layer?.source?.includes('window')) {
-        const topoData = getObjectFromString(layer.source);
-        if (topoData) {
-          geojsonLayer.addData(topoData);
+      try {
+        // Set GeoJSON when source is string as window variable name
+        if (
+          typeof layer?.source === 'string' &&
+          layer?.source?.includes('window')
+        ) {
+          const topoData = getObjectFromString(layer.source);
+          if (topoData) {
+            geojsonLayer.addData(topoData);
+          }
         }
+        // Set GeoJSON directly if the source is an object
+        if (typeof layer?.source === 'object') {
+          geojsonLayer.addData(layer.source);
+        }
+      } catch (err) {
+        console.error('geojsonLayer', err);
       }
 
       if (geoData) {
