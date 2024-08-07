@@ -28,8 +28,9 @@ const getOptions = ({
   };
 };
 
-const StackClusterColumn = ({ config, data }) => {
+const StackClusterColumn = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawConfig,
     config,
     data,
     getOptions: ({

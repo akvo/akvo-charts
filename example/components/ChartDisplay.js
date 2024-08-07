@@ -33,7 +33,7 @@ const ChartDisplay = () => {
 
   const props = useMemo(() => {
     if (isRaw) {
-      return rawConfig;
+      return { rawConfig };
     }
     let res = { ...defaultConfig };
     if (!basicChart.includes(selectedChartType)) {

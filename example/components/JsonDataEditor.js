@@ -62,7 +62,7 @@ const JsonDataEditor = () => {
           payload: true
         });
         chartDispatch({
-          type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
+          type: isRaw ? 'UPDATE_RAW' : isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
           payload: parsedOptions
         });
       } catch (error) {

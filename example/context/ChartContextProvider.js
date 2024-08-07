@@ -117,8 +117,12 @@ const chartReducer = (state, action) => {
     case 'RAW':
       return {
         ...state,
-        isRaw: !state.isRaw,
-        rawConfig: action.payload || state.rawConfig
+        isRaw: !state.isRaw
+      };
+    case 'UPDATE_RAW':
+      return {
+        ...state,
+        rawConfig: action.payload
       };
     case 'MAP_SHOW':
       return {

@@ -38,8 +38,9 @@ const getOptions = ({
   };
 };
 
-const StackBar = ({ config, data, stackMapping = {} }) => {
+const StackBar = ({ config, data, stackMapping = {}, rawConfig }) => {
   const chartRef = useECharts({
+    rawConfig,
     config,
     data,
     getOptions: ({

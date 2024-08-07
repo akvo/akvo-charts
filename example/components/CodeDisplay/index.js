@@ -57,7 +57,7 @@ const CodeDisplay = () => {
 
   const chartData = useMemo(() => {
     if (isRaw) {
-      return rawConfig;
+      return { rawConfig };
     }
     let res = { ...defaultConfig };
     if (!basicChart.includes(selectedChartType)) {

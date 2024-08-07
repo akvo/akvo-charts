@@ -39,8 +39,9 @@ const getOptions = ({
   };
 };
 
-const StacLine = ({ config, data }) => {
+const StacLine = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawConfig,
     config,
     data,
     getOptions: ({

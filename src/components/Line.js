@@ -22,8 +22,9 @@ const getOptions = ({
   };
 };
 
-const Line = ({ config, data }) => {
+const Line = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawConfig,
     config,
     data,
     getOptions: ({ dimensions, overrideItemStyle, horizontal }) =>
