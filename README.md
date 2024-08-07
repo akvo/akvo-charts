@@ -565,4 +565,87 @@ const StackLineChartExample = () => {
 export default StackLineChartExample;
 ```
 
+### MapView
+
+A component for rendering an interactive Leaflet map. It extends [Leaflet](https://leafletjs.com/) to support TopoJSON, converting it to GeoJSON, and applies custom styles and popups to map features.
+
+#### tile
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `url` | string |	A tile layer URL |
+| `maxZoom` |	number |	The maximum zoom level up to which this layer will be displayed (inclusive). |
+| `attribution` |	string | Display attribution data in a small text box on a map |
+
+#### layer
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `source` | string _or_ object [(GeoJSON/TopoJSON)](https://en.wikipedia.org/wiki/GeoJSON)  |	Sets the source from the window object variable name. eg: `window.topoData` or GeoJSON/TopoJSON object directly. |
+| `url` | string |	Sets the GeoJSON/TopoJSON source from the URL. |
+| `style` _(optional)_ | object |	Styling GeoJSON lines and polygons with [Path options](https://leafletjs.com/reference.html#path-option) |
+
+
+#### data
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `point` | array [LatLng](https://leafletjs.com/reference.html#latlng) |	Contains geographic points that will be displayed as markers.|
+| `label` |	string |	Text to be displayed in the pop-up marker|
+
+
+#### config
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `center` | array [LatLng](https://leafletjs.com/reference.html#latlng) |Initial geographic center of the map. `[latitude, longitude]`|
+| `zoom` |	number | Initial map zoom level	|
+| `height` | string | Set the map height. By default is: `100vh`	|
+| `width` |	string | Set the map width.	By default is: `100%`|
+
+#### Example usage of MapView
+
+```jsx
+import React from "react";
+import { MapView } from "akvo-charts";
+
+const MapViewExample = () => {
+  const tile = {
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    attribution: "© OpenStreetMap",
+  };
+
+  const layer = {
+    source: "window.topoData",
+    style: {
+      color: '#0ea5e9',
+      weight: 1,
+      fillColor: '#38bdf8'
+    }
+  };
+  const data = [
+    {
+      point: [39.61, -105.02],
+      label: "This is Littleton, CO.",
+    },
+    {
+      point: [39.73, -104.8],
+      label: "This is Aurora, CO.",
+    },
+  ];
+
+  const config: {
+    center: [39.73, -104.99];
+    zoom: 10;
+    height: "100vh";
+    width: "100%";
+  };
+
+  return <MapView tile={tile} layer={layer} config={config} data={data} />;
+};
+
+export default MapViewExample;
+```
+
 ---

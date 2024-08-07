@@ -10,7 +10,7 @@ import {
   useChartDispatch,
   useChartContext
 } from '../../context/ChartContextProvider';
-import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon } from '../Icons';
+import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
 import {
   excludeHorizontal,
   excludeStackMapping,
@@ -64,14 +64,21 @@ const sidebarList = [
     key: chartTypes.STACK_LINE,
     name: 'Stack Line',
     icon: <LineIcon />
+  },
+  {
+    key: chartTypes.MAP,
+    name: 'GEO/Map',
+    icon: <MapIcon />
   }
 ];
 
 const Sidebar = () => {
-  const displayDispatch = useDisplayDispatch();
-  const { selectedChartType } = useDisplayContext();
   const chartDispatch = useChartDispatch();
+  const displayDispatch = useDisplayDispatch();
+
+  const { selectedChartType } = useDisplayContext();
   const { defaultConfig } = useChartContext();
+
   const [_, setDefaultStore] = useLocalStorage('defaultConfig', null);
   const [__, setRawStore] = useLocalStorage('rawConfig', null);
 
@@ -87,7 +94,11 @@ const Sidebar = () => {
 
   const handleOnSidebarClick = ({ key }) => {
     // set default value
-    let res = { ...defaultConfig, data: basicChartExampleData };
+    let res = {
+      ...defaultConfig,
+      config: { horizontal: false, ...defaultConfig.config },
+      data: basicChartExampleData
+    };
     if (!basicChart.includes(key)) {
       res = {
         ...res,
@@ -116,6 +127,9 @@ const Sidebar = () => {
     chartDispatch({
       type: 'UPDATE_CHART',
       payload: res
+    });
+    chartDispatch({
+      type: key === chartTypes.MAP ? 'MAP_SHOW' : 'MAP_HIDE'
     });
     displayDispatch({
       type: 'SET_SELECTED_CHART_TYPE',

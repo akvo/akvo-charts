@@ -5,6 +5,7 @@ import {
   Bar,
   Doughnut,
   Line,
+  MapView,
   Pie,
   ScatterPlot,
   StackBar,
@@ -19,11 +20,13 @@ import {
   excludeHorizontal,
   basicChart,
   stackChartExampleData,
-  scatterPlotExampleData
+  scatterPlotExampleData,
+  basePath
 } from '../static/config';
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig, isEdited } = useChartContext();
+  const { isRaw, rawConfig, defaultConfig, isEdited, mapConfig, isMap } =
+    useChartContext();
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
   const [fullscreen, setFullscreen] = useState(false);
@@ -43,7 +46,7 @@ const ChartDisplay = () => {
     if (selectedChartType === chartTypes.SCATTER_PLOT) {
       res = {
         ...res,
-        data: isEdited ? res.data : scatterPlotExampleData
+        data: scatterPlotExampleData
       };
     }
     if (excludeHorizontal.includes(selectedChartType)) {
@@ -86,12 +89,35 @@ const ChartDisplay = () => {
         return <ScatterPlot {...props} />;
       case chartTypes.STACK_LINE:
         return <StackLine {...props} />;
+      case chartTypes.MAP:
+        const { layer, ...mapProps } = mapConfig;
+        /**
+         * Add a basePath prefix for the production environment
+         * since it cannot automatically point to the GitHub Pages
+         * when requesting a /static asset URL.
+         */
+        const mapLayer = {
+          ...layer,
+          url:
+            layer?.url?.includes('/static') &&
+            process.env.NODE_ENV === 'production'
+              ? `${basePath}${layer.url}`
+              : layer?.url
+        };
+        return (
+          <MapView
+            layer={mapLayer}
+            {...mapProps}
+          />
+        );
       default:
         return null;
     }
   };
 
-  return <div className="pt-10 h-2/3">{chartComponent()}</div>;
+  return (
+    <div className={`${isMap ? '' : 'pt-10'} h-2/3`}>{chartComponent()}</div>
+  );
 };
 
 export default ChartDisplay;

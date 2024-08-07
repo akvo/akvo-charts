@@ -90,6 +90,8 @@
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "echarts": "^5.5.1",
-    "postcss-flexbugs-fixes": "^5.0.2"
+    "leaflet": "^1.9.4",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "topojson-client": "^3.1.0"
   }
 }

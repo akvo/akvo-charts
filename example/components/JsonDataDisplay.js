@@ -13,8 +13,10 @@ import { useLocalStorage } from '../utils';
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
   const [preload, setPreload] = useState(true);
+  const [mapPreload, setMapPreload] = useState(true);
 
-  const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { isMap, mapConfig, isRaw, defaultConfig, rawConfig } =
+    useChartContext();
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage(
@@ -22,6 +24,7 @@ const JsonDataDisplay = () => {
     defaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
+  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
 
   const onJsonUpdate = ({ updated_src: payload }) => {
     chartDispatch({
@@ -29,7 +32,7 @@ const JsonDataDisplay = () => {
       payload: true
     });
     chartDispatch({
-      type: 'UPDATE_CHART',
+      type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
       payload
     });
   };
@@ -52,11 +55,16 @@ const JsonDataDisplay = () => {
 
   const onSaveClick = () => {
     try {
-      if (isRaw) {
-        setRawStore(rawConfig);
+      if (isMap) {
+        setMapStore(mapConfig);
       } else {
-        setDefaultStore(defaultConfig);
+        if (isRaw) {
+          setRawStore(rawConfig);
+        } else {
+          setDefaultStore(defaultConfig);
+        }
       }
+
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
         setNotify(null);
@@ -80,6 +88,7 @@ const JsonDataDisplay = () => {
       });
       setRawStore(null);
       setDefaultStore(currDefaultStore);
+      setMapStore(null);
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -97,11 +106,30 @@ const JsonDataDisplay = () => {
         payload: isRaw ? rawStore : defaultConfig
       });
     }
-  }, [chartDispatch, rawStore, defaultConfig, isRaw, preload]);
+    if (isMap && mapPreload) {
+      setMapPreload(false);
+      chartDispatch({
+        type: 'UPDATE_MAP',
+        payload: mapStore
+      });
+    }
+  }, [
+    chartDispatch,
+    rawStore,
+    defaultConfig,
+    isRaw,
+    preload,
+    mapPreload,
+    isMap,
+    mapStore
+  ]);
 
   useEffect(() => {
     firstLoad();
   }, [firstLoad]);
+
+  const chartData = isRaw ? rawConfig : defaultConfig;
+  const jsonData = isMap ? mapConfig : chartData;
 
   return (
     <div className="relative w-full h-[calc(100vh-20px)] bg-stone-800">
@@ -153,7 +181,7 @@ const JsonDataDisplay = () => {
       <div className=" bg-neutral-800 p-3">
         <ReactJson
           name="props"
-          src={isRaw ? rawConfig : defaultConfig}
+          src={jsonData}
           theme="monokai"
           displayDataTypes={false}
           onEdit={onJsonUpdate}

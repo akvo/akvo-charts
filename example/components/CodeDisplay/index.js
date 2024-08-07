@@ -52,7 +52,8 @@ const CodeDisplay = () => {
   const [show, setShow] = useState(false);
 
   const { selectedChartType } = useDisplayContext();
-  const { isRaw, defaultConfig, rawConfig, isEdited } = useChartContext();
+  const { isRaw, defaultConfig, rawConfig, isEdited, isMap, mapConfig } =
+    useChartContext();
 
   const chartData = useMemo(() => {
     if (isRaw) {
@@ -85,7 +86,9 @@ const CodeDisplay = () => {
     return res;
   }, [selectedChartType, defaultConfig, isRaw, rawConfig]);
 
-  const code = codeBlock({ type: selectedChartType, ...chartData });
+  const codeProps = isMap ? mapConfig : chartData;
+
+  const code = codeBlock({ type: selectedChartType, ...codeProps });
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
