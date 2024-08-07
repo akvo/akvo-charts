@@ -16,18 +16,22 @@ const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
           onEachFeature: (_, layer) => {
             if (typeof onClick === 'function') {
               layer.on({
-                click: (props) => onClick(props)
+                click: (props) => {
+                  onClick(props);
+                }
               });
             }
 
             if (typeof onMouseOver === 'function') {
               layer.on({
-                mouseover: (props) => onMouseOver(props)
+                mouseover: (props) => {
+                  onMouseOver(props);
+                }
               });
             }
           }
         }).addTo(mapRef.current);
-      } catch (er) {
+      } catch (err) {
         console.error('GeoJson', err);
       }
     }
