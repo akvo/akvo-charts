@@ -1,42 +1,40 @@
-// src/MapView.js
 import React, {
+  Fragment,
+  forwardRef,
+  useCallback,
   useEffect,
   useRef,
-  forwardRef,
-  useImperativeHandle,
   useState,
-  useCallback
+  useImperativeHandle
 } from 'react';
-import L from 'leaflet';
 import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { LeafletProvider } from '../context/LeafletProvider';
+import { TileLayer, Marker, GeoJson } from './Map';
+import { string2WindowObj } from '../utils/string';
 
-// Define the default icon for markers
-const defaultIcon = L.icon({
-  iconUrl: typeof markerIcon === 'object' ? markerIcon?.src : markerIcon,
-  shadowUrl:
-    typeof markerShadow === 'object' ? markerShadow?.src : markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-const getObjectFromString = (path) => {
-  const obj = path.split('.').reduce((obj, key) => obj && obj[key], window);
-  if (typeof obj === 'undefined' || typeof obj === 'string') {
-    return null;
+const getGeoJSONList = (d) => {
+  if (!d) {
+    return [];
   }
-  return obj;
+  if (d?.type === 'Topology') {
+    /**
+     * Convert TopoJSON to GeoJSON
+     */
+    return Object.keys(d.objects).map((kd) =>
+      topojson.feature(d, d.objects[kd])
+    );
+  }
+  return [d];
 };
 
-const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
+const MapView = ({ tile, layer, config, data }, ref) => {
   const [geoData, setGeoData] = useState(null);
+  const [sourceData, setSourceData] = useState(null);
+  const [preload, setPreload] = useState(true);
 
   const mapContainerRef = useRef(null);
-  const mapInstanceRef = useRef(null);
+  const mapInstance = useRef(null);
 
   const loadGeoDataFromURL = useCallback(async () => {
     if (layer?.url && !geoData) {
@@ -57,128 +55,70 @@ const MapView = forwardRef(({ tile, layer, config, data = [] }, ref) => {
   }, [loadGeoDataFromURL]);
 
   useEffect(() => {
-    if (mapInstanceRef.current === null && mapContainerRef.current) {
-      // Initialize the map only if it hasn't been initialized yet
-      const map = L.map(mapContainerRef.current, {
-        center: config?.center || [0, 0],
-        zoom: config?.zoom || 2
-      });
-
-      // Save the map instance to ref
-      mapInstanceRef.current = map;
-
-      // Add a tile layer to the map
-      if (tile?.url) {
-        const { url: tileURL, ...tileProps } = tile;
-        L.tileLayer(tileURL, { ...tileProps }).addTo(map);
+    if (mapInstance?.current && preload) {
+      setPreload(false);
+    }
+    if (!sourceData) {
+      if (
+        typeof layer?.source === 'string' &&
+        layer?.source?.includes('window')
+      ) {
+        const windowObj = string2WindowObj(layer.source);
+        if (windowObj) {
+          setSourceData(windowObj);
+        }
       }
 
-      // Add a marker to the map
-      data
-        ?.filter((d) => d?.point && d?.label)
-        ?.forEach((d) =>
-          L.marker(d?.point, { icon: defaultIcon })
-            .bindPopup(d?.label)
-            .addTo(map)
-        );
-      // Create the TopoJSON layer
-      const TopoJSON = L.GeoJSON.extend({
-        addData: (d) => {
-          if (d?.type === 'Topology') {
-            for (let kd in d.objects) {
-              if (d.objects.hasOwnProperty(kd)) {
-                const geojson = topojson.feature(d, d.objects[kd]);
-                L.geoJSON(geojson, { style: () => layer?.style || {} }).addTo(
-                  map
-                );
-              }
-            }
-          }
-          // Make sure `d` is an object that has a type but is not equal to "Topology"
-          if (d?.type && d?.type !== 'Topology') {
-            L.geoJSON(d, { style: () => layer?.style || {} }).addTo(map);
-          }
-        }
-      });
-
-      L.topoJson = function (d, options) {
-        return new TopoJSON(d, options);
-      };
-
-      // Create an empty GeoJSON layer with a style and a popup on click
-      const geojsonLayer = L.topoJson(null).addTo(map);
-
-      try {
-        // Set GeoJSON when source is string as window variable name
-        if (
-          typeof layer?.source === 'string' &&
-          layer?.source?.includes('window')
-        ) {
-          const topoData = getObjectFromString(layer.source);
-          if (topoData) {
-            geojsonLayer.addData(topoData);
-          }
-        }
-        // Set GeoJSON directly if the source is an object
-        if (typeof layer?.source === 'object') {
-          geojsonLayer.addData(layer.source);
-        }
-      } catch (err) {
-        console.error('geojsonLayer', err);
-      }
-
-      if (geoData) {
-        geojsonLayer.addData(geoData);
+      if (typeof layer?.source === 'object') {
+        setSourceData(layer.source);
       }
     }
+  }, [mapInstance, preload, sourceData, layer.source]);
 
-    // Cleanup function to remove map instance on unmount
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [
-    config?.center,
-    config?.zoom,
-    data,
-    layer.source,
-    layer?.style,
-    layer.url,
-    tile,
-    geoData
-  ]);
-
-  useImperativeHandle(ref, () => ({
-    zoomIn: () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.zoomIn();
-      }
-    },
-    zoomOut: () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.zoomOut();
-      }
-    },
-    getCenter: () => {
-      if (mapInstanceRef.current) {
-        return mapInstanceRef.current.getCenter();
-      }
-      return null;
-    }
-  }));
+  // Expose the Leaflet map instance via ref
+  useImperativeHandle(ref, () => mapInstance.current);
 
   return (
-    <div
-      ref={mapContainerRef}
-      style={{
-        height: config?.height || '100vh',
-        width: config?.width || '100%'
-      }}
-      data-testid="map-view"
-    />
+    <Fragment>
+      <div
+        ref={mapContainerRef}
+        style={{
+          height: config?.height || '100vh',
+          width: config?.width || '100%'
+        }}
+        data-testid="map-view"
+      />
+      <LeafletProvider
+        ref={mapInstance}
+        mapContainerRef={mapContainerRef}
+        center={config?.center}
+        zoom={config?.zoom}
+      >
+        <TileLayer {...tile} />
+        {data?.map((d, dx) => (
+          <Marker
+            latlng={d?.point}
+            label={d?.label}
+            key={dx}
+          />
+        ))}
+        {getGeoJSONList(geoData).map((gd, gx) => (
+          <GeoJson
+            key={gx}
+            data={gd}
+            style={layer?.style}
+          />
+        ))}
+        {getGeoJSONList(sourceData).map((sd, sx) => (
+          <GeoJson
+            key={sx}
+            data={sd}
+            style={layer?.style}
+          />
+        ))}
+      </LeafletProvider>
+    </Fragment>
   );
-});
+};
 
-export default MapView;
+export default forwardRef(MapView);
