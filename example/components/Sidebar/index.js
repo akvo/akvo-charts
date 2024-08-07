@@ -77,10 +77,11 @@ const Sidebar = () => {
   const displayDispatch = useDisplayDispatch();
 
   const { selectedChartType } = useDisplayContext();
-  const { defaultConfig } = useChartContext();
+  const { defaultConfig, mapConfig, isMap } = useChartContext();
 
   const [_, setDefaultStore] = useLocalStorage('defaultConfig', null);
   const [__, setRawStore] = useLocalStorage('rawConfig', null);
+  const [___, setMapStore] = useLocalStorage('mapConfig', null);
 
   useEffect(() => {
     const res = { ...defaultConfig, data: basicChartExampleData };
@@ -125,8 +126,8 @@ const Sidebar = () => {
       res = { ...res, stackMapping: exampleStackMapping };
     }
     chartDispatch({
-      type: 'UPDATE_CHART',
-      payload: res
+      type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
+      payload: isMap ? mapConfig : res
     });
     chartDispatch({
       type: key === chartTypes.MAP ? 'MAP_SHOW' : 'MAP_HIDE'
@@ -139,7 +140,11 @@ const Sidebar = () => {
       type: 'SET_EDITED',
       payload: false
     });
-    setDefaultStore(res);
+    if (key === chartTypes.MAP) {
+      setMapStore(mapConfig);
+    } else {
+      setDefaultStore(res);
+    }
     setRawStore(null);
   };
 

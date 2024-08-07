@@ -103,7 +103,7 @@ const JsonDataDisplay = () => {
       setPreload(false);
       chartDispatch({
         type: 'UPDATE_CHART',
-        payload: isRaw ? rawStore : defaultConfig
+        payload: isRaw ? rawStore : defaultStore
       });
     }
     if (isMap && mapPreload) {
@@ -116,7 +116,7 @@ const JsonDataDisplay = () => {
   }, [
     chartDispatch,
     rawStore,
-    defaultConfig,
+    defaultStore,
     isRaw,
     preload,
     mapPreload,

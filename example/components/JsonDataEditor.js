@@ -20,35 +20,37 @@ const JsonDataEditor = () => {
   const [editorContent, setEditorContent] = useState('');
   const [initialized, setInitialized] = useState(false);
 
-  const { isRaw, defaultConfig, rawConfig } = useChartContext();
+  const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
+    useChartContext();
   const { selectedChartType } = useDisplayContext();
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage('defaultConfig');
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
+  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
 
   useEffect(() => {
     if (!initialized) {
       const initialContent = JSON.stringify(
-        isRaw ? rawConfig : defaultStore,
+        isRaw ? rawStore : isMap ? mapStore : defaultStore,
         null,
         2
       );
       setEditorContent(initialContent);
       setInitialized(true);
     }
-  }, [initialized, isRaw, rawConfig, defaultStore]);
+  }, [initialized, isRaw, rawStore, defaultStore, isMap, mapStore]);
 
   useEffect(() => {
     if (initialized) {
       const updatedContent = JSON.stringify(
-        isRaw ? rawConfig : defaultConfig,
+        isRaw ? rawConfig : isMap ? mapStore : defaultConfig,
         null,
         2
       );
       setEditorContent(updatedContent);
     }
-  }, [selectedChartType, isRaw, initialized]);
+  }, [selectedChartType, isRaw, initialized, isMap, mapStore]);
 
   const handleEditorChange = useCallback(
     (value) => {
@@ -60,7 +62,7 @@ const JsonDataEditor = () => {
           payload: true
         });
         chartDispatch({
-          type: 'UPDATE_CHART',
+          type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
           payload: parsedOptions
         });
       } catch (error) {
@@ -89,6 +91,8 @@ const JsonDataEditor = () => {
   const onClearClick = () => {
     let currDefaultStore = window.localStorage.getItem('defaultConfig');
     currDefaultStore = currDefaultStore ? JSON.parse(currDefaultStore) : null;
+    let currMapStore = window.localStorage.getItem('mapConfig');
+    currMapStore = currMapStore ? JSON.parse(currMapStore) : null;
     try {
       chartDispatch({
         type: 'SET_EDITED',
@@ -99,7 +103,8 @@ const JsonDataEditor = () => {
         payload: currDefaultStore
       });
       setRawStore(null);
-      setDefaultStore(currDefaultStore);
+      setDefaultStore(isMap ? currMapStore : currDefaultStore);
+      setMapStore(currMapStore);
       setEditorContent(JSON.stringify(currDefaultStore, null, 2));
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
