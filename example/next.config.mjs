@@ -1,3 +1,5 @@
+const isProd = process.env.NODE_ENV === 'production';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /**
@@ -6,7 +8,7 @@ const nextConfig = {
    * @see https://nextjs.org/docs/app/building-your-application/deploying/static-exports
    */
   output: 'export',
-  basePath: '/akvo-charts',
+  basePath: isProd ? '/akvo-charts' : '',
   /**
    * Disable server-based image optimization. Next.js does not support
    * dynamic features with static exports.
