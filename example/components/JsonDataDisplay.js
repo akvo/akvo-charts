@@ -156,7 +156,16 @@ const JsonDataDisplay = () => {
   }, [firstLoad]);
 
   const chartData = isRaw ? rawConfig : transformDefaultConfig;
-  const jsonData = isMap ? mapConfig : chartData;
+  const jsonData = isMap
+    ? {
+        ...mapConfig,
+        layer: {
+          source: mapConfig?.layer?.source,
+          url: mapConfig?.layer?.url,
+          style: mapConfig?.layer?.style
+        }
+      }
+    : chartData;
 
   return (
     <div className="w-full relative">
