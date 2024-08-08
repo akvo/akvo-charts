@@ -1,12 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import CodeDisplay from './CodeDisplay';
 import JsonDataDisplay from './JsonDataDisplay';
+import JsonDataEditor from './JsonDataEditor';
 import { useDisplayContext } from '../context/DisplayContextProvider';
 
 const Editor = () => {
   const { showJson, showCode } = useDisplayContext();
-  const showAll = showJson && showCode;
+  const [activeTab, setActiveTab] = useState('json');
+
+  useEffect(() => {
+    setActiveTab(showJson ? 'json' : showCode ? 'code' : 'code');
+  }, [showJson, showCode]);
 
   if (!showJson && !showCode) {
     return null;
@@ -14,15 +20,60 @@ const Editor = () => {
 
   return (
     <div className="w-full lg:w-1/2 h-[calc(100vh-20px)] flex flex-col gap-0">
-      <div
-        className={`w-full bg-neutral-800 border-b border-zinc-300 overflow-y-scroll ${showAll ? 'h-[50%]' : 'h-full'} ${!showJson ? 'hidden animate-fadeIn' : ''} transition-all`}
-      >
-        <JsonDataDisplay />
+      <div className="flex border-b border-gray-300 bg-gray-200">
+        {showJson && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'json'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('json')}
+          >
+            JSON Data
+          </button>
+        )}
+        {showJson && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'code-editor'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('code-editor')}
+          >
+            JSON Editor
+          </button>
+        )}
+        {showCode && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'code'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('code')}
+          >
+            Code
+          </button>
+        )}
       </div>
-      <div
-        className={`w-full bg-gray-100 overflow-y-scroll ${showAll ? 'h-[50%]' : 'h-full'} ${!showCode ? 'hidden animate-fadeIn' : ''} transition-all`}
-      >
-        <CodeDisplay />
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'json' && showJson && (
+          <div className="w-full h-full">
+            <JsonDataDisplay />
+          </div>
+        )}
+        {activeTab === 'code-editor' && showJson && (
+          <div className="w-full h-full">
+            <JsonDataEditor />
+          </div>
+        )}
+        {activeTab === 'code' && showCode && (
+          <div className="w-full h-full">
+            <CodeDisplay />
+          </div>
+        )}
       </div>
     </div>
   );

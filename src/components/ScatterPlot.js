@@ -59,8 +59,15 @@ const getOptions = ({
   };
 };
 
-const ScatterPlot = ({ config, data, symbolSize = 10, showLabel = true }) => {
+const ScatterPlot = ({
+  config,
+  data,
+  symbolSize = 10,
+  showLabel = true,
+  rawConfig
+}) => {
   const chartRef = useECharts({
+    rawConfig,
     config,
     getOptions: ({ transformedConfig, overrideItemStyle }) =>
       getOptions({

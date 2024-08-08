@@ -25,7 +25,7 @@ import {
 } from '../static/config';
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig, mapConfig, isMap } =
+  const { isRaw, rawConfig, defaultConfig, isEdited, mapConfig, isMap } =
     useChartContext();
   const { selectedChartType, showJson, showCode } = useDisplayContext();
 
@@ -33,13 +33,13 @@ const ChartDisplay = () => {
 
   const props = useMemo(() => {
     if (isRaw) {
-      return rawConfig;
+      return { rawConfig };
     }
     let res = { ...defaultConfig };
     if (!basicChart.includes(selectedChartType)) {
       res = {
         ...res,
-        data: stackChartExampleData
+        data: isEdited ? res.data : stackChartExampleData
       };
     }
 
@@ -60,7 +60,7 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [isRaw, defaultConfig, selectedChartType, rawConfig]);
+  }, [isRaw, defaultConfig, selectedChartType, rawConfig, isEdited]);
 
   useEffect(() => {
     if (!showJson && !showCode && !fullscreen) {
