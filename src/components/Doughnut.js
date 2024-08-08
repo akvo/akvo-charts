@@ -22,7 +22,7 @@ const getOptions = ({ dimensions = [], radius, overrideItemStyle }) => {
   };
 };
 
-const Doughnut = ({ config, data, size = 40 }) => {
+const Doughnut = ({ config, data, size = 40, rawConfig }) => {
   const torus = useMemo(() => {
     if (size >= MAX) {
       return 0;
@@ -31,6 +31,7 @@ const Doughnut = ({ config, data, size = 40 }) => {
   }, [size]);
 
   const chartRef = useECharts({
+    rawConfig,
     config: { ...config, showAxis: false },
     data,
     getOptions: ({ dimensions, overrideItemStyle }) =>

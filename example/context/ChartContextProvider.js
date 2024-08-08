@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
-import { exampleStackMapping, basicChartExampleData } from '../static/config';
+import { basicChartExampleData } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
@@ -8,11 +8,11 @@ const ChartDispatchContext = createContext(null);
 const initalChartState = {
   rawConfig: {},
   defaultConfig: {
-    horizontal: false,
     config: {
       title: 'Akvo Chart',
       xAxisLabel: 'Product',
       yAxisLabel: 'Sales',
+      horizontal: false,
       legend: {
         show: true,
         icon: null,
@@ -39,7 +39,7 @@ const initalChartState = {
       color: []
     },
     data: basicChartExampleData,
-    stackMapping: exampleStackMapping
+    stackMapping: {}
   },
   mapConfig: {
     tile: {
@@ -79,7 +79,8 @@ const initalChartState = {
     }
   },
   isRaw: false,
-  isMap: false
+  isMap: false,
+  isEdited: false
 };
 
 const chartReducer = (state, action) => {
@@ -111,15 +112,18 @@ const chartReducer = (state, action) => {
       return {
         ...state,
         defaultConfig: {
-          ...state.defaultConfig,
           ...action.payload
         }
       };
     case 'RAW':
       return {
         ...state,
-        isRaw: !state.isRaw,
-        rawConfig: action.payload || state.rawConfig
+        isRaw: !state.isRaw
+      };
+    case 'UPDATE_RAW':
+      return {
+        ...state,
+        rawConfig: action.payload
       };
     case 'MAP_SHOW':
       return {
@@ -133,6 +137,11 @@ const chartReducer = (state, action) => {
       };
     case 'DELETE':
       return { ...initalChartState, isMap: state?.isMap };
+    case 'SET_EDITED':
+      return {
+        ...state,
+        isEdited: action.payload
+      };
     default:
       throw Error(
         `Unknown action: ${action.type}. Remeber action type must be CAPITAL text.`

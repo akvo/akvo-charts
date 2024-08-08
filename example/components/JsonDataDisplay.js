@@ -1,23 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
-import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import { useLocalStorage } from '../utils';
-import {
-  excludeHorizontal,
-  excludeStackMapping,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData
-} from '../static/config';
 
 const JsonDataDisplay = () => {
   const [notify, setNotify] = useState(null);
@@ -26,45 +17,20 @@ const JsonDataDisplay = () => {
 
   const { isMap, mapConfig, isRaw, defaultConfig, rawConfig } =
     useChartContext();
-  const { selectedChartType } = useDisplayContext();
-
-  const transformDefaultConfig = useMemo(() => {
-    let res = { ...defaultConfig };
-    if (!basicChart.includes(selectedChartType)) {
-      res = {
-        ...res,
-        data: stackChartExampleData
-      };
-    }
-
-    if (selectedChartType === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.stackMapping;
-      res = transform;
-    }
-    return res;
-  }, [selectedChartType, defaultConfig]);
 
   const chartDispatch = useChartDispatch();
   const [defaultStore, setDefaultStore] = useLocalStorage(
     'defaultConfig',
-    transformDefaultConfig
+    defaultConfig
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
   const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
 
   const onJsonUpdate = ({ updated_src: payload }) => {
+    chartDispatch({
+      type: 'SET_EDITED',
+      payload: true
+    });
     chartDispatch({
       type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
       payload
@@ -95,7 +61,7 @@ const JsonDataDisplay = () => {
         if (isRaw) {
           setRawStore(rawConfig);
         } else {
-          setDefaultStore(transformDefaultConfig);
+          setDefaultStore(defaultConfig);
         }
       }
 
@@ -109,12 +75,19 @@ const JsonDataDisplay = () => {
   };
 
   const onClearClick = () => {
+    let currDefaultStore = window.localStorage.getItem('defaultConfig');
+    currDefaultStore = currDefaultStore ? JSON.parse(currDefaultStore) : null;
     try {
       chartDispatch({
-        type: 'DELETE'
+        type: 'SET_EDITED',
+        payload: false
+      });
+      chartDispatch({
+        type: 'UPDATE_CHART',
+        payload: currDefaultStore
       });
       setRawStore(null);
-      setDefaultStore(null);
+      setDefaultStore(currDefaultStore);
       setMapStore(null);
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
@@ -155,7 +128,7 @@ const JsonDataDisplay = () => {
     firstLoad();
   }, [firstLoad]);
 
-  const chartData = isRaw ? rawConfig : transformDefaultConfig;
+  const chartData = isRaw ? rawConfig : defaultConfig;
   const jsonData = isMap
     ? {
         ...mapConfig,
@@ -168,8 +141,8 @@ const JsonDataDisplay = () => {
     : chartData;
 
   return (
-    <div className="w-full relative">
-      <div className="w-full flex justify-end sticky top-2 right-2 z-[99] rounded-sm text-lg">
+    <div className="relative w-full h-[calc(100vh-20px)] bg-stone-800">
+      <div className="sticky top-2 right-2 z-[99] flex gap-2 justify-end">
         <a
           href={
             isRaw
@@ -177,14 +150,14 @@ const JsonDataDisplay = () => {
               : 'https://github.com/akvo/akvo-charts/blob/main/README.md'
           }
           target="_blank"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
           rel="noreferrer"
           data-testid="link-rtd"
         >
           <BookOpenIcon />
           <span>Read Docs</span>
         </a>
-        <div className="px-3 py-1 bg-white">
+        <div className="flex items-center px-3 py-1 bg-white rounded shadow-md">
           <input
             type="checkbox"
             id="raw"
@@ -199,7 +172,7 @@ const JsonDataDisplay = () => {
         </div>
         <button
           type="button"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
           onClick={onClearClick}
         >
           <TrashIcon />
@@ -207,22 +180,24 @@ const JsonDataDisplay = () => {
         </button>
         <button
           type="button"
-          className="w-fit h-auto flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700"
+          className="flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded shadow-md"
           onClick={onSaveClick}
         >
           <CheckIcon />
           <span>Save</span>
         </button>
       </div>
-      <ReactJson
-        name="props"
-        src={jsonData}
-        theme="monokai"
-        displayDataTypes={false}
-        onEdit={onJsonUpdate}
-        onAdd={onJsonUpdate}
-        indentWidth={2}
-      />
+      <div className=" bg-neutral-800 p-3">
+        <ReactJson
+          name="props"
+          src={jsonData}
+          theme="monokai"
+          displayDataTypes={false}
+          onEdit={onJsonUpdate}
+          onAdd={onJsonUpdate}
+          indentWidth={2}
+        />
+      </div>
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>
     </div>
   );
