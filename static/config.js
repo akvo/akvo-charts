@@ -6,7 +6,8 @@ export const chartTypes = {
   STACK_BAR: 'StackBar',
   STACK_CLUSTER: 'StackClusterColumn',
   SCATTER_PLOT: 'ScatterPlot',
-  STACK_LINE: 'StackLine'
+  STACK_LINE: 'StackLine',
+  MAP: 'MapView'
 };
 
 export const excludeHorizontal = [
@@ -87,3 +88,5 @@ export const scatterPlotExampleData = [
   { label: 'Product 4', x: 4, y: 45 },
   { label: 'Product 5', x: 5, y: 40 }
 ];
+
+export const basePath = '/akvo-charts';
