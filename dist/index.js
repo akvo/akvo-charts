@@ -3,11 +3,11 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var React__default = _interopDefault(React);
 var echarts = require('echarts');
-var L = _interopDefault(require('leaflet'));
 var topojson = require('topojson-client');
 require('leaflet/dist/leaflet.css');
-var markerIcon = _interopDefault(require('leaflet/dist/images/marker-icon.png'));
-var markerShadow = _interopDefault(require('leaflet/dist/images/marker-shadow.png'));
+var L = _interopDefault(require('leaflet'));
+var mIcon = _interopDefault(require('leaflet/dist/images/marker-icon.png'));
+var mShadow = _interopDefault(require('leaflet/dist/images/marker-shadow.png'));
 
 function _extends() {
   return _extends = Object.assign ? Object.assign.bind() : function (n) {
@@ -807,16 +807,137 @@ function _catch(body, recover) {
 	return result;
 }
 
-var _excluded = ["url"];
-var defaultIcon = L.icon({
-  iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
-  shadowUrl: typeof markerShadow === 'object' ? markerShadow === null || markerShadow === void 0 ? void 0 : markerShadow.src : markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+var LeafletContext = React.createContext(null);
+var LeafletProvider = React.forwardRef(function (_ref, ref) {
+  var mapContainerRef = _ref.mapContainerRef,
+    children = _ref.children,
+    center = _ref.center,
+    zoom = _ref.zoom;
+  var mapRef = React.useRef(null);
+  React.useEffect(function () {
+    if (mapContainerRef !== null && mapContainerRef !== void 0 && mapContainerRef.current) {
+      var map = L.map(mapContainerRef.current, {
+        center: center || [0, 0],
+        zoom: zoom || 2
+      });
+      mapRef.current = map;
+    }
+    return function () {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [mapContainerRef, center, zoom]);
+  React.useImperativeHandle(ref, function () {
+    return {
+      getMap: function getMap() {
+        return mapRef.current;
+      }
+    };
+  });
+  return /*#__PURE__*/React__default.createElement(LeafletContext.Provider, {
+    value: mapRef
+  }, children);
 });
-var getObjectFromString = function getObjectFromString(path) {
+var useLeaflet = function useLeaflet() {
+  return React.useContext(LeafletContext);
+};
+
+var _excluded = ["latlng", "label", "icon"];
+var Marker = function Marker(_ref) {
+  var _ref$latlng = _ref.latlng,
+    latlng = _ref$latlng === void 0 ? [0, 0] : _ref$latlng,
+    _ref$label = _ref.label,
+    label = _ref$label === void 0 ? null : _ref$label,
+    _ref$icon = _ref.icon,
+    icon = _ref$icon === void 0 ? {} : _ref$icon,
+    options = _objectWithoutPropertiesLoose(_ref, _excluded);
+  var mapRef = useLeaflet();
+  var defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
+  var defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
+  var Icon = L.icon({
+    iconUrl: (icon === null || icon === void 0 ? void 0 : icon.url) || defaultIcon,
+    shadowUrl: (icon === null || icon === void 0 ? void 0 : icon.shadow) || defaultShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+  React.useEffect(function () {
+    if (mapRef.current) {
+      var marker = L.marker(latlng, _extends({
+        icon: Icon
+      }, options)).addTo(mapRef.current);
+      if (label) {
+        marker.bindPopup(label);
+      }
+    }
+  }, [Icon, mapRef, label, latlng, options]);
+  return null;
+};
+
+var _excluded$1 = ["url"];
+var TileLayer = function TileLayer(_ref) {
+  var url = _ref.url,
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
+  var mapRef = useLeaflet();
+  React.useEffect(function () {
+    if (mapRef.current) {
+      if (url) {
+        L.tileLayer(url, _extends({}, props)).addTo(mapRef.current);
+      }
+    }
+  }, [mapRef, props, url]);
+  return null;
+};
+
+var GeoJson = function GeoJson(_ref) {
+  var onClick = _ref.onClick,
+    onMouseOver = _ref.onMouseOver,
+    _ref$data = _ref.data,
+    data = _ref$data === void 0 ? {} : _ref$data,
+    _ref$style = _ref.style,
+    _style = _ref$style === void 0 ? {} : _ref$style;
+  var mapRef = useLeaflet();
+  React.useEffect(function () {
+    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology') {
+      try {
+        L.geoJSON(data, {
+          style: function style() {
+            return _extends({}, _style, {
+              fillOpacity: parseFloat((_style === null || _style === void 0 ? void 0 : _style.fillOpacity) || 0.2, 10)
+            });
+          },
+          onEachFeature: function onEachFeature(_, layer) {
+            if (typeof onClick === 'function') {
+              layer.on({
+                click: function click(props) {
+                  onClick(props);
+                }
+              });
+            }
+            if (typeof onMouseOver === 'function') {
+              layer.on({
+                mouseover: function mouseover(props) {
+                  onMouseOver(props);
+                }
+              });
+            }
+          }
+        }).addTo(mapRef.current);
+      } catch (err) {
+        console.error('GeoJson', err);
+      }
+    }
+  }, [mapRef, data, _style, onClick, onMouseOver]);
+  return null;
+};
+
+var string2WindowObj = function string2WindowObj(path) {
+  if (path === void 0) {
+    path = '';
+  }
   var obj = path.split('.').reduce(function (obj, key) {
     return obj && obj[key];
   }, window);
@@ -825,23 +946,50 @@ var getObjectFromString = function getObjectFromString(path) {
   }
   return obj;
 };
-var MapView = React.forwardRef(function (_ref, ref) {
+
+var _excluded$2 = ["url", "source", "onClick"];
+var getGeoJSONList = function getGeoJSONList(d) {
+  if (!d) {
+    return [];
+  }
+  if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
+    return Object.keys(d.objects).map(function (kd) {
+      return topojson.feature(d, d.objects[kd]);
+    });
+  }
+  return [d];
+};
+var MapView = function MapView(_ref, ref) {
   var tile = _ref.tile,
     layer = _ref.layer,
     config = _ref.config,
-    _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data;
+    data = _ref.data;
   var _useState = React.useState(null),
     geoData = _useState[0],
     setGeoData = _useState[1];
+  var _useState2 = React.useState(null),
+    sourceData = _useState2[0],
+    setSourceData = _useState2[1];
+  var _useState3 = React.useState(true),
+    preload = _useState3[0],
+    setPreload = _useState3[1];
   var mapContainerRef = React.useRef(null);
-  var mapInstanceRef = React.useRef(null);
+  var mapInstance = React.useRef(null);
+  var layerURL = layer.url,
+    layerSource = layer.source,
+    layerOnClick = layer.onClick,
+    layerProps = _objectWithoutPropertiesLoose(layer, _excluded$2);
+  var geoProps = typeof layerOnClick === 'function' ? _extends({}, layerProps, {
+    onClick: function onClick(props) {
+      return layerOnClick(mapInstance.current.getMap(), props);
+    }
+  }) : layerProps;
   var loadGeoDataFromURL = React.useCallback(function () {
     try {
       var _temp2 = function () {
-        if (layer !== null && layer !== void 0 && layer.url && !geoData) {
+        if (layerURL && !geoData) {
           var _temp = _catch(function () {
-            return Promise.resolve(fetch(layer.url)).then(function (res) {
+            return Promise.resolve(fetch(layerURL)).then(function (res) {
               return Promise.resolve(res.json()).then(function (apiData) {
                 if (apiData) {
                   setGeoData(apiData);
@@ -858,116 +1006,65 @@ var MapView = React.forwardRef(function (_ref, ref) {
     } catch (e) {
       return Promise.reject(e);
     }
-  }, [layer.url, geoData]);
+  }, [layerURL, geoData]);
   React.useEffect(function () {
     loadGeoDataFromURL();
   }, [loadGeoDataFromURL]);
   React.useEffect(function () {
-    if (mapInstanceRef.current === null && mapContainerRef.current) {
-      var _data$filter;
-      var map = L.map(mapContainerRef.current, {
-        center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
-        zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2
-      });
-      mapInstanceRef.current = map;
-      if (tile !== null && tile !== void 0 && tile.url) {
-        var tileURL = tile.url,
-          tileProps = _objectWithoutPropertiesLoose(tile, _excluded);
-        L.tileLayer(tileURL, _extends({}, tileProps)).addTo(map);
+    if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
+      setPreload(false);
+    }
+    if (!sourceData) {
+      if (typeof layerSource === 'string' && layerSource !== null && layerSource !== void 0 && layerSource.includes('window')) {
+        var windowObj = string2WindowObj(layerSource);
+        if (windowObj) {
+          setSourceData(windowObj);
+        }
       }
-      data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
-        return (d === null || d === void 0 ? void 0 : d.point) && (d === null || d === void 0 ? void 0 : d.label);
-      })) === null || _data$filter === void 0 ? void 0 : _data$filter.forEach(function (d) {
-        return L.marker(d === null || d === void 0 ? void 0 : d.point, {
-          icon: defaultIcon
-        }).bindPopup(d === null || d === void 0 ? void 0 : d.label).addTo(map);
-      });
-      var TopoJSON = L.GeoJSON.extend({
-        addData: function addData(d) {
-          if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
-            for (var kd in d.objects) {
-              if (d.objects.hasOwnProperty(kd)) {
-                var geojson = topojson.feature(d, d.objects[kd]);
-                L.geoJSON(geojson, {
-                  style: function style() {
-                    return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
-                  }
-                }).addTo(map);
-              }
-            }
-          }
-          if (d !== null && d !== void 0 && d.type && (d === null || d === void 0 ? void 0 : d.type) !== 'Topology') {
-            L.geoJSON(d, {
-              style: function style() {
-                return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
-              }
-            }).addTo(map);
-          }
-        }
-      });
-      L.topoJson = function (d, options) {
-        return new TopoJSON(d, options);
-      };
-      var geojsonLayer = L.topoJson(null).addTo(map);
-      try {
-        var _layer$source;
-        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'string' && layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
-          var topoData = getObjectFromString(layer.source);
-          if (topoData) {
-            geojsonLayer.addData(topoData);
-          }
-        }
-        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'object') {
-          geojsonLayer.addData(layer.source);
-        }
-      } catch (err) {
-        console.error('geojsonLayer', err);
-      }
-      if (geoData) {
-        geojsonLayer.addData(geoData);
+      if (typeof layerSource === 'object') {
+        setSourceData(layerSource);
       }
     }
-    return function () {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [config === null || config === void 0 ? void 0 : config.center, config === null || config === void 0 ? void 0 : config.zoom, data, layer.source, layer === null || layer === void 0 ? void 0 : layer.style, layer.url, tile, geoData]);
+  }, [mapInstance, preload, sourceData, layerSource]);
   React.useImperativeHandle(ref, function () {
-    return {
-      zoomIn: function zoomIn() {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.zoomIn();
-        }
-      },
-      zoomOut: function zoomOut() {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.zoomOut();
-        }
-      },
-      getCenter: function getCenter() {
-        if (mapInstanceRef.current) {
-          return mapInstanceRef.current.getCenter();
-        }
-        return null;
-      }
-    };
+    return mapInstance.current;
   });
-  return /*#__PURE__*/React__default.createElement("div", {
+  return /*#__PURE__*/React__default.createElement(React.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
     ref: mapContainerRef,
     style: {
       height: (config === null || config === void 0 ? void 0 : config.height) || '100vh',
       width: (config === null || config === void 0 ? void 0 : config.width) || '100%'
     },
     "data-testid": "map-view"
-  });
-});
+  }), /*#__PURE__*/React__default.createElement(LeafletProvider, {
+    ref: mapInstance,
+    mapContainerRef: mapContainerRef,
+    center: config === null || config === void 0 ? void 0 : config.center,
+    zoom: config === null || config === void 0 ? void 0 : config.zoom
+  }, /*#__PURE__*/React__default.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : data.map(function (d, dx) {
+    return /*#__PURE__*/React__default.createElement(Marker, {
+      latlng: d === null || d === void 0 ? void 0 : d.point,
+      label: d === null || d === void 0 ? void 0 : d.label,
+      key: dx
+    });
+  }), getGeoJSONList(geoData).map(function (gd, gx) {
+    return /*#__PURE__*/React__default.createElement(GeoJson, _extends({
+      key: gx,
+      data: gd
+    }, geoProps));
+  }), getGeoJSONList(sourceData).map(function (sd, sx) {
+    return /*#__PURE__*/React__default.createElement(GeoJson, _extends({
+      key: sx,
+      data: sd
+    }, geoProps));
+  })));
+};
+var MapView$1 = React.forwardRef(MapView);
 
 exports.Bar = Bar;
 exports.Doughnut = Doughnut;
 exports.Line = Line;
-exports.MapView = MapView;
+exports.MapView = MapView$1;
 exports.Pie = Pie;
 exports.ScatterPlot = ScatterPlot;
 exports.StackBar = StackBar;
