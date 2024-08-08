@@ -76,7 +76,18 @@ const renderVars = ({ config, data, stackMapping, layer, tile }) => {
   }
 
   if (layer) {
-    const layerStr = obj2String(layer);
+    const { onClick, ...layerProps } = layer;
+    const lp =
+      typeof onClick === 'function'
+        ? {
+            ...layerProps,
+            onClick: '[onClick]'
+          }
+        : layerProps;
+    const layerStr = obj2String(lp).replace(/"\[onClick\]"/g, 'onClick');
+    if (typeof onClick === 'function') {
+      codes.push(`const onClick = ${onClick.toString()}\n`);
+    }
     codes.push(`const layer = ${layerStr};\n\n`);
   }
 
