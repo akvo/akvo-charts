@@ -36,10 +36,25 @@ const MapView = ({ tile, layer, config, data }, ref) => {
   const mapContainerRef = useRef(null);
   const mapInstance = useRef(null);
 
+  const {
+    url: layerURL,
+    source: layerSource,
+    onClick: layerOnClick,
+    ...layerProps
+  } = layer;
+
+  const geoProps =
+    typeof layerOnClick === 'function'
+      ? {
+          ...layerProps,
+          onClick: (props) => layerOnClick(mapInstance.current.getMap(), props)
+        }
+      : layerProps;
+
   const loadGeoDataFromURL = useCallback(async () => {
-    if (layer?.url && !geoData) {
+    if (layerURL && !geoData) {
       try {
-        const res = await fetch(layer.url);
+        const res = await fetch(layerURL);
         const apiData = await res.json();
         if (apiData) {
           setGeoData(apiData);
@@ -48,7 +63,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         console.error('loadGeoDataFromURL', err);
       }
     }
-  }, [layer.url, geoData]);
+  }, [layerURL, geoData]);
 
   useEffect(() => {
     loadGeoDataFromURL();
@@ -59,21 +74,18 @@ const MapView = ({ tile, layer, config, data }, ref) => {
       setPreload(false);
     }
     if (!sourceData) {
-      if (
-        typeof layer?.source === 'string' &&
-        layer?.source?.includes('window')
-      ) {
-        const windowObj = string2WindowObj(layer.source);
+      if (typeof layerSource === 'string' && layerSource?.includes('window')) {
+        const windowObj = string2WindowObj(layerSource);
         if (windowObj) {
           setSourceData(windowObj);
         }
       }
 
-      if (typeof layer?.source === 'object') {
-        setSourceData(layer.source);
+      if (typeof layerSource === 'object') {
+        setSourceData(layerSource);
       }
     }
-  }, [mapInstance, preload, sourceData, layer.source]);
+  }, [mapInstance, preload, sourceData, layerSource]);
 
   // Expose the Leaflet map instance via ref
   useImperativeHandle(ref, () => mapInstance.current);
@@ -106,14 +118,14 @@ const MapView = ({ tile, layer, config, data }, ref) => {
           <GeoJson
             key={gx}
             data={gd}
-            style={layer?.style}
+            {...geoProps}
           />
         ))}
         {getGeoJSONList(sourceData).map((sd, sx) => (
           <GeoJson
             key={sx}
             data={sd}
-            style={layer?.style}
+            {...geoProps}
           />
         ))}
       </LeafletProvider>
