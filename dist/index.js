@@ -287,43 +287,58 @@ var useECharts = function useECharts(_ref) {
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? [] : _ref$data,
     _ref$getOptions = _ref.getOptions,
-    getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions;
+    getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions,
+    _ref$rawConfig = _ref.rawConfig,
+    rawConfig = _ref$rawConfig === void 0 ? {} : _ref$rawConfig;
   var chartRef = React.useRef(null);
   React.useEffect(function () {
     var chart;
+    var options = {};
     if (chartRef.current) {
       setTimeout(function () {
         if (!chart && chartRef.current) {
           chart = echarts.init(chartRef.current);
-        }
-        var itemStyle = config !== null && config !== void 0 && config.itemStyle ? _extends({}, config.itemStyle) : {
-          color: null,
-          borderColor: null,
-          borderWidth: null,
-          borderType: null,
-          opacity: null
-        };
-        var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
-          itemStyle: filterObjNullValue(itemStyle)
-        } : {};
-        var _normalizeData = normalizeData(data),
-          dimensions = _normalizeData.dimensions,
-          source = _normalizeData.source;
-        var transformedConfig = transformConfig(_extends({}, config, {
-          dimensions: dimensions
-        }));
-        var options = _extends({}, transformedConfig, {
-          dataset: {
-            dimensions: dimensions,
-            source: source
+          if (!Object.keys(rawConfig).length) {
+            var horizontal = false;
+            if (config !== null && config !== void 0 && config.horizontal) {
+              horizontal = config.horizontal;
+            }
+            var itemStyle = {
+              color: null,
+              borderColor: null,
+              borderWidth: null,
+              borderType: null,
+              opacity: null
+            };
+            if (config !== null && config !== void 0 && config.itemStyle) {
+              itemStyle = _extends({}, config.itemStyle);
+            }
+            var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
+              itemStyle: filterObjNullValue(itemStyle)
+            } : {};
+            var _normalizeData = normalizeData(data),
+              dimensions = _normalizeData.dimensions,
+              source = _normalizeData.source;
+            var transformedConfig = transformConfig(_extends({}, config, {
+              dimensions: dimensions
+            }));
+            options = _extends({}, transformedConfig, {
+              dataset: {
+                dimensions: dimensions,
+                source: source
+              }
+            }, getOptions({
+              dimensions: dimensions,
+              transformedConfig: transformedConfig,
+              overrideItemStyle: overrideItemStyle,
+              horizontal: horizontal
+            }));
+          } else {
+            options = _extends({}, rawConfig);
           }
-        }, getOptions({
-          dimensions: dimensions,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        }));
-        if (chart) {
-          chart.setOption(options);
+          if (chart) {
+            chart.setOption(options);
+          }
         }
       }, 0);
     }
@@ -332,7 +347,7 @@ var useECharts = function useECharts(_ref) {
         chart.dispose();
       }
     };
-  }, [config, data, getOptions]);
+  }, [config, rawConfig, data, getOptions]);
   return chartRef;
 };
 
@@ -361,16 +376,15 @@ var _getOptions = function getOptions(_ref) {
 var Bar = function Bar(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -408,16 +422,15 @@ var _getOptions$1 = function getOptions(_ref) {
 var Line = function Line(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$1({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -451,8 +464,10 @@ var _getOptions$2 = function getOptions(_ref) {
 };
 var Pie = function Pie(_ref2) {
   var config = _ref2.config,
-    data = _ref2.data;
+    data = _ref2.data,
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
     }),
@@ -496,7 +511,8 @@ var Doughnut = function Doughnut(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
     _ref2$size = _ref2.size,
-    size = _ref2$size === void 0 ? 40 : _ref2$size;
+    size = _ref2$size === void 0 ? 40 : _ref2$size,
+    rawConfig = _ref2.rawConfig;
   var torus = React.useMemo(function () {
     if (size >= MAX) {
       return 0;
@@ -504,6 +520,7 @@ var Doughnut = function Doughnut(_ref2) {
     return MAX - size;
   }, [size]);
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
     }),
@@ -589,8 +606,10 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     _ref4$symbolSize = _ref4.symbolSize,
     symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
     _ref4$showLabel = _ref4.showLabel,
-    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel;
+    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
+    rawConfig = _ref4.rawConfig;
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: config,
     getOptions: function getOptions(_ref5) {
       var transformedConfig = _ref5.transformedConfig,
@@ -615,8 +634,7 @@ var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     stackMapping = _ref.stackMapping,
     transformedConfig = _ref.transformedConfig,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    horizontal = _ref.horizontal,
     overrideItemStyle = _ref.overrideItemStyle;
   var dimensionToStackMap = {};
   Object.keys(stackMapping).forEach(function (stackGroup) {
@@ -647,17 +665,16 @@ var StackBar = function StackBar(_ref2) {
     data = _ref2.data,
     _ref2$stackMapping = _ref2.stackMapping,
     stackMapping = _ref2$stackMapping === void 0 ? {} : _ref2$stackMapping,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
@@ -702,17 +719,16 @@ var _getOptions$6 = function getOptions(_ref) {
 var StackClusterColumn = function StackClusterColumn(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$6({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -732,8 +748,7 @@ var _getOptions$7 = function getOptions(_ref) {
   var _extends2;
   var dimensions = _ref.dimensions,
     transformedConfig = _ref.transformedConfig,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    horizontal = _ref.horizontal,
     overrideItemStyle = _ref.overrideItemStyle;
   var axis = horizontal ? 'yAxis' : 'xAxis';
   var series = dimensions.slice(1).map(function (dim) {
@@ -762,17 +777,16 @@ var _getOptions$7 = function getOptions(_ref) {
 var StacLine = function StacLine(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$7({
         dimensions: dimensions,
         horizontal: horizontal,
@@ -981,7 +995,11 @@ var MapView = function MapView(_ref, ref) {
     layerProps = _objectWithoutPropertiesLoose(layer, _excluded$2);
   var geoProps = typeof layerOnClick === 'function' ? _extends({}, layerProps, {
     onClick: function onClick(props) {
-      return layerOnClick(mapInstance.current.getMap(), props);
+      try {
+        layerOnClick(mapInstance.current.getMap(), props);
+      } catch (err) {
+        console.error('GeoJson|onClick', err);
+      }
     }
   }) : layerProps;
   var loadGeoDataFromURL = React.useCallback(function () {
