@@ -22,7 +22,9 @@ const renderImport = (type) => {
 const renderCodes = (type, props) => {
   const attributes = Object.keys(props)
     .map((p) =>
-      ['config', 'data', 'stackMapping', 'layer', 'tile'].includes(p)
+      ['config', 'data', 'stackMapping', 'layer', 'tile', 'rawConfig'].includes(
+        p
+      )
         ? `${p}={${p}}`
         : props?.[p]
           ? typeof props[p] === 'object'
@@ -58,17 +60,18 @@ const renderCodes = (type, props) => {
   }
 };
 
-const renderVars = ({ config, data, stackMapping, layer, tile }) => {
-  if (!config || !data) {
-    return null;
-  }
-  const configStr = obj2String(config);
-  const dataStr = obj2String(data);
+const renderVars = ({ config, data, stackMapping, layer, tile, rawConfig }) => {
+  const codes = [];
 
-  const codes = [
-    `const config = ${configStr};\n\n`,
-    `const data = ${dataStr};\n\n`
-  ];
+  if (config) {
+    const configStr = obj2String(config);
+    codes.push(`const config = ${configStr};\n\n`);
+  }
+
+  if (data) {
+    const dataStr = obj2String(data);
+    codes.push(`const data = ${dataStr};\n\n`);
+  }
 
   if (stackMapping) {
     const stackMappingStr = obj2String(stackMapping);
@@ -76,13 +79,31 @@ const renderVars = ({ config, data, stackMapping, layer, tile }) => {
   }
 
   if (layer) {
-    const layerStr = obj2String(layer);
+    const { onClick, ...layerProps } = layer;
+    let lp = layerProps;
+    if (onClick) {
+      try {
+        lp = {
+          ...layerProps,
+          onClick: '[onClick]'
+        };
+        // eslint-disable-next-line no-new-func
+        const onClickFn = new Function(`return ${onClick}`)();
+        codes.push(`const onClick = ${onClickFn.toString()};\n`);
+      } catch {}
+    }
+    const layerStr = obj2String(lp).replace(/"\[onClick\]"/g, 'onClick');
     codes.push(`const layer = ${layerStr};\n\n`);
   }
 
   if (tile) {
     const tileStr = obj2String(tile);
     codes.push(`const tile = ${tileStr};\n\n`);
+  }
+
+  if (rawConfig) {
+    const rawConfigStr = obj2String(rawConfig);
+    codes.push(`const rawConfig = ${rawConfigStr};\n\n`);
   }
 
   return codes.join('');

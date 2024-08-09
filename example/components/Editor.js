@@ -1,12 +1,85 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import CodeDisplay from './CodeDisplay';
 import JsonDataDisplay from './JsonDataDisplay';
+import JsonDataEditor from './JsonDataEditor';
 import { useDisplayContext } from '../context/DisplayContextProvider';
+import {
+  useChartContext,
+  useChartDispatch
+} from '../context/ChartContextProvider';
+import { useLocalStorage } from '../utils';
 
 const Editor = () => {
+  const { isRaw, isMap, rawConfig, defaultConfig, mapConfig } =
+    useChartContext();
   const { showJson, showCode } = useDisplayContext();
-  const showAll = showJson && showCode;
+
+  const [preload, setPreload] = useState(true);
+  const [mapPreload, setMapPreload] = useState(true);
+  const [activeTab, setActiveTab] = useState('json');
+
+  const [defaultStore, setDefaultStore] = useLocalStorage(
+    'defaultConfig',
+    defaultConfig
+  );
+  const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
+  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
+
+  const chartDispatch = useChartDispatch();
+
+  const firstLoad = useCallback(() => {
+    if (preload) {
+      setPreload(false);
+      chartDispatch({
+        type: 'UPDATE_CHART',
+        payload: isRaw ? rawStore : defaultStore
+      });
+    }
+    if (isMap && mapPreload) {
+      setMapPreload(false);
+      chartDispatch({
+        type: 'UPDATE_MAP',
+        payload: mapStore
+      });
+    }
+  }, [
+    chartDispatch,
+    rawStore,
+    defaultStore,
+    isRaw,
+    preload,
+    mapPreload,
+    isMap,
+    mapStore
+  ]);
+
+  const storeData = () => {
+    if (isMap) {
+      setMapStore(mapConfig);
+    } else {
+      if (isRaw) {
+        setRawStore(rawConfig);
+      } else {
+        setDefaultStore(defaultConfig);
+      }
+    }
+  };
+
+  const clearData = () => {
+    setDefaultStore(null);
+    setRawStore(null);
+    setMapStore(null);
+  };
+
+  useEffect(() => {
+    firstLoad();
+  }, [firstLoad]);
+
+  useEffect(() => {
+    setActiveTab(showJson ? 'json' : showCode ? 'code' : 'code');
+  }, [showJson, showCode]);
 
   if (!showJson && !showCode) {
     return null;
@@ -14,15 +87,60 @@ const Editor = () => {
 
   return (
     <div className="w-full lg:w-1/2 h-[calc(100vh-20px)] flex flex-col gap-0">
-      <div
-        className={`w-full bg-neutral-800 border-b border-zinc-300 overflow-y-scroll ${showAll ? 'h-[50%]' : 'h-full'} ${!showJson ? 'hidden animate-fadeIn' : ''} transition-all`}
-      >
-        <JsonDataDisplay />
+      <div className="flex border-b border-gray-300 bg-gray-200">
+        {showJson && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'json'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('json')}
+          >
+            JSON Data
+          </button>
+        )}
+        {showJson && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'code-editor'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('code-editor')}
+          >
+            JSON Editor
+          </button>
+        )}
+        {showCode && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'code'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('code')}
+          >
+            Code
+          </button>
+        )}
       </div>
-      <div
-        className={`w-full bg-gray-100 overflow-y-scroll ${showAll ? 'h-[50%]' : 'h-full'} ${!showCode ? 'hidden animate-fadeIn' : ''} transition-all`}
-      >
-        <CodeDisplay />
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'json' && showJson && (
+          <div className="w-full h-full">
+            <JsonDataDisplay {...{ storeData, clearData }} />
+          </div>
+        )}
+        {activeTab === 'code-editor' && showJson && (
+          <div className="w-full h-full">
+            <JsonDataEditor clearData={clearData} />
+          </div>
+        )}
+        {activeTab === 'code' && showCode && (
+          <div className="w-full h-full">
+            <CodeDisplay />
+          </div>
+        )}
       </div>
     </div>
   );

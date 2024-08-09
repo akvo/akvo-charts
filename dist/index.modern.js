@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useMemo, forwardRef, useState, useCallback, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, useMemo, createContext, forwardRef, useImperativeHandle, Fragment, useContext, useState, useCallback } from 'react';
 import { init } from 'echarts';
-import L from 'leaflet';
 import { feature } from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import L from 'leaflet';
+import mIcon from 'leaflet/dist/images/marker-icon.png';
+import mShadow from 'leaflet/dist/images/marker-shadow.png';
 
 function _extends() {
   return _extends = Object.assign ? Object.assign.bind() : function (n) {
@@ -284,43 +284,58 @@ var useECharts = function useECharts(_ref) {
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? [] : _ref$data,
     _ref$getOptions = _ref.getOptions,
-    getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions;
+    getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions,
+    _ref$rawConfig = _ref.rawConfig,
+    rawConfig = _ref$rawConfig === void 0 ? {} : _ref$rawConfig;
   var chartRef = useRef(null);
   useEffect(function () {
     var chart;
+    var options = {};
     if (chartRef.current) {
       setTimeout(function () {
         if (!chart && chartRef.current) {
           chart = init(chartRef.current);
-        }
-        var itemStyle = config !== null && config !== void 0 && config.itemStyle ? _extends({}, config.itemStyle) : {
-          color: null,
-          borderColor: null,
-          borderWidth: null,
-          borderType: null,
-          opacity: null
-        };
-        var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
-          itemStyle: filterObjNullValue(itemStyle)
-        } : {};
-        var _normalizeData = normalizeData(data),
-          dimensions = _normalizeData.dimensions,
-          source = _normalizeData.source;
-        var transformedConfig = transformConfig(_extends({}, config, {
-          dimensions: dimensions
-        }));
-        var options = _extends({}, transformedConfig, {
-          dataset: {
-            dimensions: dimensions,
-            source: source
+          if (!Object.keys(rawConfig).length) {
+            var horizontal = false;
+            if (config !== null && config !== void 0 && config.horizontal) {
+              horizontal = config.horizontal;
+            }
+            var itemStyle = {
+              color: null,
+              borderColor: null,
+              borderWidth: null,
+              borderType: null,
+              opacity: null
+            };
+            if (config !== null && config !== void 0 && config.itemStyle) {
+              itemStyle = _extends({}, config.itemStyle);
+            }
+            var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
+              itemStyle: filterObjNullValue(itemStyle)
+            } : {};
+            var _normalizeData = normalizeData(data),
+              dimensions = _normalizeData.dimensions,
+              source = _normalizeData.source;
+            var transformedConfig = transformConfig(_extends({}, config, {
+              dimensions: dimensions
+            }));
+            options = _extends({}, transformedConfig, {
+              dataset: {
+                dimensions: dimensions,
+                source: source
+              }
+            }, getOptions({
+              dimensions: dimensions,
+              transformedConfig: transformedConfig,
+              overrideItemStyle: overrideItemStyle,
+              horizontal: horizontal
+            }));
+          } else {
+            options = _extends({}, rawConfig);
           }
-        }, getOptions({
-          dimensions: dimensions,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        }));
-        if (chart) {
-          chart.setOption(options);
+          if (chart) {
+            chart.setOption(options);
+          }
         }
       }, 0);
     }
@@ -329,7 +344,7 @@ var useECharts = function useECharts(_ref) {
         chart.dispose();
       }
     };
-  }, [config, data, getOptions]);
+  }, [config, rawConfig, data, getOptions]);
   return chartRef;
 };
 
@@ -358,16 +373,15 @@ var _getOptions = function getOptions(_ref) {
 var Bar = function Bar(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -405,16 +419,15 @@ var _getOptions$1 = function getOptions(_ref) {
 var Line = function Line(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$1({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -448,8 +461,10 @@ var _getOptions$2 = function getOptions(_ref) {
 };
 var Pie = function Pie(_ref2) {
   var config = _ref2.config,
-    data = _ref2.data;
+    data = _ref2.data,
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
     }),
@@ -493,7 +508,8 @@ var Doughnut = function Doughnut(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
     _ref2$size = _ref2.size,
-    size = _ref2$size === void 0 ? 40 : _ref2$size;
+    size = _ref2$size === void 0 ? 40 : _ref2$size,
+    rawConfig = _ref2.rawConfig;
   var torus = useMemo(function () {
     if (size >= MAX) {
       return 0;
@@ -501,6 +517,7 @@ var Doughnut = function Doughnut(_ref2) {
     return MAX - size;
   }, [size]);
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
     }),
@@ -586,8 +603,10 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     _ref4$symbolSize = _ref4.symbolSize,
     symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
     _ref4$showLabel = _ref4.showLabel,
-    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel;
+    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
+    rawConfig = _ref4.rawConfig;
   var chartRef = useECharts({
+    rawConfig: rawConfig,
     config: config,
     getOptions: function getOptions(_ref5) {
       var transformedConfig = _ref5.transformedConfig,
@@ -612,8 +631,7 @@ var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
     stackMapping = _ref.stackMapping,
     transformedConfig = _ref.transformedConfig,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    horizontal = _ref.horizontal,
     overrideItemStyle = _ref.overrideItemStyle;
   var dimensionToStackMap = {};
   Object.keys(stackMapping).forEach(function (stackGroup) {
@@ -644,17 +662,16 @@ var StackBar = function StackBar(_ref2) {
     data = _ref2.data,
     _ref2$stackMapping = _ref2.stackMapping,
     stackMapping = _ref2$stackMapping === void 0 ? {} : _ref2$stackMapping,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$5({
         dimensions: dimensions,
         stackMapping: stackMapping,
@@ -699,17 +716,16 @@ var _getOptions$6 = function getOptions(_ref) {
 var StackClusterColumn = function StackClusterColumn(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$6({
         horizontal: horizontal,
         dimensions: dimensions,
@@ -729,8 +745,7 @@ var _getOptions$7 = function getOptions(_ref) {
   var _extends2;
   var dimensions = _ref.dimensions,
     transformedConfig = _ref.transformedConfig,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? true : _ref$horizontal,
+    horizontal = _ref.horizontal,
     overrideItemStyle = _ref.overrideItemStyle;
   var axis = horizontal ? 'yAxis' : 'xAxis';
   var series = dimensions.slice(1).map(function (dim) {
@@ -759,17 +774,16 @@ var _getOptions$7 = function getOptions(_ref) {
 var StacLine = function StacLine(_ref2) {
   var config = _ref2.config,
     data = _ref2.data,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? true : _ref2$horizontal;
+    rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
-    config: _extends({}, config, {
-      horizontal: horizontal
-    }),
+    rawConfig: rawConfig,
+    config: config,
     data: data,
     getOptions: function getOptions(_ref3) {
       var dimensions = _ref3.dimensions,
         transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle;
+        overrideItemStyle = _ref3.overrideItemStyle,
+        horizontal = _ref3.horizontal;
       return _getOptions$7({
         dimensions: dimensions,
         horizontal: horizontal,
@@ -804,16 +818,144 @@ function _catch(body, recover) {
 	return result;
 }
 
-var _excluded = ["url"];
-var defaultIcon = L.icon({
-  iconUrl: typeof markerIcon === 'object' ? markerIcon === null || markerIcon === void 0 ? void 0 : markerIcon.src : markerIcon,
-  shadowUrl: typeof markerShadow === 'object' ? markerShadow === null || markerShadow === void 0 ? void 0 : markerShadow.src : markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+var LeafletContext = createContext(null);
+var LeafletProvider = forwardRef(function (_ref, ref) {
+  var children = _ref.children,
+    width = _ref.width,
+    height = _ref.height;
+  var mapRef = useRef(null);
+  var mapContainer = useRef(null);
+  useEffect(function () {
+    if (!mapRef.current) {
+      var map = L.map(mapContainer.current, {
+        center: [0, 0],
+        zoom: 2
+      });
+      mapRef.current = map;
+    }
+    return function () {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
+  useImperativeHandle(ref, function () {
+    return {
+      getMap: function getMap() {
+        return mapRef.current;
+      }
+    };
+  });
+  return /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("div", {
+    ref: mapContainer,
+    style: {
+      height: height || '100vh',
+      width: width || '100%'
+    },
+    "data-testid": "map-view"
+  }), /*#__PURE__*/React.createElement(LeafletContext.Provider, {
+    value: mapRef
+  }, children));
 });
-var getObjectFromString = function getObjectFromString(path) {
+var useLeaflet = function useLeaflet() {
+  return useContext(LeafletContext);
+};
+
+var _excluded = ["latlng", "label", "icon"];
+var Marker = function Marker(_ref) {
+  var _ref$latlng = _ref.latlng,
+    latlng = _ref$latlng === void 0 ? [0, 0] : _ref$latlng,
+    _ref$label = _ref.label,
+    label = _ref$label === void 0 ? null : _ref$label,
+    _ref$icon = _ref.icon,
+    icon = _ref$icon === void 0 ? {} : _ref$icon,
+    options = _objectWithoutPropertiesLoose(_ref, _excluded);
+  var mapRef = useLeaflet();
+  var defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
+  var defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
+  var Icon = L.icon({
+    iconUrl: (icon === null || icon === void 0 ? void 0 : icon.url) || defaultIcon,
+    shadowUrl: (icon === null || icon === void 0 ? void 0 : icon.shadow) || defaultShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+  useEffect(function () {
+    if (mapRef.current) {
+      var marker = L.marker(latlng, _extends({
+        icon: Icon
+      }, options)).addTo(mapRef.current);
+      if (label) {
+        marker.bindPopup(label);
+      }
+    }
+  }, [Icon, mapRef, label, latlng, options]);
+  return null;
+};
+
+var _excluded$1 = ["url"];
+var TileLayer = function TileLayer(_ref) {
+  var url = _ref.url,
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
+  var mapRef = useLeaflet();
+  useEffect(function () {
+    if (mapRef.current) {
+      if (url) {
+        L.tileLayer(url, _extends({}, props)).addTo(mapRef.current);
+      }
+    }
+  }, [mapRef, props, url]);
+  return null;
+};
+
+var GeoJson = function GeoJson(_ref) {
+  var onClick = _ref.onClick,
+    onMouseOver = _ref.onMouseOver,
+    _ref$data = _ref.data,
+    data = _ref$data === void 0 ? {} : _ref$data,
+    _ref$style = _ref.style,
+    _style = _ref$style === void 0 ? {} : _ref$style;
+  var mapRef = useLeaflet();
+  useEffect(function () {
+    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology') {
+      try {
+        L.geoJSON(data, {
+          style: function style() {
+            return _extends({}, _style, {
+              fillOpacity: parseFloat((_style === null || _style === void 0 ? void 0 : _style.fillOpacity) || 0.2, 10)
+            });
+          },
+          onEachFeature: function onEachFeature(_, layer) {
+            if (typeof onClick === 'function') {
+              layer.on({
+                click: function click(props) {
+                  onClick(props);
+                }
+              });
+            }
+            if (typeof onMouseOver === 'function') {
+              layer.on({
+                mouseover: function mouseover(props) {
+                  onMouseOver(props);
+                }
+              });
+            }
+          }
+        }).addTo(mapRef.current);
+      } catch (err) {
+        console.error('GeoJson', err);
+      }
+    }
+  }, [mapRef, data, _style, onClick, onMouseOver]);
+  return null;
+};
+
+var string2WindowObj = function string2WindowObj(path) {
+  if (path === void 0) {
+    path = '';
+  }
   var obj = path.split('.').reduce(function (obj, key) {
     return obj && obj[key];
   }, window);
@@ -822,23 +964,53 @@ var getObjectFromString = function getObjectFromString(path) {
   }
   return obj;
 };
-var MapView = forwardRef(function (_ref, ref) {
+
+var _excluded$2 = ["url", "source", "onClick"];
+var getGeoJSONList = function getGeoJSONList(d) {
+  if (!d) {
+    return [];
+  }
+  if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
+    return Object.keys(d.objects).map(function (kd) {
+      return feature(d, d.objects[kd]);
+    });
+  }
+  return [d];
+};
+var MapView = function MapView(_ref, ref) {
   var tile = _ref.tile,
     layer = _ref.layer,
     config = _ref.config,
-    _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data;
+    data = _ref.data;
   var _useState = useState(null),
     geoData = _useState[0],
     setGeoData = _useState[1];
-  var mapContainerRef = useRef(null);
-  var mapInstanceRef = useRef(null);
+  var _useState2 = useState(null),
+    sourceData = _useState2[0],
+    setSourceData = _useState2[1];
+  var _useState3 = useState(true),
+    preload = _useState3[0],
+    setPreload = _useState3[1];
+  var mapInstance = useRef(null);
+  var layerURL = layer.url,
+    layerSource = layer.source,
+    layerOnClick = layer.onClick,
+    layerProps = _objectWithoutPropertiesLoose(layer, _excluded$2);
+  var geoProps = typeof layerOnClick === 'function' ? _extends({}, layerProps, {
+    onClick: function onClick(props) {
+      try {
+        layerOnClick(mapInstance.current.getMap(), props);
+      } catch (err) {
+        console.error('GeoJson|onClick', err);
+      }
+    }
+  }) : layerProps;
   var loadGeoDataFromURL = useCallback(function () {
     try {
       var _temp2 = function () {
-        if (layer !== null && layer !== void 0 && layer.url && !geoData) {
+        if (layerURL && !geoData) {
           var _temp = _catch(function () {
-            return Promise.resolve(fetch(layer.url)).then(function (res) {
+            return Promise.resolve(fetch(layerURL)).then(function (res) {
               return Promise.resolve(res.json()).then(function (apiData) {
                 if (apiData) {
                   setGeoData(apiData);
@@ -855,111 +1027,58 @@ var MapView = forwardRef(function (_ref, ref) {
     } catch (e) {
       return Promise.reject(e);
     }
-  }, [layer.url, geoData]);
+  }, [layerURL, geoData]);
   useEffect(function () {
     loadGeoDataFromURL();
   }, [loadGeoDataFromURL]);
   useEffect(function () {
-    if (mapInstanceRef.current === null && mapContainerRef.current) {
-      var _data$filter;
-      var map = L.map(mapContainerRef.current, {
-        center: (config === null || config === void 0 ? void 0 : config.center) || [0, 0],
-        zoom: (config === null || config === void 0 ? void 0 : config.zoom) || 2
-      });
-      mapInstanceRef.current = map;
-      if (tile !== null && tile !== void 0 && tile.url) {
-        var tileURL = tile.url,
-          tileProps = _objectWithoutPropertiesLoose(tile, _excluded);
-        L.tileLayer(tileURL, _extends({}, tileProps)).addTo(map);
+    if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
+      if (config !== null && config !== void 0 && config.zoom) {
+        mapInstance.current.getMap().setZoom(config.zoom);
       }
-      data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
-        return (d === null || d === void 0 ? void 0 : d.point) && (d === null || d === void 0 ? void 0 : d.label);
-      })) === null || _data$filter === void 0 ? void 0 : _data$filter.forEach(function (d) {
-        return L.marker(d === null || d === void 0 ? void 0 : d.point, {
-          icon: defaultIcon
-        }).bindPopup(d === null || d === void 0 ? void 0 : d.label).addTo(map);
-      });
-      var TopoJSON = L.GeoJSON.extend({
-        addData: function addData(d) {
-          if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
-            for (var kd in d.objects) {
-              if (d.objects.hasOwnProperty(kd)) {
-                var geojson = feature(d, d.objects[kd]);
-                L.geoJSON(geojson, {
-                  style: function style() {
-                    return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
-                  }
-                }).addTo(map);
-              }
-            }
-          }
-          if (d !== null && d !== void 0 && d.type && (d === null || d === void 0 ? void 0 : d.type) !== 'Topology') {
-            L.geoJSON(d, {
-              style: function style() {
-                return (layer === null || layer === void 0 ? void 0 : layer.style) || {};
-              }
-            }).addTo(map);
-          }
-        }
-      });
-      L.topoJson = function (d, options) {
-        return new TopoJSON(d, options);
-      };
-      var geojsonLayer = L.topoJson(null).addTo(map);
-      try {
-        var _layer$source;
-        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'string' && layer !== null && layer !== void 0 && (_layer$source = layer.source) !== null && _layer$source !== void 0 && _layer$source.includes('window')) {
-          var topoData = getObjectFromString(layer.source);
-          if (topoData) {
-            geojsonLayer.addData(topoData);
-          }
-        }
-        if (typeof (layer === null || layer === void 0 ? void 0 : layer.source) === 'object') {
-          geojsonLayer.addData(layer.source);
-        }
-      } catch (err) {
-        console.error('geojsonLayer', err);
+      if (config !== null && config !== void 0 && config.center) {
+        mapInstance.current.getMap().panTo(config.center);
       }
-      if (geoData) {
-        geojsonLayer.addData(geoData);
+      setPreload(false);
+    }
+    if (!sourceData) {
+      if (typeof layerSource === 'string' && layerSource !== null && layerSource !== void 0 && layerSource.includes('window')) {
+        var windowObj = string2WindowObj(layerSource);
+        if (windowObj) {
+          setSourceData(windowObj);
+        }
+      }
+      if (typeof layerSource === 'object') {
+        setSourceData(layerSource);
       }
     }
-    return function () {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [config === null || config === void 0 ? void 0 : config.center, config === null || config === void 0 ? void 0 : config.zoom, data, layer.source, layer === null || layer === void 0 ? void 0 : layer.style, layer.url, tile, geoData]);
+  }, [mapInstance, preload, sourceData, layerSource, config === null || config === void 0 ? void 0 : config.zoom, config === null || config === void 0 ? void 0 : config.center]);
   useImperativeHandle(ref, function () {
-    return {
-      zoomIn: function zoomIn() {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.zoomIn();
-        }
-      },
-      zoomOut: function zoomOut() {
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.zoomOut();
-        }
-      },
-      getCenter: function getCenter() {
-        if (mapInstanceRef.current) {
-          return mapInstanceRef.current.getCenter();
-        }
-        return null;
-      }
-    };
+    return mapInstance.current;
   });
-  return /*#__PURE__*/React.createElement("div", {
-    ref: mapContainerRef,
-    style: {
-      height: (config === null || config === void 0 ? void 0 : config.height) || '100vh',
-      width: (config === null || config === void 0 ? void 0 : config.width) || '100%'
-    },
-    "data-testid": "map-view"
-  });
-});
+  return /*#__PURE__*/React.createElement(LeafletProvider, {
+    ref: mapInstance,
+    width: config === null || config === void 0 ? void 0 : config.width,
+    height: config === null || config === void 0 ? void 0 : config.height
+  }, /*#__PURE__*/React.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : data.map(function (d, dx) {
+    return /*#__PURE__*/React.createElement(Marker, {
+      latlng: d === null || d === void 0 ? void 0 : d.point,
+      label: d === null || d === void 0 ? void 0 : d.label,
+      key: dx
+    });
+  }), getGeoJSONList(geoData).map(function (gd, gx) {
+    return /*#__PURE__*/React.createElement(GeoJson, _extends({
+      key: gx,
+      data: gd
+    }, geoProps));
+  }), getGeoJSONList(sourceData).map(function (sd, sx) {
+    return /*#__PURE__*/React.createElement(GeoJson, _extends({
+      key: sx,
+      data: sd
+    }, geoProps));
+  }));
+};
+var MapView$1 = forwardRef(MapView);
 
-export { Bar, Doughnut, Line, MapView, Pie, ScatterPlot, StackBar, StackClusterColumn, StacLine as StackLine };
+export { Bar, Doughnut, Line, MapView$1 as MapView, Pie, ScatterPlot, StackBar, StackClusterColumn, StacLine as StackLine };
 //# sourceMappingURL=index.modern.js.map
