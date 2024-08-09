@@ -5,23 +5,14 @@ import { LeafletProvider } from '../LeafletProvider';
 describe('LeafletProvider', () => {
   it('should get leaflet instance correctly', async () => {
     let instance = null;
-    const mRef = React.createRef();
     render(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
-        />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <span />
-        </LeafletProvider>
-      </>
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <span />
+      </LeafletProvider>
     );
     await waitFor(async () => {
       expect(instance.getMap()).not.toBeNull();
@@ -31,16 +22,9 @@ describe('LeafletProvider', () => {
 
   it('should render emtpy map correctly', async () => {
     let instance = null;
-    const mRef = React.createRef();
     render(
       <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
-        />
         <LeafletProvider
-          mapContainerRef={mRef}
           ref={(el) => {
             instance = el;
           }}

@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  Fragment,
   useContext,
   useRef,
   useEffect,
@@ -11,15 +12,13 @@ import L from 'leaflet';
 const LeafletContext = createContext(null);
 
 export const LeafletProvider = forwardRef(
-  ({ mapContainerRef, children, center, zoom }, ref) => {
+  ({ children, width, height }, ref) => {
     const mapRef = useRef(null);
+    const mapContainer = useRef(null);
 
     useEffect(() => {
-      if (mapContainerRef?.current) {
-        const map = L.map(mapContainerRef.current, {
-          center: center || [0, 0],
-          zoom: zoom || 2
-        });
+      if (!mapRef.current) {
+        const map = L.map(mapContainer.current, { center: [0, 0], zoom: 2 });
         mapRef.current = map;
       }
 
@@ -27,10 +26,10 @@ export const LeafletProvider = forwardRef(
       return () => {
         if (mapRef.current) {
           mapRef.current.remove();
-          mapRef.current = null;
+          mapRef.current = null; // Reset the map ref
         }
       };
-    }, [mapContainerRef, center, zoom]);
+    }, []);
 
     // Expose the Leaflet map instance via ref
     useImperativeHandle(ref, () => ({
@@ -38,9 +37,19 @@ export const LeafletProvider = forwardRef(
     }));
 
     return (
-      <LeafletContext.Provider value={mapRef}>
-        {children}
-      </LeafletContext.Provider>
+      <Fragment>
+        <div
+          ref={mapContainer}
+          style={{
+            height: height || '100vh',
+            width: width || '100%'
+          }}
+          data-testid="map-view"
+        />
+        <LeafletContext.Provider value={mapRef}>
+          {children}
+        </LeafletContext.Provider>
+      </Fragment>
     );
   }
 );
