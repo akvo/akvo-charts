@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactJson from 'react-json-view';
 import {
   useChartContext,
@@ -8,23 +8,14 @@ import {
 } from '../context/ChartContextProvider';
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
-import { useLocalStorage } from '../utils';
 
-const JsonDataDisplay = () => {
+const JsonDataDisplay = ({ storeData, clearData }) => {
   const [notify, setNotify] = useState(null);
-  const [preload, setPreload] = useState(true);
-  const [mapPreload, setMapPreload] = useState(true);
 
   const { isMap, mapConfig, isRaw, defaultConfig, rawConfig } =
     useChartContext();
 
   const chartDispatch = useChartDispatch();
-  const [defaultStore, setDefaultStore] = useLocalStorage(
-    'defaultConfig',
-    defaultConfig
-  );
-  const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
-  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
 
   const onJsonUpdate = ({ updated_src: payload }) => {
     chartDispatch({
@@ -40,7 +31,7 @@ const JsonDataDisplay = () => {
   const onRawClick = () => {
     chartDispatch({
       type: 'RAW',
-      payload: rawStore
+      payload: rawConfig
     });
   };
 
@@ -55,16 +46,9 @@ const JsonDataDisplay = () => {
 
   const onSaveClick = () => {
     try {
-      if (isMap) {
-        setMapStore(mapConfig);
-      } else {
-        if (isRaw) {
-          setRawStore(rawConfig);
-        } else {
-          setDefaultStore(defaultConfig);
-        }
+      if (typeof storeData === 'function') {
+        storeData();
       }
-
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
         setNotify(null);
@@ -86,9 +70,12 @@ const JsonDataDisplay = () => {
         type: 'UPDATE_CHART',
         payload: currDefaultStore
       });
-      setRawStore(null);
-      setDefaultStore(currDefaultStore);
-      setMapStore(null);
+      chartDispatch({
+        type: 'RESET_MAP'
+      });
+      if (typeof clearData === 'function') {
+        clearData();
+      }
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -98,47 +85,8 @@ const JsonDataDisplay = () => {
     }
   };
 
-  const firstLoad = useCallback(() => {
-    if (preload) {
-      setPreload(false);
-      chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: isRaw ? rawStore : defaultStore
-      });
-    }
-    if (isMap && mapPreload) {
-      setMapPreload(false);
-      chartDispatch({
-        type: 'UPDATE_MAP',
-        payload: mapStore
-      });
-    }
-  }, [
-    chartDispatch,
-    rawStore,
-    defaultStore,
-    isRaw,
-    preload,
-    mapPreload,
-    isMap,
-    mapStore
-  ]);
-
-  useEffect(() => {
-    firstLoad();
-  }, [firstLoad]);
-
   const chartData = isRaw ? rawConfig : defaultConfig;
-  const jsonData = isMap
-    ? {
-        ...mapConfig,
-        layer: {
-          source: mapConfig?.layer?.source,
-          url: mapConfig?.layer?.url,
-          style: mapConfig?.layer?.style
-        }
-      }
-    : chartData;
+  const jsonData = isMap ? mapConfig : chartData;
 
   return (
     <div className="relative w-full h-[calc(100vh-20px)] bg-stone-800">
