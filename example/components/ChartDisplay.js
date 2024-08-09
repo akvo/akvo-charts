@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   Bar,
   Doughnut,
@@ -24,12 +24,49 @@ import {
   basePath
 } from '../static/config';
 
+const MapDisplay = ({ layer, ...mapProps }) => {
+  const getOnClickFn = (onClickString) => {
+    try {
+      return onClickString
+        ? // eslint-disable-next-line no-new-func
+          new Function(`return ${onClickString}`)()
+        : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const getLayerURL = (layerURL) => {
+    /**
+     * Add a basePath prefix for the production environment
+     * since it cannot automatically point to the GitHub Pages
+     * when requesting a /static asset URL.
+     */
+    return layerURL?.includes('/static') &&
+      process.env.NODE_ENV === 'production'
+      ? `${basePath}${layerURL}`
+      : layerURL;
+  };
+
+  const { url: layerURL, onClick: onClickString, ...layerProps } = layer;
+
+  const mapLayer = {
+    ...layerProps,
+    onClick: getOnClickFn(onClickString),
+    url: getLayerURL(layerURL)
+  };
+  return (
+    <MapView
+      layer={mapLayer}
+      {...mapProps}
+    />
+  );
+};
+
 const ChartDisplay = () => {
   const { isRaw, rawConfig, defaultConfig, isEdited, mapConfig, isMap } =
     useChartContext();
-  const { selectedChartType, showJson, showCode } = useDisplayContext();
-
-  const [fullscreen, setFullscreen] = useState(false);
+  const { selectedChartType } = useDisplayContext();
 
   const props = useMemo(() => {
     if (isRaw) {
@@ -62,15 +99,6 @@ const ChartDisplay = () => {
     return res;
   }, [isRaw, defaultConfig, selectedChartType, rawConfig, isEdited]);
 
-  useEffect(() => {
-    if (!showJson && !showCode && !fullscreen) {
-      setFullscreen(true);
-    }
-    if ((showJson || showCode) && fullscreen) {
-      setFullscreen(false);
-    }
-  }, [showJson, showCode, fullscreen]);
-
   const chartComponent = () => {
     switch (selectedChartType) {
       case chartTypes.BAR:
@@ -90,26 +118,7 @@ const ChartDisplay = () => {
       case chartTypes.STACK_LINE:
         return <StackLine {...props} />;
       case chartTypes.MAP:
-        const { layer, ...mapProps } = mapConfig;
-        /**
-         * Add a basePath prefix for the production environment
-         * since it cannot automatically point to the GitHub Pages
-         * when requesting a /static asset URL.
-         */
-        const mapLayer = {
-          ...layer,
-          url:
-            layer?.url?.includes('/static') &&
-            process.env.NODE_ENV === 'production'
-              ? `${basePath}${layer.url}`
-              : layer?.url
-        };
-        return (
-          <MapView
-            layer={mapLayer}
-            {...mapProps}
-          />
-        );
+        return <MapDisplay {...mapConfig} />;
       default:
         return null;
     }
