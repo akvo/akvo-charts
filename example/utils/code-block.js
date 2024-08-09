@@ -80,17 +80,19 @@ const renderVars = ({ config, data, stackMapping, layer, tile, rawConfig }) => {
 
   if (layer) {
     const { onClick, ...layerProps } = layer;
-    const lp =
-      typeof onClick === 'function'
-        ? {
-            ...layerProps,
-            onClick: '[onClick]'
-          }
-        : layerProps;
-    const layerStr = obj2String(lp).replace(/"\[onClick\]"/g, 'onClick');
-    if (typeof onClick === 'function') {
-      codes.push(`const onClick = ${onClick.toString()}\n`);
+    let lp = layerProps;
+    if (onClick) {
+      try {
+        lp = {
+          ...layerProps,
+          onClick: '[onClick]'
+        };
+        // eslint-disable-next-line no-new-func
+        const onClickFn = new Function(`return ${onClick}`)();
+        codes.push(`const onClick = ${onClickFn.toString()};\n`);
+      } catch {}
     }
+    const layerStr = obj2String(lp).replace(/"\[onClick\]"/g, 'onClick');
     codes.push(`const layer = ${layerStr};\n\n`);
   }
 
