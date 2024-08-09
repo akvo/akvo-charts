@@ -47,7 +47,13 @@ const MapView = ({ tile, layer, config, data }, ref) => {
     typeof layerOnClick === 'function'
       ? {
           ...layerProps,
-          onClick: (props) => layerOnClick(mapInstance.current.getMap(), props)
+          onClick: (props) => {
+            try {
+              layerOnClick(mapInstance.current.getMap(), props);
+            } catch (err) {
+              console.error('GeoJson|onClick', err);
+            }
+          }
         }
       : layerProps;
 
