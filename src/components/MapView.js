@@ -1,5 +1,4 @@
 import React, {
-  Fragment,
   forwardRef,
   useCallback,
   useEffect,
@@ -33,7 +32,6 @@ const MapView = ({ tile, layer, config, data }, ref) => {
   const [sourceData, setSourceData] = useState(null);
   const [preload, setPreload] = useState(true);
 
-  const mapContainerRef = useRef(null);
   const mapInstance = useRef(null);
 
   const {
@@ -77,6 +75,14 @@ const MapView = ({ tile, layer, config, data }, ref) => {
 
   useEffect(() => {
     if (mapInstance?.current && preload) {
+      if (config?.zoom) {
+        mapInstance.current.getMap().setZoom(config.zoom);
+      }
+
+      if (config?.center) {
+        mapInstance.current.getMap().panTo(config.center);
+      }
+
       setPreload(false);
     }
     if (!sourceData) {
@@ -91,51 +97,47 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         setSourceData(layerSource);
       }
     }
-  }, [mapInstance, preload, sourceData, layerSource]);
+  }, [
+    mapInstance,
+    preload,
+    sourceData,
+    layerSource,
+    config?.zoom,
+    config?.center
+  ]);
 
   // Expose the Leaflet map instance via ref
   useImperativeHandle(ref, () => mapInstance.current);
 
   return (
-    <Fragment>
-      <div
-        ref={mapContainerRef}
-        style={{
-          height: config?.height || '100vh',
-          width: config?.width || '100%'
-        }}
-        data-testid="map-view"
-      />
-      <LeafletProvider
-        ref={mapInstance}
-        mapContainerRef={mapContainerRef}
-        center={config?.center}
-        zoom={config?.zoom}
-      >
-        <TileLayer {...tile} />
-        {data?.map((d, dx) => (
-          <Marker
-            latlng={d?.point}
-            label={d?.label}
-            key={dx}
-          />
-        ))}
-        {getGeoJSONList(geoData).map((gd, gx) => (
-          <GeoJson
-            key={gx}
-            data={gd}
-            {...geoProps}
-          />
-        ))}
-        {getGeoJSONList(sourceData).map((sd, sx) => (
-          <GeoJson
-            key={sx}
-            data={sd}
-            {...geoProps}
-          />
-        ))}
-      </LeafletProvider>
-    </Fragment>
+    <LeafletProvider
+      ref={mapInstance}
+      width={config?.width}
+      height={config?.height}
+    >
+      <TileLayer {...tile} />
+      {data?.map((d, dx) => (
+        <Marker
+          latlng={d?.point}
+          label={d?.label}
+          key={dx}
+        />
+      ))}
+      {getGeoJSONList(geoData).map((gd, gx) => (
+        <GeoJson
+          key={gx}
+          data={gd}
+          {...geoProps}
+        />
+      ))}
+      {getGeoJSONList(sourceData).map((sd, sx) => (
+        <GeoJson
+          key={sx}
+          data={sd}
+          {...geoProps}
+        />
+      ))}
+    </LeafletProvider>
   );
 };
 
