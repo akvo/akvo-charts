@@ -823,16 +823,16 @@ function _catch(body, recover) {
 
 var LeafletContext = React.createContext(null);
 var LeafletProvider = React.forwardRef(function (_ref, ref) {
-  var mapContainerRef = _ref.mapContainerRef,
-    children = _ref.children,
-    center = _ref.center,
-    zoom = _ref.zoom;
+  var children = _ref.children,
+    width = _ref.width,
+    height = _ref.height;
   var mapRef = React.useRef(null);
+  var mapContainer = React.useRef(null);
   React.useEffect(function () {
-    if (mapContainerRef !== null && mapContainerRef !== void 0 && mapContainerRef.current) {
-      var map = L.map(mapContainerRef.current, {
-        center: center || [0, 0],
-        zoom: zoom || 2
+    if (!mapRef.current) {
+      var map = L.map(mapContainer.current, {
+        center: [0, 0],
+        zoom: 2
       });
       mapRef.current = map;
     }
@@ -842,7 +842,7 @@ var LeafletProvider = React.forwardRef(function (_ref, ref) {
         mapRef.current = null;
       }
     };
-  }, [mapContainerRef, center, zoom]);
+  }, []);
   React.useImperativeHandle(ref, function () {
     return {
       getMap: function getMap() {
@@ -850,9 +850,16 @@ var LeafletProvider = React.forwardRef(function (_ref, ref) {
       }
     };
   });
-  return /*#__PURE__*/React__default.createElement(LeafletContext.Provider, {
+  return /*#__PURE__*/React__default.createElement(React.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
+    ref: mapContainer,
+    style: {
+      height: height || '100vh',
+      width: width || '100%'
+    },
+    "data-testid": "map-view"
+  }), /*#__PURE__*/React__default.createElement(LeafletContext.Provider, {
     value: mapRef
-  }, children);
+  }, children));
 });
 var useLeaflet = function useLeaflet() {
   return React.useContext(LeafletContext);
@@ -987,7 +994,6 @@ var MapView = function MapView(_ref, ref) {
   var _useState3 = React.useState(true),
     preload = _useState3[0],
     setPreload = _useState3[1];
-  var mapContainerRef = React.useRef(null);
   var mapInstance = React.useRef(null);
   var layerURL = layer.url,
     layerSource = layer.source,
@@ -1030,6 +1036,12 @@ var MapView = function MapView(_ref, ref) {
   }, [loadGeoDataFromURL]);
   React.useEffect(function () {
     if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
+      if (config !== null && config !== void 0 && config.zoom) {
+        mapInstance.current.getMap().setZoom(config.zoom);
+      }
+      if (config !== null && config !== void 0 && config.center) {
+        mapInstance.current.getMap().panTo(config.center);
+      }
       setPreload(false);
     }
     if (!sourceData) {
@@ -1043,22 +1055,14 @@ var MapView = function MapView(_ref, ref) {
         setSourceData(layerSource);
       }
     }
-  }, [mapInstance, preload, sourceData, layerSource]);
+  }, [mapInstance, preload, sourceData, layerSource, config === null || config === void 0 ? void 0 : config.zoom, config === null || config === void 0 ? void 0 : config.center]);
   React.useImperativeHandle(ref, function () {
     return mapInstance.current;
   });
-  return /*#__PURE__*/React__default.createElement(React.Fragment, null, /*#__PURE__*/React__default.createElement("div", {
-    ref: mapContainerRef,
-    style: {
-      height: (config === null || config === void 0 ? void 0 : config.height) || '100vh',
-      width: (config === null || config === void 0 ? void 0 : config.width) || '100%'
-    },
-    "data-testid": "map-view"
-  }), /*#__PURE__*/React__default.createElement(LeafletProvider, {
+  return /*#__PURE__*/React__default.createElement(LeafletProvider, {
     ref: mapInstance,
-    mapContainerRef: mapContainerRef,
-    center: config === null || config === void 0 ? void 0 : config.center,
-    zoom: config === null || config === void 0 ? void 0 : config.zoom
+    width: config === null || config === void 0 ? void 0 : config.width,
+    height: config === null || config === void 0 ? void 0 : config.height
   }, /*#__PURE__*/React__default.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : data.map(function (d, dx) {
     return /*#__PURE__*/React__default.createElement(Marker, {
       latlng: d === null || d === void 0 ? void 0 : d.point,
@@ -1075,7 +1079,7 @@ var MapView = function MapView(_ref, ref) {
       key: sx,
       data: sd
     }, geoProps));
-  })));
+  }));
 };
 var MapView$1 = React.forwardRef(MapView);
 
