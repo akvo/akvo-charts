@@ -55,7 +55,7 @@ const initalChartState = {
         weight: 1,
         fillColor: '#fbbf24'
       },
-      onClick: (map, { target }) => map.fitBounds(target._bounds)
+      onClick: '(map, { target }) => map.fitBounds(target._bounds)'
     },
     data: [
       {
@@ -85,6 +85,11 @@ const initalChartState = {
 
 const chartReducer = (state, action) => {
   switch (action.type) {
+    case 'RESET_MAP':
+      return {
+        ...state,
+        mapConfig: initalChartState.mapConfig
+      };
     case 'UPDATE_MAP':
       if (!action.payload) {
         return state;
