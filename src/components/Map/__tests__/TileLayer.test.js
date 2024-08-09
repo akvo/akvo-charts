@@ -6,47 +6,30 @@ import TileLayer from '../TileLayer';
 describe('TileLayer', () => {
   it('should add the tile correctly and get the attribution', async () => {
     let instance = null;
-    const mRef = React.createRef();
     const { getByText, rerender } = render(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <TileLayer
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <TileLayer
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="© OpenStreetMap"
-          />
-        </LeafletProvider>
-      </>
+      </LeafletProvider>
     );
 
     rerender(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <TileLayer
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <TileLayer
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="© OpenStreetMap"
-          />
-        </LeafletProvider>
-      </>
+      </LeafletProvider>
     );
     await waitFor(async () => {
       expect(getByText('© OpenStreetMap')).toBeDefined();

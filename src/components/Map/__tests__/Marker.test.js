@@ -6,47 +6,31 @@ import Marker from '../Marker';
 describe('Marker', () => {
   it('should add the marker correctly and get the popUp label', async () => {
     let instance = null;
-    const mRef = React.createRef();
+
     const { getByAltText, getByText, rerender } = render(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <Marker
+          latlng={[-6.170166, 106.831375]}
+          label="Istiqlal Mosque"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <Marker
-            latlng={[-6.170166, 106.831375]}
-            label="Istiqlal Mosque"
-          />
-        </LeafletProvider>
-      </>
+      </LeafletProvider>
     );
 
     rerender(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <Marker
+          latlng={[-6.170166, 106.831375]}
+          label="Istiqlal Mosque"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <Marker
-            latlng={[-6.170166, 106.831375]}
-            label="Istiqlal Mosque"
-          />
-        </LeafletProvider>
-      </>
+      </LeafletProvider>
     );
     await waitFor(async () => {
       expect(getByAltText('Marker')).toBeDefined();

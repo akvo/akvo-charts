@@ -7,7 +7,6 @@ import GeoJson from '../GeoJson';
 describe('TileLayer', () => {
   it('should set geojson correctly and trigger onClick', async () => {
     let instance = null;
-    const mRef = React.createRef();
     const geoJsonData = {
       type: 'Feature',
       geometry: {
@@ -20,54 +19,38 @@ describe('TileLayer', () => {
     };
 
     const onClickMock = jest.fn();
-    const { debug, rerender, getByAltText } = render(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+    const { rerender, getByAltText } = render(
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <TileLayer
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <TileLayer
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="© OpenStreetMap"
-          />
-          <GeoJson
-            data={geoJsonData}
-            onClick={onClickMock}
-          />
-        </LeafletProvider>
-      </>
+        <GeoJson
+          data={geoJsonData}
+          onClick={onClickMock}
+        />
+      </LeafletProvider>
     );
 
     rerender(
-      <>
-        <div
-          width="400"
-          height="400"
-          ref={mRef}
+      <LeafletProvider
+        ref={(el) => {
+          instance = el;
+        }}
+      >
+        <TileLayer
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap"
         />
-        <LeafletProvider
-          mapContainerRef={mRef}
-          ref={(el) => {
-            instance = el;
-          }}
-        >
-          <TileLayer
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="© OpenStreetMap"
-          />
-          <GeoJson
-            data={geoJsonData}
-            onClick={onClickMock}
-          />
-        </LeafletProvider>
-      </>
+        <GeoJson
+          data={geoJsonData}
+          onClick={onClickMock}
+        />
+      </LeafletProvider>
     );
 
     act(() => {
