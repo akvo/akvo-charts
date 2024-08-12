@@ -1,60 +1,28 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
-import { useDisplayContext } from '../context/DisplayContextProvider';
 import { BookOpenIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
-import { useLocalStorage } from '../utils';
 import dynamic from 'next/dynamic';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
 });
 
-const JsonDataEditor = () => {
+const JsonDataEditor = ({ clearData }) => {
   const [notify, setNotify] = useState(null);
-  const [editorContent, setEditorContent] = useState('');
-  const [initialized, setInitialized] = useState(false);
 
   const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
     useChartContext();
-  const { selectedChartType } = useDisplayContext();
 
   const chartDispatch = useChartDispatch();
-  const [defaultStore, setDefaultStore] = useLocalStorage('defaultConfig');
-  const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
-  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
-
-  useEffect(() => {
-    if (!initialized) {
-      const initialContent = JSON.stringify(
-        isRaw ? rawStore : isMap ? mapStore : defaultStore,
-        null,
-        2
-      );
-      setEditorContent(initialContent);
-      setInitialized(true);
-    }
-  }, [initialized, isRaw, rawStore, defaultStore, isMap, mapStore]);
-
-  useEffect(() => {
-    if (initialized) {
-      const updatedContent = JSON.stringify(
-        isRaw ? rawConfig : isMap ? mapStore : defaultConfig,
-        null,
-        2
-      );
-      setEditorContent(updatedContent);
-    }
-  }, [selectedChartType, isRaw, initialized, isMap, mapStore]);
 
   const handleEditorChange = useCallback(
     (value) => {
-      setEditorContent(value);
       try {
         const parsedOptions = JSON.parse(value);
         chartDispatch({
@@ -69,13 +37,13 @@ const JsonDataEditor = () => {
         console.error('Invalid JSON:', error);
       }
     },
-    [chartDispatch]
+    [chartDispatch, isMap, isRaw]
   );
 
   const onRawClick = () => {
     chartDispatch({
       type: 'RAW',
-      payload: rawStore
+      payload: rawConfig
     });
   };
 
@@ -89,23 +57,20 @@ const JsonDataEditor = () => {
   };
 
   const onClearClick = () => {
-    let currDefaultStore = window.localStorage.getItem('defaultConfig');
-    currDefaultStore = currDefaultStore ? JSON.parse(currDefaultStore) : null;
-    let currMapStore = window.localStorage.getItem('mapConfig');
-    currMapStore = currMapStore ? JSON.parse(currMapStore) : null;
     try {
       chartDispatch({
         type: 'SET_EDITED',
         payload: false
       });
       chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: currDefaultStore
+        type: 'DELETE'
       });
-      setRawStore(null);
-      setDefaultStore(isMap ? currMapStore : currDefaultStore);
-      setMapStore(currMapStore);
-      setEditorContent(JSON.stringify(currDefaultStore, null, 2));
+      chartDispatch({
+        type: 'RESET_MAP'
+      });
+      if (typeof clearData === 'function') {
+        clearData();
+      }
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -156,7 +121,11 @@ const JsonDataEditor = () => {
       </div>
       <MonacoEditor
         language="json"
-        value={editorContent}
+        value={JSON.stringify(
+          isRaw ? rawConfig : isMap ? mapConfig : defaultConfig,
+          null,
+          2
+        )}
         onChange={handleEditorChange}
       />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>

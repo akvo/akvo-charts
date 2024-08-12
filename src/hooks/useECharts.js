@@ -80,7 +80,7 @@ const useECharts = ({
         chart.dispose();
       }
     };
-  }, [config, data, getOptions]);
+  }, [config, rawConfig, data, getOptions]);
 
   return chartRef;
 };

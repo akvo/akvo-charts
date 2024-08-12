@@ -43,7 +43,7 @@ describe('MapView chart', () => {
     await waitFor(() => {
       const chartContainer = screen.getByTestId('map-view');
       expect(chartContainer).toBeInTheDocument();
-      expect(instance.getCenter()).toEqual({
+      expect(instance.getMap().getCenter()).toEqual({
         lat: 39.73,
         lng: -104.99
       });

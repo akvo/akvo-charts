@@ -1,14 +1,81 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import CodeDisplay from './CodeDisplay';
 import JsonDataDisplay from './JsonDataDisplay';
 import JsonDataEditor from './JsonDataEditor';
 import { useDisplayContext } from '../context/DisplayContextProvider';
+import {
+  useChartContext,
+  useChartDispatch
+} from '../context/ChartContextProvider';
+import { useLocalStorage } from '../utils';
 
 const Editor = () => {
+  const { isRaw, isMap, rawConfig, defaultConfig, mapConfig } =
+    useChartContext();
   const { showJson, showCode } = useDisplayContext();
+
+  const [preload, setPreload] = useState(true);
+  const [mapPreload, setMapPreload] = useState(true);
   const [activeTab, setActiveTab] = useState('json');
+
+  const [defaultStore, setDefaultStore] = useLocalStorage(
+    'defaultConfig',
+    defaultConfig
+  );
+  const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
+  const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
+
+  const chartDispatch = useChartDispatch();
+
+  const firstLoad = useCallback(() => {
+    if (preload) {
+      setPreload(false);
+      chartDispatch({
+        type: 'UPDATE_CHART',
+        payload: isRaw ? rawStore : defaultStore
+      });
+    }
+    if (isMap && mapPreload) {
+      setMapPreload(false);
+      chartDispatch({
+        type: 'UPDATE_MAP',
+        payload: mapStore
+      });
+    }
+  }, [
+    chartDispatch,
+    rawStore,
+    defaultStore,
+    isRaw,
+    preload,
+    mapPreload,
+    isMap,
+    mapStore
+  ]);
+
+  const storeData = () => {
+    if (isMap) {
+      setMapStore(mapConfig);
+    } else {
+      if (isRaw) {
+        setRawStore(rawConfig);
+      } else {
+        setDefaultStore(defaultConfig);
+      }
+    }
+  };
+
+  const clearData = () => {
+    setDefaultStore(null);
+    setRawStore(null);
+    setMapStore(null);
+  };
+
+  useEffect(() => {
+    firstLoad();
+  }, [firstLoad]);
 
   useEffect(() => {
     setActiveTab(showJson ? 'json' : showCode ? 'code' : 'code');
@@ -61,12 +128,12 @@ const Editor = () => {
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'json' && showJson && (
           <div className="w-full h-full">
-            <JsonDataDisplay />
+            <JsonDataDisplay {...{ storeData, clearData }} />
           </div>
         )}
         {activeTab === 'code-editor' && showJson && (
           <div className="w-full h-full">
-            <JsonDataEditor />
+            <JsonDataEditor clearData={clearData} />
           </div>
         )}
         {activeTab === 'code' && showCode && (

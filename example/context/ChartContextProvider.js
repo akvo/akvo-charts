@@ -51,10 +51,11 @@ const initalChartState = {
       source: 'window.topoData',
       url: '/static/geojson/indonesia-prov.geojson',
       style: {
-        color: '#f59e0b',
+        color: '#92400e',
         weight: 1,
         fillColor: '#fbbf24'
-      }
+      },
+      onClick: '(map, { target }) => map.fitBounds(target._bounds)'
     },
     data: [
       {
@@ -72,7 +73,7 @@ const initalChartState = {
     ],
     config: {
       center: [-6.2, 106.816666],
-      zoom: 12,
+      zoom: 8,
       height: '100vh',
       width: '100%'
     }
@@ -84,6 +85,11 @@ const initalChartState = {
 
 const chartReducer = (state, action) => {
   switch (action.type) {
+    case 'RESET_MAP':
+      return {
+        ...state,
+        mapConfig: initalChartState.mapConfig
+      };
     case 'UPDATE_MAP':
       if (!action.payload) {
         return state;

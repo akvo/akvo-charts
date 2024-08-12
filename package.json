@@ -1,6 +1,6 @@
 {
   "name": "akvo-charts",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Echarts Wrapper for React Component",
   "author": "dedenbangkit",
   "license": "AGPL-3.0",
