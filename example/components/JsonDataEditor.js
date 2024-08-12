@@ -8,6 +8,7 @@ import {
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import dynamic from 'next/dynamic';
+import { useDisplayContext } from '../context/DisplayContextProvider';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
@@ -18,6 +19,12 @@ const JsonDataEditor = ({ storeData, clearData }) => {
 
   const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
     useChartContext();
+  const { selectedChartType } = useDisplayContext();
+  const content = isMap
+    ? mapConfig
+    : isRaw
+      ? rawConfig?.[selectedChartType] || {}
+      : defaultConfig;
 
   const chartDispatch = useChartDispatch();
 
@@ -29,21 +36,28 @@ const JsonDataEditor = ({ storeData, clearData }) => {
           type: 'SET_EDITED',
           payload: true
         });
-        chartDispatch({
-          type: isRaw ? 'UPDATE_RAW' : isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
-          payload: parsedOptions
-        });
+        if (isRaw) {
+          chartDispatch({
+            type: 'UPDATE_RAW',
+            chartType: selectedChartType,
+            payload: parsedOptions
+          });
+        } else {
+          chartDispatch({
+            type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
+            payload: parsedOptions
+          });
+        }
       } catch (error) {
         console.error('Invalid JSON:', error);
       }
     },
-    [chartDispatch, isMap, isRaw]
+    [chartDispatch, isMap, isRaw, selectedChartType]
   );
 
   const onRawClick = () => {
     chartDispatch({
-      type: 'RAW',
-      payload: rawConfig
+      type: 'RAW'
     });
   };
 
@@ -117,6 +131,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
               type="checkbox"
               id="raw"
               onClick={onRawClick}
+              checked={isRaw}
             />
             <label
               htmlFor="raw"
@@ -146,11 +161,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
       <MonacoEditor
         theme="vs-dark"
         language="json"
-        value={JSON.stringify(
-          isMap ? mapConfig : isRaw ? rawConfig : defaultConfig,
-          null,
-          2
-        )}
+        value={JSON.stringify(content, null, 2)}
         onChange={handleEditorChange}
       />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>

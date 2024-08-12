@@ -64,11 +64,18 @@ const MapDisplay = ({ layer, ...mapProps }) => {
 };
 
 const ChartDisplay = () => {
-  const { isRaw, rawConfig, defaultConfig, isEdited, mapConfig, isMap } =
-    useChartContext();
+  const {
+    isRaw,
+    rawConfig: rawOptions,
+    defaultConfig,
+    isEdited,
+    mapConfig,
+    isMap
+  } = useChartContext();
   const { selectedChartType } = useDisplayContext();
 
   const props = useMemo(() => {
+    const rawConfig = rawOptions?.[selectedChartType] || {};
     if (isRaw) {
       return { rawConfig };
     }
@@ -97,7 +104,7 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [isRaw, defaultConfig, selectedChartType, rawConfig, isEdited]);
+  }, [isRaw, defaultConfig, selectedChartType, rawOptions, isEdited]);
 
   const chartComponent = () => {
     switch (selectedChartType) {
