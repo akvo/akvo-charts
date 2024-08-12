@@ -42,9 +42,16 @@ const JsonDataEditor = ({ storeData, clearData }) => {
             chartType: selectedChartType,
             payload: parsedOptions
           });
-        } else {
+        }
+        if (!isMap || !isRaw) {
           chartDispatch({
-            type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
+            type: 'UPDATE_CHART',
+            payload: parsedOptions
+          });
+        }
+        if (isMap) {
+          chartDispatch({
+            type: 'UPDATE_MAP',
             payload: parsedOptions
           });
         }
@@ -79,9 +86,11 @@ const JsonDataEditor = ({ storeData, clearData }) => {
       chartDispatch({
         type: 'DELETE'
       });
-      chartDispatch({
-        type: 'RESET_MAP'
-      });
+      if (isMap) {
+        chartDispatch({
+          type: 'RESET_MAP'
+        });
+      }
       if (typeof clearData === 'function') {
         clearData();
       }
@@ -130,7 +139,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
             <input
               type="checkbox"
               id="raw"
-              onClick={onRawClick}
+              onChange={onRawClick}
               checked={isRaw}
             />
             <label
