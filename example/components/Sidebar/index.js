@@ -21,8 +21,6 @@ import {
   basicChartExampleData,
   exampleStackMapping
 } from '../../static/config';
-import { useLocalStorage } from '../../utils';
-import { useECharts } from '../../../src/hooks';
 
 const sidebarList = [
   {
@@ -79,20 +77,6 @@ const Sidebar = () => {
   const { selectedChartType } = useDisplayContext();
   const { defaultConfig, mapConfig, isMap } = useChartContext();
 
-  const [_, setDefaultStore] = useLocalStorage('defaultConfig', null);
-  const [__, setRawStore] = useLocalStorage('rawConfig', null);
-  const [___, setMapStore] = useLocalStorage('mapConfig', null);
-
-  useEffect(() => {
-    const res = { ...defaultConfig, data: basicChartExampleData };
-    delete res.stackMapping;
-    chartDispatch({
-      type: 'UPDATE_CHART',
-      payload: res
-    });
-    setDefaultStore(res);
-  }, []);
-
   const handleOnSidebarClick = ({ key }) => {
     // set default value
     let res = {
@@ -140,12 +124,6 @@ const Sidebar = () => {
       type: 'SET_EDITED',
       payload: false
     });
-    if (key === chartTypes.MAP) {
-      setMapStore(mapConfig);
-    } else {
-      setDefaultStore(res);
-    }
-    setRawStore(null);
   };
 
   return (
