@@ -30,6 +30,10 @@ const getOptions = ({
 
 const StackClusterColumn = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      barGap: 0
+    },
     rawConfig,
     config,
     data,

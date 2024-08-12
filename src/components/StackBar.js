@@ -40,6 +40,10 @@ const getOptions = ({
 
 const StackBar = ({ config, data, stackMapping = {}, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      stack: 'defaultStack'
+    },
     rawConfig,
     config,
     data,

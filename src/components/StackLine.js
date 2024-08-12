@@ -41,6 +41,10 @@ const getOptions = ({
 
 const StacLine = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'line',
+      stack: 'defaultStack'
+    },
     rawConfig,
     config,
     data,

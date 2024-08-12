@@ -54,7 +54,7 @@ const getOptions = ({
       }
     },
     dataset: {
-      source: scatterTransform(data)
+      source: data ? scatterTransform(data) : []
     }
   };
 };
@@ -67,6 +67,9 @@ const ScatterPlot = ({
   rawConfig
 }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'scatter'
+    },
     rawConfig,
     config,
     getOptions: ({ transformedConfig, overrideItemStyle }) =>

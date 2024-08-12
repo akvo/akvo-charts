@@ -24,6 +24,9 @@ const getOptions = ({
 
 const Bar = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar'
+    },
     rawConfig,
     config,
     data,

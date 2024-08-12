@@ -24,6 +24,9 @@ const getOptions = ({
 
 const Line = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'line'
+    },
     rawConfig,
     config,
     data,

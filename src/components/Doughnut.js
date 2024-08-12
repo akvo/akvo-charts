@@ -31,6 +31,10 @@ const Doughnut = ({ config, data, size = 40, rawConfig }) => {
   }, [size]);
 
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'pie',
+      radius: [`${torus}%`, `${MAX}%`]
+    },
     rawConfig,
     config: { ...config, showAxis: false },
     data,
