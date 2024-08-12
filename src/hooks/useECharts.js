@@ -7,7 +7,8 @@ const useECharts = ({
   config = {},
   data = [],
   getOptions = () => {},
-  rawConfig = {}
+  rawConfig = {},
+  rawOverrides = {}
 }) => {
   const chartRef = useRef(null);
 
@@ -65,11 +66,24 @@ const useECharts = ({
             };
           } else {
             // Handle raw config
-            options = { ...rawConfig };
+            options = rawConfig?.series
+              ? {
+                  ...rawConfig,
+                  series: rawConfig.series.map((s) => ({
+                    ...rawOverrides,
+                    ...s,
+                    type: rawOverrides?.type || s?.type
+                  }))
+                }
+              : rawConfig;
           }
 
           if (chart) {
-            chart.setOption(options);
+            try {
+              chart.setOption(options);
+            } catch (err) {
+              console.error('useECharts', err);
+            }
           }
         }
       }, 0);
@@ -80,7 +94,7 @@ const useECharts = ({
         chart.dispose();
       }
     };
-  }, [config, rawConfig, data, getOptions]);
+  }, [config, rawConfig, data, rawOverrides, getOptions]);
 
   return chartRef;
 };
