@@ -84,7 +84,7 @@ const CodeDisplay = () => {
       res = transform;
     }
     return res;
-  }, [selectedChartType, defaultConfig, isRaw, rawConfig]);
+  }, [selectedChartType, defaultConfig, isRaw, rawConfig, isEdited]);
 
   const codeProps = isMap ? mapConfig : chartData;
 
@@ -100,12 +100,14 @@ const CodeDisplay = () => {
 
   return (
     <div className="relative w-full bg-gray-100 pb-3">
-      <div className="sticky top-2 right-2 z-10 flex justify-end">
+      <div className="sticky top-2 right-2 z-[99] flex gap-2 justify-end">
         <button
+          type="button"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
           onClick={handleOnCopy}
-          className="bg-white p-2 rounded shadow-md hover:bg-gray-100 focus:outline-none"
         >
-          <CopyIcon size={20} />
+          <CopyIcon />
+          <span>Copy</span>
         </button>
       </div>
       <div
