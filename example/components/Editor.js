@@ -18,7 +18,7 @@ const Editor = () => {
 
   const [preload, setPreload] = useState(true);
   const [mapPreload, setMapPreload] = useState(true);
-  const [activeTab, setActiveTab] = useState('json');
+  const [activeTab, setActiveTab] = useState('json-editor');
 
   const [defaultStore, setDefaultStore] = useLocalStorage(
     'defaultConfig',
@@ -34,7 +34,11 @@ const Editor = () => {
       setPreload(false);
       chartDispatch({
         type: 'UPDATE_CHART',
-        payload: isRaw ? rawStore : defaultStore
+        payload: defaultStore
+      });
+      chartDispatch({
+        type: 'UPDATE_RAW',
+        payload: rawStore
       });
     }
     if (isMap && mapPreload) {
@@ -48,7 +52,6 @@ const Editor = () => {
     chartDispatch,
     rawStore,
     defaultStore,
-    isRaw,
     preload,
     mapPreload,
     isMap,
@@ -78,8 +81,13 @@ const Editor = () => {
   }, [firstLoad]);
 
   useEffect(() => {
-    setActiveTab(showJson ? 'json' : showCode ? 'code' : 'code');
-  }, [showJson, showCode]);
+    if (!showCode && activeTab === 'code') {
+      setActiveTab('json-editor');
+    }
+    if (!showJson && activeTab?.includes('json')) {
+      setActiveTab('code');
+    }
+  }, [showJson, showCode, activeTab]);
 
   if (!showJson && !showCode) {
     return null;
@@ -91,6 +99,18 @@ const Editor = () => {
         {showJson && (
           <button
             className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+              activeTab === 'json-editor'
+                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+            }`}
+            onClick={() => setActiveTab('json-editor')}
+          >
+            JSON Editor
+          </button>
+        )}
+        {showJson && (
+          <button
+            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
               activeTab === 'json'
                 ? 'bg-white border-b-2 border-blue-500 text-blue-600'
                 : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
@@ -98,18 +118,6 @@ const Editor = () => {
             onClick={() => setActiveTab('json')}
           >
             JSON Data
-          </button>
-        )}
-        {showJson && (
-          <button
-            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
-              activeTab === 'code-editor'
-                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
-            }`}
-            onClick={() => setActiveTab('code-editor')}
-          >
-            JSON Editor
           </button>
         )}
         {showCode && (
@@ -128,15 +136,15 @@ const Editor = () => {
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'json' && showJson && (
           <div className="w-full h-full">
-            <JsonDataDisplay {...{ storeData, clearData }} />
+            <JsonDataDisplay />
           </div>
         )}
-        {activeTab === 'code-editor' && showJson && (
+        {activeTab === 'json-editor' && showJson && (
           <div className="w-full h-full">
-            <JsonDataEditor clearData={clearData} />
+            <JsonDataEditor {...{ storeData, clearData }} />
           </div>
         )}
-        {activeTab === 'code' && showCode && (
+        {(activeTab === 'code' || (showCode && !showJson)) && (
           <div className="w-full h-full">
             <CodeDisplay />
           </div>
