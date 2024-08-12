@@ -1,12 +1,21 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
-import { basicChartExampleData } from '../static/config';
+import { basicChartExampleData, chartTypes } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
 
 const initalChartState = {
-  rawConfig: {},
+  rawConfig: {
+    [chartTypes.BAR]: {},
+    [chartTypes.LINE]: {},
+    [chartTypes.PIE]: {},
+    [chartTypes.DOUGHNUT]: {},
+    [chartTypes.STACK_BAR]: {},
+    [chartTypes.STACK_CLUSTER]: {},
+    [chartTypes.STACK_LINE]: {},
+    [chartTypes.SCATTER_PLOT]: {}
+  },
   defaultConfig: {
     config: {
       title: 'Akvo Chart',
@@ -105,15 +114,6 @@ const chartReducer = (state, action) => {
       if (!action.payload) {
         return state;
       }
-      if (state.isRaw) {
-        return {
-          ...state,
-          rawConfig: {
-            ...state.rawConfig,
-            ...action.payload
-          }
-        };
-      }
       return {
         ...state,
         defaultConfig: {
@@ -128,7 +128,12 @@ const chartReducer = (state, action) => {
     case 'UPDATE_RAW':
       return {
         ...state,
-        rawConfig: action.payload
+        rawConfig: action?.chartType
+          ? {
+              ...state.rawConfig,
+              [action.chartType]: action.payload
+            }
+          : action.payload
       };
     case 'MAP_SHOW':
       return {
@@ -141,7 +146,7 @@ const chartReducer = (state, action) => {
         isMap: false
       };
     case 'DELETE':
-      return { ...initalChartState, isMap: state?.isMap };
+      return { ...initalChartState, isMap: state?.isMap, isRaw: state?.isRaw };
     case 'SET_EDITED':
       return {
         ...state,
