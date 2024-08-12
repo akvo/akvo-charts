@@ -12,6 +12,7 @@
     "test:watch": "jest --watchAll"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
     "akvo-charts": "link:..",
     "autoprefixer": "^10.4.19",
     "buffer": "^6.0.3",
