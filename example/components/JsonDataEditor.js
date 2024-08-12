@@ -5,7 +5,7 @@ import {
   useChartContext,
   useChartDispatch
 } from '../context/ChartContextProvider';
-import { BookOpenIcon, TrashIcon } from './Icons';
+import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import dynamic from 'next/dynamic';
 
@@ -13,7 +13,7 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
 });
 
-const JsonDataEditor = ({ clearData }) => {
+const JsonDataEditor = ({ storeData, clearData }) => {
   const [notify, setNotify] = useState(null);
 
   const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
@@ -80,6 +80,20 @@ const JsonDataEditor = ({ clearData }) => {
     }
   };
 
+  const onSaveClick = () => {
+    try {
+      if (typeof storeData === 'function') {
+        storeData();
+      }
+      setNotify(`Configuration successfully saved`);
+      setTimeout(() => {
+        setNotify(null);
+      }, 1000);
+    } catch (error) {
+      handleOnError(error);
+    }
+  };
+
   return (
     <div className="relative w-full h-[calc(100vh-20px)]">
       <div className="absolute top-2 right-2 z-[99] flex gap-2">
@@ -97,19 +111,21 @@ const JsonDataEditor = ({ clearData }) => {
           <BookOpenIcon />
           <span>Read Docs</span>
         </a>
-        <div className="flex items-center px-3 py-1 bg-white rounded shadow-md">
-          <input
-            type="checkbox"
-            id="raw"
-            onClick={onRawClick}
-          />
-          <label
-            htmlFor="raw"
-            className="mx-1"
-          >
-            Raw
-          </label>
-        </div>
+        {!isMap && (
+          <div className="flex items-center px-3 py-1 bg-white rounded shadow-md">
+            <input
+              type="checkbox"
+              id="raw"
+              onClick={onRawClick}
+            />
+            <label
+              htmlFor="raw"
+              className="mx-1"
+            >
+              Raw
+            </label>
+          </div>
+        )}
         <button
           type="button"
           className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
@@ -118,11 +134,20 @@ const JsonDataEditor = ({ clearData }) => {
           <TrashIcon />
           <span>Clear</span>
         </button>
+        <button
+          type="button"
+          className="flex items-center gap-2 px-4 py-1 text-white bg-blue-600 hover:bg-blue-700 rounded shadow-md"
+          onClick={onSaveClick}
+        >
+          <CheckIcon />
+          <span>Save</span>
+        </button>
       </div>
       <MonacoEditor
+        theme="vs-dark"
         language="json"
         value={JSON.stringify(
-          isRaw ? rawConfig : isMap ? mapConfig : defaultConfig,
+          isMap ? mapConfig : isRaw ? rawConfig : defaultConfig,
           null,
           2
         )}
