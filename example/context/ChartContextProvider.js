@@ -87,6 +87,16 @@ const initalChartState = {
       width: '100%'
     }
   },
+  chartConfig: {
+    [chartTypes.BAR]: null,
+    [chartTypes.LINE]: null,
+    [chartTypes.PIE]: null,
+    [chartTypes.DOUGHNUT]: null,
+    [chartTypes.STACK_BAR]: null,
+    [chartTypes.STACK_CLUSTER]: null,
+    [chartTypes.STACK_LINE]: null,
+    [chartTypes.SCATTER_PLOT]: null
+  },
   isRaw: false,
   isMap: false,
   isEdited: false
@@ -94,6 +104,31 @@ const initalChartState = {
 
 const chartReducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CHARTS':
+      return {
+        ...state,
+        chartConfig: {
+          ...state.chartConfig,
+          ...action.payload
+        }
+      };
+    case 'CLEAR_CHART':
+      if (state?.isRaw) {
+        return {
+          ...state,
+          rawConfig: {
+            ...state.rawConfig,
+            [action?.chartType]: null
+          }
+        };
+      }
+      return {
+        ...state,
+        chartConfig: {
+          ...state.chartConfig,
+          [action?.chartType]: null
+        }
+      };
     case 'RESET_MAP':
       return {
         ...state,
@@ -111,13 +146,11 @@ const chartReducer = (state, action) => {
         }
       };
     case 'UPDATE_CHART':
-      if (!action.payload) {
-        return state;
-      }
       return {
         ...state,
-        defaultConfig: {
-          ...action.payload
+        chartConfig: {
+          ...state.chartConfig,
+          [action?.chartType]: action.payload
         }
       };
     case 'RAW':
@@ -145,8 +178,6 @@ const chartReducer = (state, action) => {
         ...state,
         isMap: false
       };
-    case 'DELETE':
-      return { ...initalChartState, isMap: state?.isMap, isRaw: state?.isRaw };
     case 'SET_EDITED':
       return {
         ...state,
