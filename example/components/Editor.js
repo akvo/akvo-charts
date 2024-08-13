@@ -183,7 +183,7 @@ const Editor = () => {
             }`}
             onClick={() => setActiveTab('json-editor')}
           >
-            JSON Editor
+            JS Editor
           </button>
         )}
         {showJson && (

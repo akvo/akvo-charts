@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import {
   useChartContext,
   useChartDispatch
@@ -8,7 +8,9 @@ import {
 import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import dynamic from 'next/dynamic';
+import debounce from 'lodash/debounce';
 import { useDisplayContext } from '../context/DisplayContextProvider';
+import { getConfigFromString, obj2String } from '../utils';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
@@ -22,33 +24,30 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
 
   const chartDispatch = useChartDispatch();
 
-  const handleEditorChange = useCallback(
-    (value) => {
-      try {
-        const parsedOptions = JSON.parse(value);
-        chartDispatch({
-          type: 'SET_EDITED',
-          payload: true
-        });
+  const handleEditorChange = debounce((value) => {
+    try {
+      const parsedOptions = getConfigFromString(value);
+      chartDispatch({
+        type: 'SET_EDITED',
+        payload: true
+      });
 
+      chartDispatch({
+        type: isRaw ? 'UPDATE_RAW' : 'UPDATE_CHART',
+        chartType: selectedChartType,
+        payload: parsedOptions
+      });
+
+      if (isMap) {
         chartDispatch({
-          type: isRaw ? 'UPDATE_RAW' : 'UPDATE_CHART',
-          chartType: selectedChartType,
+          type: 'UPDATE_MAP',
           payload: parsedOptions
         });
-
-        if (isMap) {
-          chartDispatch({
-            type: 'UPDATE_MAP',
-            payload: parsedOptions
-          });
-        }
-      } catch (error) {
-        console.error('Invalid JSON:', error);
       }
-    },
-    [chartDispatch, isMap, isRaw, selectedChartType]
-  );
+    } catch (err) {
+      console.error('Invalid JSON:', err);
+    }
+  }, 1000);
 
   const onRawClick = () => {
     chartDispatch({
@@ -141,8 +140,8 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
       </div>
       <MonacoEditor
         theme="vs-dark"
-        language="json"
-        value={JSON.stringify(jsonData, null, 2)}
+        language="javascript"
+        value={`option = ${obj2String(jsonData)}`}
         onChange={handleEditorChange}
       />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>
