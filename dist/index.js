@@ -289,7 +289,9 @@ var useECharts = function useECharts(_ref) {
     _ref$getOptions = _ref.getOptions,
     getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions,
     _ref$rawConfig = _ref.rawConfig,
-    rawConfig = _ref$rawConfig === void 0 ? {} : _ref$rawConfig;
+    rawConfig = _ref$rawConfig === void 0 ? {} : _ref$rawConfig,
+    _ref$rawOverrides = _ref.rawOverrides,
+    rawOverrides = _ref$rawOverrides === void 0 ? {} : _ref$rawOverrides;
   var chartRef = React.useRef(null);
   React.useEffect(function () {
     var chart;
@@ -334,10 +336,20 @@ var useECharts = function useECharts(_ref) {
               horizontal: horizontal
             }));
           } else {
-            options = _extends({}, rawConfig);
+            options = rawConfig !== null && rawConfig !== void 0 && rawConfig.series ? _extends({}, rawConfig, {
+              series: rawConfig.series.map(function (s) {
+                return _extends({}, rawOverrides, s, {
+                  type: (rawOverrides === null || rawOverrides === void 0 ? void 0 : rawOverrides.type) || (s === null || s === void 0 ? void 0 : s.type)
+                });
+              })
+            }) : rawConfig;
           }
           if (chart) {
-            chart.setOption(options);
+            try {
+              chart.setOption(options);
+            } catch (err) {
+              console.error('useECharts', err);
+            }
           }
         }
       }, 0);
@@ -347,7 +359,7 @@ var useECharts = function useECharts(_ref) {
         chart.dispose();
       }
     };
-  }, [config, rawConfig, data, getOptions]);
+  }, [config, rawConfig, data, rawOverrides, getOptions]);
   return chartRef;
 };
 
@@ -378,6 +390,9 @@ var Bar = function Bar(_ref2) {
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar'
+    },
     rawConfig: rawConfig,
     config: config,
     data: data,
@@ -424,6 +439,9 @@ var Line = function Line(_ref2) {
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'line'
+    },
     rawConfig: rawConfig,
     config: config,
     data: data,
@@ -467,6 +485,9 @@ var Pie = function Pie(_ref2) {
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'pie'
+    },
     rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
@@ -520,6 +541,10 @@ var Doughnut = function Doughnut(_ref2) {
     return MAX - size;
   }, [size]);
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'pie',
+      radius: [torus + "%", MAX + "%"]
+    },
     rawConfig: rawConfig,
     config: _extends({}, config, {
       showAxis: false
@@ -596,7 +621,7 @@ var _getOptions$4 = function getOptions(_ref3) {
       }
     }),
     dataset: {
-      source: scatterTransform(data)
+      source: data ? scatterTransform(data) : []
     }
   };
 };
@@ -609,6 +634,9 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
     rawConfig = _ref4.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'scatter'
+    },
     rawConfig: rawConfig,
     config: config,
     getOptions: function getOptions(_ref5) {
@@ -667,6 +695,10 @@ var StackBar = function StackBar(_ref2) {
     stackMapping = _ref2$stackMapping === void 0 ? {} : _ref2$stackMapping,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      stack: 'defaultStack'
+    },
     rawConfig: rawConfig,
     config: config,
     data: data,
@@ -721,6 +753,10 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      barGap: 0
+    },
     rawConfig: rawConfig,
     config: config,
     data: data,
@@ -779,6 +815,10 @@ var StacLine = function StacLine(_ref2) {
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
   var chartRef = useECharts({
+    rawOverrides: {
+      type: 'line',
+      stack: 'defaultStack'
+    },
     rawConfig: rawConfig,
     config: config,
     data: data,
