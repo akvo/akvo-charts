@@ -1,7 +1,5 @@
 import { chartTypes } from '../static/config';
-
-const obj2String = (str, replacer = null, space = 2) =>
-  JSON.stringify(str, replacer, space).replace(/"([^(")]+)":/g, '$1:');
+import { obj2String } from './string';
 
 const importBlocks = {
   [chartTypes.BAR]: `import { ${chartTypes.BAR} } from "akvo-charts";`,
