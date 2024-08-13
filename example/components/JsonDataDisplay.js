@@ -1,18 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import ReactJson from 'react-json-view';
-import { useChartContext } from '../context/ChartContextProvider';
 import { CopyIcon } from './Icons';
 import SnackBar from './Snackbar';
-import { useDisplayContext } from '../context/DisplayContextProvider';
 
-const JsonDataDisplay = () => {
+const JsonDataDisplay = ({ jsonData }) => {
   const [notify, setNotify] = useState(null);
-
-  const { isMap, mapConfig, isRaw, defaultConfig, rawConfig } =
-    useChartContext();
-  const { selectedChartType } = useDisplayContext();
 
   const onCopyClick = () => {
     navigator.clipboard.writeText(JSON.stringify(jsonData, null, 2));
@@ -21,13 +15,6 @@ const JsonDataDisplay = () => {
       setNotify(null);
     }, 1000);
   };
-
-  const jsonData = useMemo(() => {
-    const chartData = isRaw
-      ? rawConfig?.[selectedChartType] || {}
-      : defaultConfig;
-    return isMap ? mapConfig : chartData;
-  }, [defaultConfig, isMap, isRaw, mapConfig, rawConfig, selectedChartType]);
 
   return (
     <div className="relative w-full h-[calc(100vh-20px)] bg-stone-800">
