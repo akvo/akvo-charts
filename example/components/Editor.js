@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import CodeDisplay from './CodeDisplay';
 import JsonDataDisplay from './JsonDataDisplay';
 import JsonDataEditor from './JsonDataEditor';
@@ -10,11 +10,21 @@ import {
   useChartDispatch
 } from '../context/ChartContextProvider';
 import { useLocalStorage } from '../utils';
+import {
+  basicChart,
+  basicChartExampleData,
+  chartTypes,
+  exampleStackMapping,
+  excludeHorizontal,
+  excludeStackMapping,
+  scatterPlotExampleData,
+  stackChartExampleData
+} from '../static/config';
 
 const Editor = () => {
-  const { isRaw, isMap, rawConfig, defaultConfig, mapConfig } =
+  const { isRaw, isMap, rawConfig, defaultConfig, chartConfig, mapConfig } =
     useChartContext();
-  const { showJson, showCode } = useDisplayContext();
+  const { showJson, showCode, selectedChartType } = useDisplayContext();
 
   const [preload, setPreload] = useState(true);
   const [mapPreload, setMapPreload] = useState(true);
@@ -29,16 +39,62 @@ const Editor = () => {
 
   const chartDispatch = useChartDispatch();
 
+  const jsonData = useMemo(() => {
+    let res = {
+      ...defaultConfig,
+      config: { horizontal: false, ...defaultConfig.config },
+      data: basicChartExampleData
+    };
+    if (!basicChart.includes(selectedChartType)) {
+      res = {
+        ...res,
+        data: stackChartExampleData
+      };
+    }
+    if (selectedChartType === chartTypes.SCATTER_PLOT) {
+      res = {
+        ...res,
+        data: scatterPlotExampleData
+      };
+    }
+    if (excludeHorizontal.includes(selectedChartType)) {
+      const transform = { ...res };
+      delete transform.config.horizontal;
+      res = transform;
+    }
+    if (excludeStackMapping.includes(selectedChartType)) {
+      const transform2 = { ...res };
+      delete transform2.stackMapping;
+      res = transform2;
+    }
+    if (!excludeStackMapping.includes(selectedChartType)) {
+      res = { ...res, stackMapping: exampleStackMapping };
+    }
+    const chartData = isRaw
+      ? rawConfig?.[selectedChartType] || {}
+      : chartConfig?.[selectedChartType] || res;
+
+    return isMap ? mapConfig : chartData;
+  }, [
+    defaultConfig,
+    chartConfig,
+    isMap,
+    isRaw,
+    mapConfig,
+    rawConfig,
+    selectedChartType
+  ]);
+
   const firstLoad = useCallback(() => {
     if (preload) {
       setPreload(false);
       chartDispatch({
-        type: 'UPDATE_CHART',
-        payload: defaultStore
-      });
-      chartDispatch({
         type: 'UPDATE_RAW',
         payload: rawStore
+      });
+      chartDispatch({
+        type: 'SET_CHARTS',
+        payload: defaultStore
       });
     }
     if (isMap && mapPreload) {
@@ -65,14 +121,36 @@ const Editor = () => {
       if (isRaw) {
         setRawStore(rawConfig);
       } else {
-        setDefaultStore(defaultConfig);
+        setDefaultStore({
+          ...defaultStore,
+          [selectedChartType]: chartConfig?.[selectedChartType] || defaultConfig
+        });
       }
     }
   };
 
   const clearData = () => {
-    setDefaultStore(null);
-    setRawStore(null);
+    chartDispatch({
+      type: 'SET_EDITED',
+      payload: false
+    });
+    if (isMap) {
+      chartDispatch({
+        type: 'RESET_MAP'
+      });
+    }
+    chartDispatch({
+      type: 'CLEAR_CHART',
+      chartType: selectedChartType
+    });
+    setDefaultStore({
+      ...chartConfig,
+      [selectedChartType]: null
+    });
+    setRawStore({
+      ...rawConfig,
+      [selectedChartType]: null
+    });
     setMapStore(null);
   };
 
@@ -136,17 +214,17 @@ const Editor = () => {
       <div className="flex-1 overflow-y-auto">
         {activeTab === 'json' && showJson && (
           <div className="w-full h-full">
-            <JsonDataDisplay />
+            <JsonDataDisplay jsonData={jsonData} />
           </div>
         )}
         {activeTab === 'json-editor' && showJson && (
           <div className="w-full h-full">
-            <JsonDataEditor {...{ storeData, clearData }} />
+            <JsonDataEditor {...{ storeData, clearData, jsonData }} />
           </div>
         )}
         {(activeTab === 'code' || (showCode && !showJson)) && (
           <div className="w-full h-full">
-            <CodeDisplay />
+            <CodeDisplay {...{ jsonData, isRaw }} />
           </div>
         )}
       </div>
