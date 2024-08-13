@@ -68,6 +68,7 @@ const ChartDisplay = () => {
     isRaw,
     rawConfig: rawOptions,
     defaultConfig,
+    chartConfig,
     isEdited,
     mapConfig,
     isMap
@@ -79,7 +80,7 @@ const ChartDisplay = () => {
     if (isRaw) {
       return { rawConfig };
     }
-    let res = { ...defaultConfig };
+    let res = chartConfig?.[selectedChartType] || defaultConfig;
     if (!basicChart.includes(selectedChartType)) {
       res = {
         ...res,
@@ -104,7 +105,14 @@ const ChartDisplay = () => {
       res = transform;
     }
     return res;
-  }, [isRaw, defaultConfig, selectedChartType, rawOptions, isEdited]);
+  }, [
+    isRaw,
+    defaultConfig,
+    chartConfig,
+    selectedChartType,
+    rawOptions,
+    isEdited
+  ]);
 
   const chartComponent = () => {
     switch (selectedChartType) {
