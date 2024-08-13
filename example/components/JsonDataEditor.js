@@ -14,17 +14,11 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false
 });
 
-const JsonDataEditor = ({ storeData, clearData }) => {
+const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
   const [notify, setNotify] = useState(null);
 
-  const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
-    useChartContext();
+  const { isRaw, isMap } = useChartContext();
   const { selectedChartType } = useDisplayContext();
-  const content = isMap
-    ? mapConfig
-    : isRaw
-      ? rawConfig?.[selectedChartType] || {}
-      : defaultConfig;
 
   const chartDispatch = useChartDispatch();
 
@@ -36,19 +30,13 @@ const JsonDataEditor = ({ storeData, clearData }) => {
           type: 'SET_EDITED',
           payload: true
         });
-        if (isRaw) {
-          chartDispatch({
-            type: 'UPDATE_RAW',
-            chartType: selectedChartType,
-            payload: parsedOptions
-          });
-        }
-        if (!isMap || !isRaw) {
-          chartDispatch({
-            type: 'UPDATE_CHART',
-            payload: parsedOptions
-          });
-        }
+
+        chartDispatch({
+          type: isRaw ? 'UPDATE_RAW' : 'UPDATE_CHART',
+          chartType: selectedChartType,
+          payload: parsedOptions
+        });
+
         if (isMap) {
           chartDispatch({
             type: 'UPDATE_MAP',
@@ -79,21 +67,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
 
   const onClearClick = () => {
     try {
-      chartDispatch({
-        type: 'SET_EDITED',
-        payload: false
-      });
-      chartDispatch({
-        type: 'DELETE'
-      });
-      if (isMap) {
-        chartDispatch({
-          type: 'RESET_MAP'
-        });
-      }
-      if (typeof clearData === 'function') {
-        clearData();
-      }
+      clearData();
       setNotify(`Configuration cleared successfully`);
       setTimeout(() => {
         setNotify(null);
@@ -105,9 +79,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
 
   const onSaveClick = () => {
     try {
-      if (typeof storeData === 'function') {
-        storeData();
-      }
+      storeData();
       setNotify(`Configuration successfully saved`);
       setTimeout(() => {
         setNotify(null);
@@ -170,7 +142,7 @@ const JsonDataEditor = ({ storeData, clearData }) => {
       <MonacoEditor
         theme="vs-dark"
         language="json"
-        value={JSON.stringify(content, null, 2)}
+        value={JSON.stringify(jsonData, null, 2)}
         onChange={handleEditorChange}
       />
       <SnackBar show={notify ? true : false}>{notify}</SnackBar>
