@@ -1,26 +1,14 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import './styles.css';
 import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import {
-  useChartDispatch,
-  useChartContext
-} from '../../context/ChartContextProvider';
+import { useChartDispatch } from '../../context/ChartContextProvider';
 import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
-import {
-  excludeHorizontal,
-  excludeStackMapping,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData,
-  basicChartExampleData,
-  exampleStackMapping
-} from '../../static/config';
+import { chartTypes } from '../../static/config';
 
 const sidebarList = [
   {
@@ -75,44 +63,8 @@ const Sidebar = () => {
   const displayDispatch = useDisplayDispatch();
 
   const { selectedChartType } = useDisplayContext();
-  const { defaultConfig, mapConfig, isMap } = useChartContext();
 
   const handleOnSidebarClick = ({ key }) => {
-    // set default value
-    let res = {
-      ...defaultConfig,
-      config: { horizontal: false, ...defaultConfig.config },
-      data: basicChartExampleData
-    };
-    if (!basicChart.includes(key)) {
-      res = {
-        ...res,
-        data: stackChartExampleData
-      };
-    }
-    if (key === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(key)) {
-      const transform = { ...res };
-      delete transform.config.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(key)) {
-      const transform2 = { ...res };
-      delete transform2.stackMapping;
-      res = transform2;
-    }
-    if (!excludeStackMapping.includes(key)) {
-      res = { ...res, stackMapping: exampleStackMapping };
-    }
-    chartDispatch({
-      type: isMap ? 'UPDATE_MAP' : 'UPDATE_CHART',
-      payload: isMap ? mapConfig : res
-    });
     chartDispatch({
       type: key === chartTypes.MAP ? 'MAP_SHOW' : 'MAP_HIDE'
     });
