@@ -1,25 +1,16 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 
 import SnackBar from '../Snackbar';
-import { useChartContext } from '../../context/ChartContextProvider';
 import { useDisplayContext } from '../../context/DisplayContextProvider';
 import { codeBlock } from '../../utils';
 
 import 'highlight.js/styles/default.css';
 import './styles.css';
 import { CopyIcon } from '../Icons';
-import {
-  excludeStackMapping,
-  excludeHorizontal,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData
-} from '../../static/config';
 
 hljs.registerLanguage('javascript', javascript);
 
@@ -48,47 +39,14 @@ const createHighlight = (content, language) => {
   return `<pre class="pt-4 ml-[-16px]"><code><table class="code-table">${contentTable}</table></code></pre>`;
 };
 
-const CodeDisplay = () => {
+const CodeDisplay = ({ jsonData = {}, isRaw = false }) => {
   const [show, setShow] = useState(false);
 
-  const { selectedChartType } = useDisplayContext();
-  const { isRaw, defaultConfig, rawConfig, isEdited, isMap, mapConfig } =
-    useChartContext();
+  const { selectedChartType: type } = useDisplayContext();
 
-  const chartData = useMemo(() => {
-    if (isRaw) {
-      return { rawConfig: rawConfig?.[selectedChartType] || {} };
-    }
-    let res = { ...defaultConfig };
-    if (!basicChart.includes(selectedChartType)) {
-      res = {
-        ...res,
-        data: isEdited ? res.data : stackChartExampleData
-      };
-    }
-
-    if (selectedChartType === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: isEdited ? res.data : scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.stackMapping;
-      res = transform;
-    }
-    return res;
-  }, [selectedChartType, defaultConfig, isRaw, rawConfig, isEdited]);
-
-  const codeProps = isMap ? mapConfig : chartData;
-
-  const code = codeBlock({ type: selectedChartType, ...codeProps });
+  const code = isRaw
+    ? codeBlock({ type, rawConfig: jsonData })
+    : codeBlock({ type, ...jsonData });
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
