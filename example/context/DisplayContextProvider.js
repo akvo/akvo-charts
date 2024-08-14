@@ -7,26 +7,20 @@ const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
   selectedChartType: chartTypes.BAR,
-  showJson: true,
-  showCode: true
+  fullScreen: false
 };
 
 const displayReducer = (state, action) => {
   switch (action.type) {
-    case 'JSON':
-      return {
-        ...state,
-        showJson: !state.showJson
-      };
-    case 'CODE':
-      return {
-        ...state,
-        showCode: !state.showCode
-      };
     case 'SET_SELECTED_CHART_TYPE':
       return {
         ...state,
         selectedChartType: action.payload
+      };
+    case 'FULL_SCREEN':
+      return {
+        ...state,
+        fullScreen: !state.fullScreen
       };
     default:
       throw Error(
