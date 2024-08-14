@@ -62,7 +62,7 @@ const Sidebar = () => {
   const chartDispatch = useChartDispatch();
   const displayDispatch = useDisplayDispatch();
 
-  const { selectedChartType } = useDisplayContext();
+  const { selectedChartType, fullScreen } = useDisplayContext();
 
   const handleOnSidebarClick = ({ key }) => {
     chartDispatch({
@@ -79,9 +79,9 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="sidebar w-80 h-[calc(100vh-20px)] text-gray-800 flex flex-col">
+    <div className={`${fullScreen ? '-ml-72' : ''} flex-shrink-0 w-72 h-[calc(100vh-20px)] sidebar text-gray-800 flex flex-col animate-fadeIn transition-all duration-300`}>
       <div className="p-4 text-xl font-bold">Chart Types</div>
-      <ul className="flex-1 space-y-2 p-4">
+      <ul className="w-min-80 flex-1 space-y-2 p-4">
         {sidebarList.map((chartType, index) => (
           <li key={index}>
             <button
