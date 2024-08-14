@@ -20,8 +20,12 @@ const getOptions = ({ dimensions = [], overrideItemStyle }) => {
   };
 };
 
-const Pie = ({ config, data }) => {
+const Pie = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
+    rawOverrides: {
+      type: 'pie'
+    },
+    rawConfig,
     config: { ...config, showAxis: false },
     data,
     getOptions: ({ dimensions, overrideItemStyle }) =>

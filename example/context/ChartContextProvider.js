@@ -1,18 +1,27 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
-import { exampleStackMapping, basicChartExampleData } from '../static/config';
+import { basicChartExampleData, chartTypes } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
 
 const initalChartState = {
-  rawConfig: {},
+  rawConfig: {
+    [chartTypes.BAR]: {},
+    [chartTypes.LINE]: {},
+    [chartTypes.PIE]: {},
+    [chartTypes.DOUGHNUT]: {},
+    [chartTypes.STACK_BAR]: {},
+    [chartTypes.STACK_CLUSTER]: {},
+    [chartTypes.STACK_LINE]: {},
+    [chartTypes.SCATTER_PLOT]: {}
+  },
   defaultConfig: {
-    horizontal: false,
     config: {
       title: 'Akvo Chart',
       xAxisLabel: 'Product',
       yAxisLabel: 'Sales',
+      horizontal: false,
       legend: {
         show: true,
         icon: null,
@@ -39,7 +48,7 @@ const initalChartState = {
       color: []
     },
     data: basicChartExampleData,
-    stackMapping: exampleStackMapping
+    stackMapping: {}
   },
   mapConfig: {
     tile: {
@@ -51,10 +60,11 @@ const initalChartState = {
       source: 'window.topoData',
       url: '/static/geojson/indonesia-prov.geojson',
       style: {
-        color: '#f59e0b',
+        color: '#92400e',
         weight: 1,
         fillColor: '#fbbf24'
-      }
+      },
+      onClick: '(map, { target }) => map.fitBounds(target._bounds)'
     },
     data: [
       {
@@ -71,18 +81,59 @@ const initalChartState = {
       }
     ],
     config: {
-      center: [-6.200000, 106.816666],
-      zoom: 12,
+      center: [-6.2, 106.816666],
+      zoom: 8,
       height: '100vh',
       width: '100%'
     }
   },
+  chartConfig: {
+    [chartTypes.BAR]: null,
+    [chartTypes.LINE]: null,
+    [chartTypes.PIE]: null,
+    [chartTypes.DOUGHNUT]: null,
+    [chartTypes.STACK_BAR]: null,
+    [chartTypes.STACK_CLUSTER]: null,
+    [chartTypes.STACK_LINE]: null,
+    [chartTypes.SCATTER_PLOT]: null
+  },
   isRaw: false,
-  isMap: false
+  isMap: false,
+  isEdited: false
 };
 
 const chartReducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CHARTS':
+      return {
+        ...state,
+        chartConfig: {
+          ...state.chartConfig,
+          ...action.payload
+        }
+      };
+    case 'CLEAR_CHART':
+      if (state?.isRaw) {
+        return {
+          ...state,
+          rawConfig: {
+            ...state.rawConfig,
+            [action?.chartType]: null
+          }
+        };
+      }
+      return {
+        ...state,
+        chartConfig: {
+          ...state.chartConfig,
+          [action?.chartType]: null
+        }
+      };
+    case 'RESET_MAP':
+      return {
+        ...state,
+        mapConfig: initalChartState.mapConfig
+      };
     case 'UPDATE_MAP':
       if (!action.payload) {
         return state;
@@ -95,30 +146,27 @@ const chartReducer = (state, action) => {
         }
       };
     case 'UPDATE_CHART':
-      if (!action.payload) {
-        return state;
-      }
-      if (state.isRaw) {
-        return {
-          ...state,
-          rawConfig: {
-            ...state.rawConfig,
-            ...action.payload
-          }
-        };
-      }
       return {
         ...state,
-        defaultConfig: {
-          ...state.defaultConfig,
-          ...action.payload
+        chartConfig: {
+          ...state.chartConfig,
+          [action?.chartType]: action.payload
         }
       };
     case 'RAW':
       return {
         ...state,
-        isRaw: !state.isRaw,
-        rawConfig: action.payload || state.rawConfig
+        isRaw: !state.isRaw
+      };
+    case 'UPDATE_RAW':
+      return {
+        ...state,
+        rawConfig: action?.chartType
+          ? {
+              ...state.rawConfig,
+              [action.chartType]: action.payload
+            }
+          : action.payload
       };
     case 'MAP_SHOW':
       return {
@@ -130,8 +178,11 @@ const chartReducer = (state, action) => {
         ...state,
         isMap: false
       };
-    case 'DELETE':
-      return { ...initalChartState, isMap: state?.isMap };
+    case 'SET_EDITED':
+      return {
+        ...state,
+        isEdited: action.payload
+      };
     default:
       throw Error(
         `Unknown action: ${action.type}. Remeber action type must be CAPITAL text.`

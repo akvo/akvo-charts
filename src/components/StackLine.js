@@ -5,7 +5,7 @@ import styles from '../styles.module.css';
 const getOptions = ({
   dimensions,
   transformedConfig,
-  horizontal = true,
+  horizontal,
   overrideItemStyle
 }) => {
   const axis = horizontal ? 'yAxis' : 'xAxis';
@@ -39,11 +39,21 @@ const getOptions = ({
   };
 };
 
-const StacLine = ({ config, data, horizontal = true }) => {
+const StacLine = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
-    config: { ...config, horizontal },
+    rawOverrides: {
+      type: 'line',
+      stack: 'defaultStack'
+    },
+    rawConfig,
+    config,
     data,
-    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) =>
       getOptions({
         dimensions,
         horizontal,

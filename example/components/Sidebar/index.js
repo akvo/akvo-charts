@@ -6,8 +6,8 @@ import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
 import { useChartDispatch } from '../../context/ChartContextProvider';
+import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
 import { chartTypes } from '../../static/config';
 
 const sidebarList = [
@@ -61,6 +61,7 @@ const sidebarList = [
 const Sidebar = () => {
   const chartDispatch = useChartDispatch();
   const displayDispatch = useDisplayDispatch();
+
   const { selectedChartType } = useDisplayContext();
 
   const handleOnSidebarClick = ({ key }) => {
@@ -71,10 +72,14 @@ const Sidebar = () => {
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
     });
+    chartDispatch({
+      type: 'SET_EDITED',
+      payload: false
+    });
   };
 
   return (
-    <div className="sidebar w-80 h-screen text-gray-800 flex flex-col">
+    <div className="sidebar w-80 h-[calc(100vh-20px)] text-gray-800 flex flex-col">
       <div className="p-4 text-xl font-bold">Chart Types</div>
       <ul className="flex-1 space-y-2 p-4">
         {sidebarList.map((chartType, index) => (

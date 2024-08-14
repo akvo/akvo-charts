@@ -28,11 +28,21 @@ const getOptions = ({
   };
 };
 
-const StackClusterColumn = ({ config, data, horizontal = false }) => {
+const StackClusterColumn = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
-    config: { ...config, horizontal },
+    rawOverrides: {
+      type: 'bar',
+      barGap: 0
+    },
+    rawConfig,
+    config,
     data,
-    getOptions: ({ dimensions, transformedConfig, overrideItemStyle }) =>
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) =>
       getOptions({
         horizontal,
         dimensions,

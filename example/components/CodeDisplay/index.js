@@ -1,37 +1,23 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 
 import SnackBar from '../Snackbar';
-import { useChartContext } from '../../context/ChartContextProvider';
 import { useDisplayContext } from '../../context/DisplayContextProvider';
 import { codeBlock } from '../../utils';
 
 import 'highlight.js/styles/default.css';
 import './styles.css';
 import { CopyIcon } from '../Icons';
-import {
-  excludeStackMapping,
-  excludeHorizontal,
-  basicChart,
-  stackChartExampleData,
-  chartTypes,
-  scatterPlotExampleData
-} from '../../static/config';
 
 hljs.registerLanguage('javascript', javascript);
 
-const createHighlight = (content, languange) => {
+const createHighlight = (content, language) => {
   let lineNumber = 0;
-  const highlightedContent = hljs.highlightAuto(content, [languange]).value;
+  const highlightedContent = hljs.highlightAuto(content, [language]).value;
 
-  /* Highlight.js wraps comment blocks inside <span class="hljs-comment"></span>.
-     However, when the multi-line comment block is broken down into diffirent
-     table rows, only the first row, which is appended by the <span> tag, is
-     highlighted. The following code fixes it by appending <span> to each line
-     of the comment block. */
   const commentPattern = /<span class="hljs-comment">(.|\n)*?<\/span>/g;
   const adaptedHighlightedContent = highlightedContent.replace(
     commentPattern,
@@ -53,47 +39,14 @@ const createHighlight = (content, languange) => {
   return `<pre class="pt-4 ml-[-16px]"><code><table class="code-table">${contentTable}</table></code></pre>`;
 };
 
-const CodeDisplay = () => {
+const CodeDisplay = ({ jsonData = {}, isRaw = false }) => {
   const [show, setShow] = useState(false);
 
-  const { selectedChartType } = useDisplayContext();
-  const { isRaw, defaultConfig, rawConfig, isMap, mapConfig } =
-    useChartContext();
+  const { selectedChartType: type } = useDisplayContext();
 
-  const chartData = useMemo(() => {
-    if (isRaw) {
-      return rawConfig;
-    }
-    let res = { ...defaultConfig };
-    if (!basicChart.includes(selectedChartType)) {
-      res = {
-        ...res,
-        data: stackChartExampleData
-      };
-    }
-
-    if (selectedChartType === chartTypes.SCATTER_PLOT) {
-      res = {
-        ...res,
-        data: scatterPlotExampleData
-      };
-    }
-    if (excludeHorizontal.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.horizontal;
-      res = transform;
-    }
-    if (excludeStackMapping.includes(selectedChartType)) {
-      const transform = { ...res };
-      delete transform.stackMapping;
-      res = transform;
-    }
-    return res;
-  }, [selectedChartType, defaultConfig, isRaw, rawConfig]);
-
-  const codeProps = isMap ? mapConfig : chartData;
-
-  const code = codeBlock({ type: selectedChartType, ...codeProps });
+  const code = isRaw
+    ? codeBlock({ type, rawConfig: jsonData })
+    : codeBlock({ type, ...jsonData });
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
@@ -104,10 +57,15 @@ const CodeDisplay = () => {
   };
 
   return (
-    <div className="w-full relative hljs">
-      <div className="w-full top-2 right-2 text-right sticky">
-        <button onClick={handleOnCopy}>
-          <CopyIcon size={20} />
+    <div className="relative w-full bg-gray-100 pb-3">
+      <div className="sticky top-2 right-2 z-[99] flex gap-2 justify-end">
+        <button
+          type="button"
+          className="flex items-center gap-2 px-4 py-1 bg-white hover:bg-gray-200 rounded shadow-md"
+          onClick={handleOnCopy}
+        >
+          <CopyIcon />
+          <span>Copy</span>
         </button>
       </div>
       <div

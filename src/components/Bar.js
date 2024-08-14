@@ -22,11 +22,15 @@ const getOptions = ({
   };
 };
 
-const Bar = ({ config, data, horizontal = false }) => {
+const Bar = ({ config, data, rawConfig }) => {
   const chartRef = useECharts({
-    config: { ...config, horizontal },
+    rawOverrides: {
+      type: 'bar'
+    },
+    rawConfig,
+    config,
     data,
-    getOptions: ({ dimensions, overrideItemStyle }) =>
+    getOptions: ({ dimensions, overrideItemStyle, horizontal }) =>
       getOptions({ horizontal, dimensions, overrideItemStyle })
   });
 
