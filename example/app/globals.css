@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.ae-container {
+.chart-display div[role='figure'] {
   display: flex;
   justify-content: center;
 }

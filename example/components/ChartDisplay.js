@@ -140,7 +140,7 @@ const ChartDisplay = () => {
   };
 
   return (
-    <div className={`${isMap ? '' : 'pt-10'} h-2/3`}>{chartComponent()}</div>
+    <div className={`${isMap ? '' : 'pt-10'} h-2/3 chart-display`}>{chartComponent()}</div>
   );
 };
 
