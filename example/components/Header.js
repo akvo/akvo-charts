@@ -2,7 +2,7 @@
 import { useDisplayContext, useDisplayDispatch } from '../context/DisplayContextProvider';
 
 const Header = () => {
-  const displayContext = useDisplayContext();
+  const { fullScreen } = useDisplayContext();
   const displayDispatch = useDisplayDispatch();
 
   return (
@@ -22,16 +22,9 @@ const Header = () => {
         <button
           type="button"
           className="px-4 py-2 leading-3 font-bold rounded-none border-l border-zinc-300 bg-zinc-200 hover:bg-zinc-300"
-          onClick={() => displayDispatch({ type: 'JSON' })}
+          onClick={() => displayDispatch({ type: 'FULL_SCREEN' })}
         >
-          {`${displayContext.showJson ? '☑' : '☒'} JSON`}
-        </button>
-        <button
-          type="button"
-          className="px-4 py-2 leading-3 font-bold rounded-none border-l border-zinc-300 bg-zinc-200 hover:bg-zinc-300"
-          onClick={() => displayDispatch({ type: 'CODE' })}
-        >
-          {`${displayContext.showCode ? '☑' : '☒'} Code`}
+          {`${fullScreen ? '☑' : '☒'} Full Screen`}
         </button>
       </div>
     </div>
