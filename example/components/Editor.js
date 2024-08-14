@@ -165,7 +165,7 @@ const Editor = () => {
 
   return (
     <div className="w-full lg:w-1/2 h-[calc(100vh-20px)] flex flex-col gap-0">
-      <div className="flex border-b border-gray-300 bg-gray-200">
+      <div className="w-full lg:max-w-[845px] flex border-b border-gray-300 bg-gray-200">
         <button
           className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
             activeTab === 'json-editor'
