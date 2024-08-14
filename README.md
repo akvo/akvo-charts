@@ -1153,8 +1153,8 @@ The `MapView` component provides an easy way to render a map in your React appli
 | `source`     | string _or_ object [(GeoJSON/TopoJSON)](https://en.wikipedia.org/wiki/GeoJSON) | Sets the source of the layer data. This can be a reference to a GeoJSON/TopoJSON object stored in a global variable (e.g., `window.topoData`) or a GeoJSON/TopoJSON object directly. |
 | `url`        | string                                                  | Sets the GeoJSON/TopoJSON source from a URL. The data from this URL will be fetched and used as the layer source.                                                              |
 | `style` _(optional)_  | object                                                  | Defines the styling for GeoJSON lines and polygons using [Path options](https://leafletjs.com/reference.html#path-option), including properties like color, weight, and fillColor. |
-| `onClick`    | function _or_ string                                    | A function that defines the behavior when a feature in the layer is clicked. It can be a direct function or a string referencing a global function name.                          |
-| `onMouseOver`| function _or_ string                                    | A function that defines the behavior when the mouse hovers over a feature in the layer. It can be a direct function or a string referencing a global function name.               |
+| `onClick` _(optional)_| function _or_ string                                    | A function that defines the behavior when a feature in the layer is clicked. It can be a direct function or a string referencing a global function name.                          |
+| `onMouseOver` _(optional)_| function _or_ string                                    | A function that defines the behavior when the mouse hovers over a feature in the layer. It can be a direct function or a string referencing a global function name.               |
 
 
 
