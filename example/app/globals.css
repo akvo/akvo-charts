@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ae-container {
+  display: flex;
+  justify-content: center;
+}
