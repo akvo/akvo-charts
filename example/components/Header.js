@@ -18,7 +18,7 @@ const Header = () => {
           alt="npm"
         />
       </div>
-      <div className="w-fit flex">
+      <div className="w-fit hidden lg:flex">
         <button
           type="button"
           className="px-4 py-2 leading-3 font-bold rounded-none border-l border-zinc-300 bg-zinc-200 hover:bg-zinc-300"
