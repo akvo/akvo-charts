@@ -304,47 +304,43 @@ export default BarChartExample;
 ```jsx
 import { Bar } from "akvo-charts";
 
-const rawConfig = {
-  xAxis: {
-    type: "category",
-    data: [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat",
-      "Sun"
-    ]
-  },
-  yAxis: {
-    type: "value"
-  },
-  series: [
-    {
+const BarChartExample = () => {
+  const rawConfig = {
+    xAxis: {
+      type: "category",
       data: [
-        120,
-        200,
-        150,
-        80,
-        70,
-        110,
-        130
-      ],
-      type: "bar"
-    }
-  ]
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    yAxis: {
+      type: "value"
+    },
+    series: [
+      {
+        data: [
+          120,
+          200,
+          150,
+          80,
+          70,
+          110,
+          130
+        ],
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <Bar rawConfig={rawConfig} />;
 };
 
-const Chart = () => {
-	return (
-		<div>
-			<Bar rawConfig={rawConfig} />
-		</div>
-	);
-};
-
-export default Chart;
+export default BarChartExample;
 ```
 
 
@@ -387,45 +383,41 @@ export default LineChartExample;
 ```jsx
 import { Line } from "akvo-charts";
 
-const rawConfig = {
-  xAxis: {
-    type: "category",
-    data: [
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat",
-      "Sun"
-    ]
-  },
-  yAxis: {
-    type: "value"
-  },
-  series: [
-    {
-      data: [
-        820,
-        932,
-        901,
-        934,
-        1290,
-        1330,
-        1320
-      ],
-      type: "line",
-      smooth: true
-    }
-  ]
-};
-
 const LineChartExample = () => {
-	return (
-		<div>
-			<Line rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    xAxis: {
+      type: "category",
+      data: [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    yAxis: {
+      type: "value"
+    },
+    series: [
+      {
+        data: [
+          820,
+          932,
+          901,
+          934,
+          1290,
+          1330,
+          1320
+        ],
+        type: "line",
+        smooth: true
+      }
+    ]
+  };
+  
+  return <Line rawConfig={rawConfig} />;
 };
 
 export default LineChartExample;
@@ -469,63 +461,59 @@ export default PieChartExample;
 ```jsx
 import { Pie } from "akvo-charts";
 
-const rawConfig = {
-  title: {
-    text: "Referer of a Website",
-    subtext: "Fake Data",
-    left: "center"
-  },
-  tooltip: {
-    trigger: "item"
-  },
-  legend: {
-    orient: "vertical",
-    left: "left"
-  },
-  series: [
-    {
-      name: "Access From",
-      type: "pie",
-      radius: "50%",
-      data: [
-        {
-          value: 1048,
-          name: "Search Engine"
-        },
-        {
-          value: 735,
-          name: "Direct"
-        },
-        {
-          value: 580,
-          name: "Email"
-        },
-        {
-          value: 484,
-          name: "Union Ads"
-        },
-        {
-          value: 300,
-          name: "Video Ads"
-        }
-      ],
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: "rgba(0, 0, 0, 0.5)"
+const PieChartExample = () => {
+  const rawConfig = {
+    title: {
+      text: "Referer of a Website",
+      subtext: "Fake Data",
+      left: "center"
+    },
+    tooltip: {
+      trigger: "item"
+    },
+    legend: {
+      orient: "vertical",
+      left: "left"
+    },
+    series: [
+      {
+        name: "Access From",
+        type: "pie",
+        radius: "50%",
+        data: [
+          {
+            value: 1048,
+            name: "Search Engine"
+          },
+          {
+            value: 735,
+            name: "Direct"
+          },
+          {
+            value: 580,
+            name: "Email"
+          },
+          {
+            value: 484,
+            name: "Union Ads"
+          },
+          {
+            value: 300,
+            name: "Video Ads"
+          }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)"
+          }
         }
       }
-    }
-  ]
-};
-
-const PieChartExample = () => {
-	return (
-		<div>
-			<Pie rawConfig={rawConfig} />
-		</div>
-	);
+    ]
+  };
+  
+  return <Pie rawConfig={rawConfig} />;
 };
 
 export default PieChartExample;
@@ -570,69 +558,65 @@ export default DoughnutChartExample;
 ```jsx
 import { Doughnut } from "akvo-charts";
 
-const rawConfig = {
-  tooltip: {
-    trigger: "item"
-  },
-  legend: {
-    top: "5%",
-    left: "center"
-  },
-  series: [
-    {
-      name: "Access From",
-      type: "pie",
-      radius: [
-        "40%",
-        "70%"
-      ],
-      avoidLabelOverlap: false,
-      label: {
-        show: false,
-        position: "center"
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 40,
-          fontWeight: "bold"
-        }
-      },
-      labelLine: {
-        show: false
-      },
-      data: [
-        {
-          value: 1048,
-          name: "Search Engine"
-        },
-        {
-          value: 735,
-          name: "Direct"
-        },
-        {
-          value: 580,
-          name: "Email"
-        },
-        {
-          value: 484,
-          name: "Union Ads"
-        },
-        {
-          value: 300,
-          name: "Video Ads"
-        }
-      ]
-    }
-  ]
-};
-
 const DoughnutChartExample = () => {
-	return (
-		<div>
-			<Doughnut rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    tooltip: {
+      trigger: "item"
+    },
+    legend: {
+      top: "5%",
+      left: "center"
+    },
+    series: [
+      {
+        name: "Access From",
+        type: "pie",
+        radius: [
+          "40%",
+          "70%"
+        ],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: "center"
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 40,
+            fontWeight: "bold"
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          {
+            value: 1048,
+            name: "Search Engine"
+          },
+          {
+            value: 735,
+            name: "Direct"
+          },
+          {
+            value: 580,
+            name: "Email"
+          },
+          {
+            value: 484,
+            name: "Union Ads"
+          },
+          {
+            value: 300,
+            name: "Video Ads"
+          }
+        ]
+      }
+    ]
+  };
+  
+  return <Doughnut rawConfig={rawConfig} />;
 };
 
 export default DoughnutChartExample;
@@ -707,66 +691,62 @@ export default StackBarChartExample;
 ```jsx
 import { StackBar } from "akvo-charts";
 
-const rawConfig = {
-  legend: {},
-  tooltip: {},
-  dataset: {
-    source: [
-      [
-        "product",
-        "2015",
-        "2016",
-        "2017"
-      ],
-      [
-        "Matcha Latte",
-        43.3,
-        85.8,
-        93.7
-      ],
-      [
-        "Milk Tea",
-        83.1,
-        73.4,
-        55.1
-      ],
-      [
-        "Cheese Cocoa",
-        86.4,
-        65.2,
-        82.5
-      ],
-      [
-        "Walnut Brownie",
-        72.4,
-        53.9,
-        39.1
-      ]
-    ]
-  },
-  xAxis: {
-    type: "category"
-  },
-  yAxis: {},
-  series: [
-    {
-      type: "bar"
-    },
-    {
-      type: "bar"
-    },
-    {
-      type: "bar"
-    }
-  ]
-};
-
 const StackBarChartExample = () => {
-	return (
-		<div>
-			<StackBar rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: [
+        [
+          "product",
+          "2015",
+          "2016",
+          "2017"
+        ],
+        [
+          "Matcha Latte",
+          43.3,
+          85.8,
+          93.7
+        ],
+        [
+          "Milk Tea",
+          83.1,
+          73.4,
+          55.1
+        ],
+        [
+          "Cheese Cocoa",
+          86.4,
+          65.2,
+          82.5
+        ],
+        [
+          "Walnut Brownie",
+          72.4,
+          53.9,
+          39.1
+        ]
+      ]
+    },
+    xAxis: {
+      type: "category"
+    },
+    yAxis: {},
+    series: [
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <StackBar rawConfig={rawConfig} />;
 };
 
 export default StackBarChartExample;
@@ -818,66 +798,62 @@ export default StackClusterColumnChartExample;
 ```jsx
 import { StackClusterColumn } from "akvo-charts";
 
-const rawConfig = {
-  legend: {},
-  tooltip: {},
-  dataset: {
-    source: [
-      [
-        "product",
-        "2015",
-        "2016",
-        "2017"
-      ],
-      [
-        "Matcha Latte",
-        43.3,
-        85.8,
-        93.7
-      ],
-      [
-        "Milk Tea",
-        83.1,
-        73.4,
-        55.1
-      ],
-      [
-        "Cheese Cocoa",
-        86.4,
-        65.2,
-        82.5
-      ],
-      [
-        "Walnut Brownie",
-        72.4,
-        53.9,
-        39.1
-      ]
-    ]
-  },
-  xAxis: {
-    type: "category"
-  },
-  yAxis: {},
-  series: [
-    {
-      type: "bar"
-    },
-    {
-      type: "bar"
-    },
-    {
-      type: "bar"
-    }
-  ]
-};
-
 const StackClusterColumnChartExample = () => {
-	return (
-		<div>
-			<StackClusterColumn rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: [
+        [
+          "product",
+          "2015",
+          "2016",
+          "2017"
+        ],
+        [
+          "Matcha Latte",
+          43.3,
+          85.8,
+          93.7
+        ],
+        [
+          "Milk Tea",
+          83.1,
+          73.4,
+          55.1
+        ],
+        [
+          "Cheese Cocoa",
+          86.4,
+          65.2,
+          82.5
+        ],
+        [
+          "Walnut Brownie",
+          72.4,
+          53.9,
+          39.1
+        ]
+      ]
+    },
+    xAxis: {
+      type: "category"
+    },
+    yAxis: {},
+    series: [
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <StackClusterColumn rawConfig={rawConfig} />;
 };
 
 export default StackClusterColumnChartExample;
@@ -925,41 +901,37 @@ export default ScatterPlotChartExample;
 ```jsx
 import { ScatterPlot } from "akvo-charts";
 
-const rawConfig = {
-  xAxis: {},
-  yAxis: {},
-  series: [
-    {
-      symbolSize: 20,
-      data: [
-        [
-          10,
-          8.04
-        ],
-        [
-          8.07,
-          6.95
-        ],
-        [
-          13,
-          7.58
-        ],
-        [
-          9.05,
-          8.81
-        ],
-      ],
-      type: "scatter"
-    }
-  ]
-};
-
 const ScatterPlotChartExample = () => {
-	return (
-		<div>
-			<ScatterPlot rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    xAxis: {},
+    yAxis: {},
+    series: [
+      {
+        symbolSize: 20,
+        data: [
+          [
+            10,
+            8.04
+          ],
+          [
+            8.07,
+            6.95
+          ],
+          [
+            13,
+            7.58
+          ],
+          [
+            9.05,
+            8.81
+          ],
+        ],
+        type: "scatter"
+      }
+    ]
+  };
+  
+  return <ScatterPlot rawConfig={rawConfig} />;
 };
 
 export default ScatterPlotChartExample;
@@ -1009,125 +981,121 @@ export default StackLineChartExample;
 ```jsx
 import { StackLine } from "akvo-charts";
 
-const rawConfig = {
-  title: {
-    text: "Product Sales"
-  },
-  tooltip: {
-    trigger: "axis",
-    axisPointer: {
-      type: "cross",
-      label: {
-        backgroundColor: "#6a7985"
-      }
-    }
-  },
-  legend: {
-    data: [
-      "Matcha Latte",
-      "Milk Tea",
-      "Cheese Cocoa",
-      "Walnut Brownie"
-    ]
-  },
-  toolbox: {
-    feature: {
-      saveAsImage: {}
-    }
-  },
-  grid: {
-    left: "3%",
-    right: "4%",
-    bottom: "3%",
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: "category",
-      boundaryGap: false,
-      data: [
-        "2015",
-        "2016",
-        "2017",
-        "2018"
-      ]
-    }
-  ],
-  yAxis: [
-    {
-      type: "value"
-    }
-  ],
-  series: [
-    {
-      name: "Matcha Latte",
-      type: "line",
-      stack: "Total",
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [
-        43.3,
-        85.8,
-        93.7,
-        90
-      ]
-    },
-    {
-      name: "Milk Tea",
-      type: "line",
-      stack: "Total",
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [
-        83.1,
-        73.4,
-        55.1,
-        78
-      ]
-    },
-    {
-      name: "Cheese Cocoa",
-      type: "line",
-      stack: "Total",
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [
-        86.4,
-        65.2,
-        82.5,
-        44.3
-      ]
-    },
-    {
-      name: "Walnut Brownie",
-      type: "line",
-      stack: "Total",
-      areaStyle: {},
-      emphasis: {
-        focus: "series"
-      },
-      data: [
-        72.4,
-        53.9,
-        39.1,
-        55.5
-      ]
-    }
-  ]
-};
-
 const StackLineChartExample = () => {
-	return (
-		<div>
-			<StackLine rawConfig={rawConfig} />
-		</div>
-	);
+  const rawConfig = {
+    title: {
+      text: "Product Sales"
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross",
+        label: {
+          backgroundColor: "#6a7985"
+        }
+      }
+    },
+    legend: {
+      data: [
+        "Matcha Latte",
+        "Milk Tea",
+        "Cheese Cocoa",
+        "Walnut Brownie"
+      ]
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: "category",
+        boundaryGap: false,
+        data: [
+          "2015",
+          "2016",
+          "2017",
+          "2018"
+        ]
+      }
+    ],
+    yAxis: [
+      {
+        type: "value"
+      }
+    ],
+    series: [
+      {
+        name: "Matcha Latte",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          43.3,
+          85.8,
+          93.7,
+          90
+        ]
+      },
+      {
+        name: "Milk Tea",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          83.1,
+          73.4,
+          55.1,
+          78
+        ]
+      },
+      {
+        name: "Cheese Cocoa",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          86.4,
+          65.2,
+          82.5,
+          44.3
+        ]
+      },
+      {
+        name: "Walnut Brownie",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          72.4,
+          53.9,
+          39.1,
+          55.5
+        ]
+      }
+    ]
+  };
+  
+  return <StackLine rawConfig={rawConfig} />;
 };
 
 export default StackLineChartExample;
@@ -1181,64 +1149,60 @@ The `MapView` component provides an easy way to render a map in your React appli
 import React from "react";
 import { MapView } from "akvo-charts";
 
-const config = {
-  center: [
-    -6.2,
-    106.816666
-  ],
-  zoom: 8,
-  height: "100vh",
-  width: "100%"
-};
-
-const data = [
-  {
-    point: [
-      -6.170166,
-      106.831375
-    ],
-    label: "Istiqlal Mosque"
-  },
-  {
-    point: [
-      -6.174596,
-      106.830407
-    ],
-    label: "Gambir Station"
-  },
-  {
-    point: [
-      -6.175414,
-      106.827175
-    ],
-    label: "The National Monument"
-  }
-];
-
-const onClick = (map, { target }) => map.fitBounds(target._bounds);
-const layer = {
-  source: "window.topoData",
-  url: "https://akvo.github.io/akvo-charts/static/geojson/indonesia-prov.geojson",
-  style: {
-    color: "#92400e",
-    weight: 1,
-    fillColor: "#fbbf24"
-  },
-  onClick: onClick
-};
-
-const tile = {
-  url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-  maxZoom: 19,
-  attribution: "© OpenStreetMap"
-};
-
 const MapViewExample = () => {
-	return (
-		<div>
-			<MapView tile={tile} layer={layer} data={data} config={config} />
-		</div>
-	);
+  const config = {
+    center: [
+      -6.2,
+      106.816666
+    ],
+    zoom: 8,
+    height: "100vh",
+    width: "100%"
+  };
+
+  const data = [
+    {
+      point: [
+        -6.170166,
+        106.831375
+      ],
+      label: "Istiqlal Mosque"
+    },
+    {
+      point: [
+        -6.174596,
+        106.830407
+      ],
+      label: "Gambir Station"
+    },
+    {
+      point: [
+        -6.175414,
+        106.827175
+      ],
+      label: "The National Monument"
+    }
+  ];
+
+  const onClick = (map, { target }) => map.fitBounds(target._bounds);
+  const layer = {
+    source: "window.topoData",
+    url: "https://akvo.github.io/akvo-charts/static/geojson/indonesia-prov.geojson",
+    style: {
+      color: "#92400e",
+      weight: 1,
+      fillColor: "#fbbf24"
+    },
+    onClick: onClick
+  };
+
+  const tile = {
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    attribution: "© OpenStreetMap"
+  };
+
+  return <MapView tile={tile} layer={layer} data={data} config={config} />;
 };
 
 export default MapViewExample;
