@@ -1,6 +1,8 @@
 # Akvo Charts
 
-Echarts Wrapper for React Component
+The `akvo-charts` library allows you to create a variety of charts by leveraging [Apache ECharts](https://echarts.apache.org/en/index.html) configurations. In this documentation, we'll demonstrate how to use all the components from akvo-charts with custom configurations, using both the default config and the rawConfig prop, which directly maps to the ECharts options.
+
+**Note:** In addition to chart components, `akvo-charts` also includes a `MapView` component that leverages [Leaflet](https://leafletjs.com/) for creating interactive maps. This provides a powerful combination of charting and mapping capabilities within a single library.
 
 [![NPM](https://img.shields.io/npm/v/akvo-charts.svg)](https://www.npmjs.com/package/akvo-charts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -47,6 +49,12 @@ Echarts Wrapper for React Component
     - [Stack Line Chart](#stack-line-chart)
       - [Props](#props-7)
       - [Example usage of StackLine chart](#example-usage-of-stackline-chart)
+    - [MapView](#mapview)
+      - [Tile](#tile)
+      - [Layer](#layer)
+      - [Data](#data-1)
+      - [Config](#config-1)
+      - [Example usage of MapView](#example-usage-of-mapview)
 
 ---
 
@@ -63,6 +71,15 @@ yarn add akvo-charts
 ---
 
 ## API
+
+### Raw config
+
+An object containing the chart configuration options that adhere to Apache ECharts' specifications. This allows you to customize various aspects of the chart, including axes, series, grid, and more. The structure of this object should follow the [ECharts option documentation](https://echarts.apache.org/en/option.html).
+
+
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| rawConfig | object | An object containing the chart configuration options that adhere to Apache ECharts' specifications. **When `rawConfig` is provided, it will override the default `data` and `config` props.** This allows you to customize various aspects of the chart, including axes, series, grid, and more. The structure of this object should follow the [ECharts option documentation](https://echarts.apache.org/en/option.html). |
 
 ### Config
 
@@ -282,6 +299,51 @@ const BarChartExample = () => {
 export default BarChartExample;
 ```
 
+#### Example usage of `rawConfig` for a Bar chart
+
+```jsx
+import { Bar } from "akvo-charts";
+
+const BarChartExample = () => {
+  const rawConfig = {
+    xAxis: {
+      type: "category",
+      data: [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    yAxis: {
+      type: "value"
+    },
+    series: [
+      {
+        data: [
+          120,
+          200,
+          150,
+          80,
+          70,
+          110,
+          130
+        ],
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <Bar rawConfig={rawConfig} />;
+};
+
+export default BarChartExample;
+```
+
+
 ### Line Chart
 A component for rendering basic line chart.
 
@@ -312,6 +374,50 @@ const LineChartExample = () => {
   };
 
   return <Line config={config} data={data} />;
+};
+
+export default LineChartExample;
+```
+#### Example usage of `rawConfig` for a Line chart
+
+```jsx
+import { Line } from "akvo-charts";
+
+const LineChartExample = () => {
+  const rawConfig = {
+    xAxis: {
+      type: "category",
+      data: [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    yAxis: {
+      type: "value"
+    },
+    series: [
+      {
+        data: [
+          820,
+          932,
+          901,
+          934,
+          1290,
+          1330,
+          1320
+        ],
+        type: "line",
+        smooth: true
+      }
+    ]
+  };
+  
+  return <Line rawConfig={rawConfig} />;
 };
 
 export default LineChartExample;
@@ -350,6 +456,68 @@ const PieChartExample = () => {
 export default PieChartExample;
 ```
 
+#### Example usage of `rawConfig` for a Pie chart
+
+```jsx
+import { Pie } from "akvo-charts";
+
+const PieChartExample = () => {
+  const rawConfig = {
+    title: {
+      text: "Referer of a Website",
+      subtext: "Fake Data",
+      left: "center"
+    },
+    tooltip: {
+      trigger: "item"
+    },
+    legend: {
+      orient: "vertical",
+      left: "left"
+    },
+    series: [
+      {
+        name: "Access From",
+        type: "pie",
+        radius: "50%",
+        data: [
+          {
+            value: 1048,
+            name: "Search Engine"
+          },
+          {
+            value: 735,
+            name: "Direct"
+          },
+          {
+            value: 580,
+            name: "Email"
+          },
+          {
+            value: 484,
+            name: "Union Ads"
+          },
+          {
+            value: 300,
+            name: "Video Ads"
+          }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)"
+          }
+        }
+      }
+    ]
+  };
+  
+  return <Pie rawConfig={rawConfig} />;
+};
+
+export default PieChartExample;
+```
 
 ### Doughnut Chart
 A component for rendering basic doughnut chart.
@@ -384,6 +552,76 @@ const DoughnutChartExample = () => {
 
 export default DoughnutChartExample;
 ```
+
+#### Example usage of `rawConfig` for a Doughnut chart
+
+```jsx
+import { Doughnut } from "akvo-charts";
+
+const DoughnutChartExample = () => {
+  const rawConfig = {
+    tooltip: {
+      trigger: "item"
+    },
+    legend: {
+      top: "5%",
+      left: "center"
+    },
+    series: [
+      {
+        name: "Access From",
+        type: "pie",
+        radius: [
+          "40%",
+          "70%"
+        ],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: "center"
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 40,
+            fontWeight: "bold"
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: [
+          {
+            value: 1048,
+            name: "Search Engine"
+          },
+          {
+            value: 735,
+            name: "Direct"
+          },
+          {
+            value: 580,
+            name: "Email"
+          },
+          {
+            value: 484,
+            name: "Union Ads"
+          },
+          {
+            value: 300,
+            name: "Video Ads"
+          }
+        ]
+      }
+    ]
+  };
+  
+  return <Doughnut rawConfig={rawConfig} />;
+};
+
+export default DoughnutChartExample;
+```
+
 
 ### Stack Bar Chart
 
@@ -448,6 +686,72 @@ const StackBarChartExample = () => {
 export default StackBarChartExample;
 ```
 
+#### Example usage of `rawConfig` for a StackBar chart
+
+```jsx
+import { StackBar } from "akvo-charts";
+
+const StackBarChartExample = () => {
+  const rawConfig = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: [
+        [
+          "product",
+          "2015",
+          "2016",
+          "2017"
+        ],
+        [
+          "Matcha Latte",
+          43.3,
+          85.8,
+          93.7
+        ],
+        [
+          "Milk Tea",
+          83.1,
+          73.4,
+          55.1
+        ],
+        [
+          "Cheese Cocoa",
+          86.4,
+          65.2,
+          82.5
+        ],
+        [
+          "Walnut Brownie",
+          72.4,
+          53.9,
+          39.1
+        ]
+      ]
+    },
+    xAxis: {
+      type: "category"
+    },
+    yAxis: {},
+    series: [
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <StackBar rawConfig={rawConfig} />;
+};
+
+export default StackBarChartExample;
+```
+
 
 ### Stack Cluster Column
 
@@ -489,6 +793,72 @@ const StackClusterColumnChartExample = () => {
 export default StackClusterColumnChartExample;
 ```
 
+#### Example usage of `rawConfig` for a StackClusterColumn chart
+
+```jsx
+import { StackClusterColumn } from "akvo-charts";
+
+const StackClusterColumnChartExample = () => {
+  const rawConfig = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: [
+        [
+          "product",
+          "2015",
+          "2016",
+          "2017"
+        ],
+        [
+          "Matcha Latte",
+          43.3,
+          85.8,
+          93.7
+        ],
+        [
+          "Milk Tea",
+          83.1,
+          73.4,
+          55.1
+        ],
+        [
+          "Cheese Cocoa",
+          86.4,
+          65.2,
+          82.5
+        ],
+        [
+          "Walnut Brownie",
+          72.4,
+          53.9,
+          39.1
+        ]
+      ]
+    },
+    xAxis: {
+      type: "category"
+    },
+    yAxis: {},
+    series: [
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      },
+      {
+        type: "bar"
+      }
+    ]
+  };
+  
+  return <StackClusterColumn rawConfig={rawConfig} />;
+};
+
+export default StackClusterColumnChartExample;
+```
+
 ### Scatter Plot Chart
 
 A component for rendering basic scatter plot chart.
@@ -521,6 +891,47 @@ const ScatterPlotChartExample = () => {
     };
 
   return <ScatterPlot config={config} data={data} symbolSize={25} />;
+};
+
+export default ScatterPlotChartExample;
+```
+
+#### Example usage of `rawConfig` for a ScatterPlot chart
+
+```jsx
+import { ScatterPlot } from "akvo-charts";
+
+const ScatterPlotChartExample = () => {
+  const rawConfig = {
+    xAxis: {},
+    yAxis: {},
+    series: [
+      {
+        symbolSize: 20,
+        data: [
+          [
+            10,
+            8.04
+          ],
+          [
+            8.07,
+            6.95
+          ],
+          [
+            13,
+            7.58
+          ],
+          [
+            9.05,
+            8.81
+          ],
+        ],
+        type: "scatter"
+      }
+    ]
+  };
+  
+  return <ScatterPlot rawConfig={rawConfig} />;
 };
 
 export default ScatterPlotChartExample;
@@ -565,9 +976,135 @@ const StackLineChartExample = () => {
 export default StackLineChartExample;
 ```
 
+#### Example usage of `rawConfig` for a StackLine chart
+
+```jsx
+import { StackLine } from "akvo-charts";
+
+const StackLineChartExample = () => {
+  const rawConfig = {
+    title: {
+      text: "Product Sales"
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross",
+        label: {
+          backgroundColor: "#6a7985"
+        }
+      }
+    },
+    legend: {
+      data: [
+        "Matcha Latte",
+        "Milk Tea",
+        "Cheese Cocoa",
+        "Walnut Brownie"
+      ]
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: "category",
+        boundaryGap: false,
+        data: [
+          "2015",
+          "2016",
+          "2017",
+          "2018"
+        ]
+      }
+    ],
+    yAxis: [
+      {
+        type: "value"
+      }
+    ],
+    series: [
+      {
+        name: "Matcha Latte",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          43.3,
+          85.8,
+          93.7,
+          90
+        ]
+      },
+      {
+        name: "Milk Tea",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          83.1,
+          73.4,
+          55.1,
+          78
+        ]
+      },
+      {
+        name: "Cheese Cocoa",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          86.4,
+          65.2,
+          82.5,
+          44.3
+        ]
+      },
+      {
+        name: "Walnut Brownie",
+        type: "line",
+        stack: "Total",
+        areaStyle: {},
+        emphasis: {
+          focus: "series"
+        },
+        data: [
+          72.4,
+          53.9,
+          39.1,
+          55.5
+        ]
+      }
+    ]
+  };
+  
+  return <StackLine rawConfig={rawConfig} />;
+};
+
+export default StackLineChartExample;
+```
+
 ### MapView
 
-A component for rendering an interactive Leaflet map. It extends [Leaflet](https://leafletjs.com/) to support TopoJSON, converting it to GeoJSON, and applies custom styles and popups to map features.
+The `MapView` component provides an easy way to render a map in your React application using [Leaflet](https://leafletjs.com/). You can customize the map's appearance, add layers, plot points, and handle user interactions such as clicks. The map configuration is passed via the `config`, `data`, `tile`, and `layer` props.
+
 
 #### tile
 
@@ -579,11 +1116,14 @@ A component for rendering an interactive Leaflet map. It extends [Leaflet](https
 
 #### layer
 
-| Prop	| Type |	Description |
-|-------|------|--------------|
-| `source` | string _or_ object [(GeoJSON/TopoJSON)](https://en.wikipedia.org/wiki/GeoJSON)  |	Sets the source from the window object variable name. eg: `window.topoData` or GeoJSON/TopoJSON object directly. |
-| `url` | string |	Sets the GeoJSON/TopoJSON source from the URL. |
-| `style` _(optional)_ | object |	Styling GeoJSON lines and polygons with [Path options](https://leafletjs.com/reference.html#path-option) |
+| Prop         | Type                                                   | Description                                                                                                                                                                   |
+|--------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `source`     | string _or_ object [(GeoJSON/TopoJSON)](https://en.wikipedia.org/wiki/GeoJSON) | Sets the source of the layer data. This can be a reference to a GeoJSON/TopoJSON object stored in a global variable (e.g., `window.topoData`) or a GeoJSON/TopoJSON object directly. |
+| `url`        | string                                                  | Sets the GeoJSON/TopoJSON source from a URL. The data from this URL will be fetched and used as the layer source.                                                              |
+| `style` _(optional)_  | object                                                  | Defines the styling for GeoJSON lines and polygons using [Path options](https://leafletjs.com/reference.html#path-option), including properties like color, weight, and fillColor. |
+| `onClick(map, props)` _(optional)_| function _or_ string                                    | A function that is triggered when a layer feature is clicked. It receives the [map: Map instance](https://leafletjs.com/reference.html#map-factory) and [props: GeoJSON event properties](https://leafletjs.com/reference.html#geojsonevent-properties) as arguments, allowing you to interact with the map or the feature.   |
+| `onMouseOver(map, props)` _(optional)_| function _or_ string                                    | A function that is triggered when the mouse hovers over a layer feature. It receives the [map: Map instance](https://leafletjs.com/reference.html#map-factory) and [props: GeoJSON event properties](https://leafletjs.com/reference.html#geojsonevent-properties) as arguments, enabling hover-based interactions. |
+
 
 
 #### data
@@ -610,39 +1150,59 @@ import React from "react";
 import { MapView } from "akvo-charts";
 
 const MapViewExample = () => {
+  const config = {
+    center: [
+      -6.2,
+      106.816666
+    ],
+    zoom: 8,
+    height: "100vh",
+    width: "100%"
+  };
+
+  const data = [
+    {
+      point: [
+        -6.170166,
+        106.831375
+      ],
+      label: "Istiqlal Mosque"
+    },
+    {
+      point: [
+        -6.174596,
+        106.830407
+      ],
+      label: "Gambir Station"
+    },
+    {
+      point: [
+        -6.175414,
+        106.827175
+      ],
+      label: "The National Monument"
+    }
+  ];
+
+  const onClick = (map, { target }) => map.fitBounds(target._bounds);
+  const layer = {
+    source: "window.topoData",
+    url: "https://akvo.github.io/akvo-charts/static/geojson/indonesia-prov.geojson",
+    style: {
+      color: "#92400e",
+      weight: 1,
+      fillColor: "#fbbf24"
+    },
+    onClick: onClick
+  };
+
   const tile = {
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     maxZoom: 19,
-    attribution: "© OpenStreetMap",
+    attribution: "© OpenStreetMap"
   };
 
-  const layer = {
-    source: "window.topoData",
-    style: {
-      color: '#0ea5e9',
-      weight: 1,
-      fillColor: '#38bdf8'
-    }
-  };
-  const data = [
-    {
-      point: [39.61, -105.02],
-      label: "This is Littleton, CO.",
-    },
-    {
-      point: [39.73, -104.8],
-      label: "This is Aurora, CO.",
-    },
-  ];
-
-  const config: {
-    center: [39.73, -104.99];
-    zoom: 10;
-    height: "100vh";
-    width: "100%";
-  };
-
-  return <MapView tile={tile} layer={layer} config={config} data={data} />;
+  return <MapView tile={tile} layer={layer} data={data} config={config} />;
 };
 
 export default MapViewExample;
