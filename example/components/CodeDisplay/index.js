@@ -39,12 +39,12 @@ const createHighlight = (content, language) => {
   return `<pre class="pt-4 ml-[-16px]"><code><table class="code-table">${contentTable}</table></code></pre>`;
 };
 
-const CodeDisplay = ({ jsonData = {}, isRaw = false }) => {
+const CodeDisplay = ({ jsonData = {}, isRaw = false, isMap = false }) => {
   const [show, setShow] = useState(false);
 
   const { selectedChartType: type } = useDisplayContext();
 
-  const code = isRaw
+  const code = isRaw && !isMap
     ? codeBlock({ type, rawConfig: jsonData })
     : codeBlock({ type, ...jsonData });
 

@@ -15,7 +15,7 @@ const ChartDisplay = dynamic(() => import('../components/ChartDisplay'), {
 
 const Home = () => {
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-0 overflow-y-hidden">
+    <div className="w-full flex flex-col lg:flex-row gap-0 overflow-y-hidden overflow-x-hidden">
       <Sidebar />
       <ChartWrapper>
         <ChartDisplay />

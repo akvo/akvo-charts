@@ -24,7 +24,8 @@ import {
 const Editor = () => {
   const { isRaw, isMap, rawConfig, defaultConfig, chartConfig, mapConfig } =
     useChartContext();
-  const { showJson, showCode, selectedChartType } = useDisplayContext();
+  const { selectedChartType, fullScreen } =
+    useDisplayContext();
 
   const [preload, setPreload] = useState(true);
   const [mapPreload, setMapPreload] = useState(true);
@@ -158,73 +159,60 @@ const Editor = () => {
     firstLoad();
   }, [firstLoad]);
 
-  useEffect(() => {
-    if (!showCode && activeTab === 'code') {
-      setActiveTab('json-editor');
-    }
-    if (!showJson && activeTab?.includes('json')) {
-      setActiveTab('code');
-    }
-  }, [showJson, showCode, activeTab]);
-
-  if (!showJson && !showCode) {
+  if (fullScreen) {
     return null;
   }
 
   return (
     <div className="w-full lg:w-1/2 h-[calc(100vh-20px)] flex flex-col gap-0">
-      <div className="flex border-b border-gray-300 bg-gray-200">
-        {showJson && (
-          <button
-            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
-              activeTab === 'json-editor'
-                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
-            }`}
-            onClick={() => setActiveTab('json-editor')}
-          >
-            JS Editor
-          </button>
-        )}
-        {showJson && (
-          <button
-            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
-              activeTab === 'json'
-                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
-            }`}
-            onClick={() => setActiveTab('json')}
-          >
-            JSON Data
-          </button>
-        )}
-        {showCode && (
-          <button
-            className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
-              activeTab === 'code'
-                ? 'bg-white border-b-2 border-blue-500 text-blue-600'
-                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
-            }`}
-            onClick={() => setActiveTab('code')}
-          >
-            Code
-          </button>
-        )}
+      <div className="w-full lg:max-w-[845px] flex border-b border-gray-300 bg-gray-200">
+        <button
+          className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+            activeTab === 'json-editor'
+              ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+              : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+          }`}
+          onClick={() => setActiveTab('json-editor')}
+        >
+          Option
+        </button>
+
+        <button
+          className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+            activeTab === 'json'
+              ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+              : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+          }`}
+          onClick={() => setActiveTab('json')}
+        >
+          JSON
+        </button>
+
+        <button
+          className={`flex-1 py-2 px-4 text-center border-r border-gray-300 last:border-r-0 focus:outline-none transition-colors ${
+            activeTab === 'code'
+              ? 'bg-white border-b-2 border-blue-500 text-blue-600'
+              : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+          }`}
+          onClick={() => setActiveTab('code')}
+        >
+          Code
+        </button>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {activeTab === 'json' && showJson && (
+        {activeTab === 'json' && (
           <div className="w-full h-full">
             <JsonDataDisplay jsonData={jsonData} />
           </div>
         )}
-        {activeTab === 'json-editor' && showJson && (
+        {activeTab === 'json-editor' && (
           <div className="w-full h-full">
             <JsonDataEditor {...{ storeData, clearData, jsonData }} />
           </div>
         )}
-        {(activeTab === 'code' || (showCode && !showJson)) && (
+        {activeTab === 'code' && (
           <div className="w-full h-full">
-            <CodeDisplay {...{ jsonData, isRaw }} />
+            <CodeDisplay {...{ jsonData, isRaw, isMap }} />
           </div>
         )}
       </div>
