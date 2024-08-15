@@ -212,7 +212,7 @@ const Editor = () => {
         )}
         {activeTab === 'code' && (
           <div className="w-full h-full">
-            <CodeDisplay {...{ jsonData, isRaw }} />
+            <CodeDisplay {...{ jsonData, isRaw, isMap }} />
           </div>
         )}
       </div>
