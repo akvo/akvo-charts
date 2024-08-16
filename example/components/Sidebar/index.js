@@ -114,7 +114,11 @@ const Sidebar = () => {
         payload: {
           data: choroplethExampleData,
           layer: {
-            ...mapConfig.layer,
+            ...mapConfig?.layer,
+            style: {
+              ...mapConfig?.layer?.style,
+              fillOpacity: 0.7
+            },
             color: choroplethExampleColor,
             mapKey: 'Propinsi',
             choropleth: 'density'

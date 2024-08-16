@@ -63,7 +63,7 @@ const initalChartState = {
         color: '#92400e',
         weight: 1,
         fillColor: '#fbbf24',
-        fillOpacity: 0.7
+        fillOpacity: 0.4
       },
       onClick: '(map, { target }) => map.fitBounds(target._bounds)'
     },
