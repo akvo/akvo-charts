@@ -220,6 +220,24 @@ const MapIcon = ({ size = 16 }) => (
   </svg>
 );
 
+const ChevronDownIcon = ({ size = 16 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    width={size}
+    height={size}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m19.5 8.25-7.5 7.5-7.5-7.5"
+    />
+  </svg>
+);
+
 export {
   CheckIcon,
   CopyIcon,
@@ -229,5 +247,6 @@ export {
   LineIcon,
   PieIcon,
   ScatterPlotIcon,
-  MapIcon
+  MapIcon,
+  ChevronDownIcon
 };
