@@ -29,7 +29,7 @@ export const getGeoJSONProps = (
   { onClick, onMouseOver, mapKey, choropleth, color, style, ...props },
   data = []
 ) => {
-  let allProps = props;
+  let allProps = { ...props, style };
   if (typeof onClick === 'function') {
     allProps = {
       ...allProps,
