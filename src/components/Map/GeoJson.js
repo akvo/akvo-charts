@@ -9,10 +9,13 @@ const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
     if (mapRef.current && data?.type && data?.type !== 'Topology') {
       try {
         L.geoJSON(data, {
-          style: () => ({
-            ...style,
-            fillOpacity: parseFloat(style?.fillOpacity || 0.2, 10)
-          }),
+          style: (feature) =>
+            typeof style === 'function'
+              ? style(feature)
+              : {
+                  ...style,
+                  fillOpacity: parseFloat(style?.fillOpacity || 0.2, 10)
+                },
           onEachFeature: (_, layer) => {
             if (typeof onClick === 'function') {
               layer.on({
