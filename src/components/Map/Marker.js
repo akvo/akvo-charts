@@ -5,7 +5,13 @@ import mShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { useLeaflet } from '../../context/LeafletProvider';
 
-const Marker = ({ latlng = [0, 0], label = null, icon = {}, ...options }) => {
+const Marker = ({
+  latlng = null,
+  label = null,
+  icon = {},
+  markerLayer,
+  ...options
+}) => {
   const mapRef = useLeaflet();
 
   const defaultIcon = typeof mIcon === 'object' ? mIcon?.src : mIcon;
@@ -22,14 +28,15 @@ const Marker = ({ latlng = [0, 0], label = null, icon = {}, ...options }) => {
 
   useEffect(() => {
     if (mapRef.current) {
+      const mapLayer = markerLayer || mapRef.current;
       const marker = L.marker(latlng, { icon: Icon, ...options }).addTo(
-        mapRef.current
+        mapLayer
       );
       if (label) {
         marker.bindPopup(label);
       }
     }
-  }, [Icon, mapRef, label, latlng, options]);
+  }, [Icon, mapRef, label, latlng, options, markerLayer]);
 
   return null;
 };
