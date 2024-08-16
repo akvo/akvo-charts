@@ -6,9 +6,23 @@ import {
   useDisplayContext,
   useDisplayDispatch
 } from '../../context/DisplayContextProvider';
-import { useChartDispatch } from '../../context/ChartContextProvider';
-import { BarIcon, LineIcon, PieIcon, ScatterPlotIcon, MapIcon } from '../Icons';
-import { chartTypes } from '../../static/config';
+import {
+  useChartContext,
+  useChartDispatch
+} from '../../context/ChartContextProvider';
+import {
+  BarIcon,
+  LineIcon,
+  PieIcon,
+  ScatterPlotIcon,
+  MapIcon,
+  ChevronDownIcon
+} from '../Icons';
+import {
+  chartTypes,
+  choroplethExampleColor,
+  choroplethExampleData
+} from '../../static/config';
 
 const sidebarList = [
   {
@@ -54,7 +68,14 @@ const sidebarList = [
   {
     key: chartTypes.MAP,
     name: 'GEO/Map',
-    icon: <MapIcon />
+    icon: <MapIcon />,
+    subItems: [
+      {
+        key: chartTypes.CHOROPLETH_MAP,
+        name: 'Choropleth Map',
+        icon: null
+      }
+    ]
   }
 ];
 
@@ -63,34 +84,93 @@ const Sidebar = () => {
   const displayDispatch = useDisplayDispatch();
 
   const { selectedChartType, fullScreen } = useDisplayContext();
+  const { isMap, isEdited, mapConfig } = useChartContext();
 
   const handleOnSidebarClick = ({ key }) => {
-    chartDispatch({
-      type: key === chartTypes.MAP ? 'MAP_SHOW' : 'MAP_HIDE'
-    });
+    const isMapType = [chartTypes.MAP, chartTypes.CHOROPLETH_MAP].includes(key);
+    if (isMap && !isMapType) {
+      chartDispatch({
+        type: 'MAP_HIDE'
+      });
+    }
+    if (!isMap && isMapType) {
+      chartDispatch({
+        type: 'MAP_SHOW'
+      });
+    }
+    if (isEdited) {
+      chartDispatch({
+        type: 'SET_EDITED',
+        payload: false
+      });
+    }
     displayDispatch({
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
     });
-    chartDispatch({
-      type: 'SET_EDITED',
-      payload: false
-    });
+    if (key === chartTypes.CHOROPLETH_MAP) {
+      chartDispatch({
+        type: 'UPDATE_MAP',
+        payload: {
+          data: choroplethExampleData,
+          layer: {
+            ...mapConfig.layer,
+            color: choroplethExampleColor,
+            mapKey: 'Propinsi',
+            choropleth: 'density'
+          }
+        }
+      });
+    }
+    if (key === chartTypes.MAP) {
+      chartDispatch({
+        type: 'RESET_MAP'
+      });
+    }
   };
 
   return (
-    <div className={`${fullScreen ? '-ml-72' : ''} flex-shrink-0 w-full lg:w-72 h-auto lg:h-[calc(100vh-20px)] sidebar text-gray-800 flex flex-col animate-fadeIn transition-all duration-300`}>
+    <div
+      className={`${fullScreen ? '-ml-72' : ''} flex-shrink-0 w-full lg:w-72 h-auto lg:h-[calc(100vh-20px)] sidebar text-gray-800 flex flex-col animate-fadeIn transition-all duration-300`}
+    >
       <div className="p-4 text-xl font-bold">Chart Types</div>
       <ul className="flex flex-row lg:flex-col items-center lg:items-start py-0 lg:py-4">
         {sidebarList.map((chartType, index) => (
-          <li className={`w-full p-2 text-center sidebar-item ${chartType.key === selectedChartType ? 'active' : ''}`} key={index}>
+          <li
+            className={`w-full p-2 text-center sidebar-item ${chartType.key === selectedChartType ? 'active' : ''}`}
+            key={index}
+          >
             <button
-              className={`flex items-center w-full text-left p-2`}
+              className={`flex items-center justify-between w-full text-left p-2`}
               onClick={() => handleOnSidebarClick(chartType)}
             >
-              <div className="icon h-5 w-5">{chartType.icon}</div>
-              <div className="hidden lg:block">{chartType.name}</div>
+              <div>
+                <div className="icon h-5 w-5 float-left">{chartType.icon}</div>
+                <div className="hidden lg:block float-left">
+                  {chartType.name}
+                </div>
+              </div>
+              {chartType?.subItems?.length > 0 && (
+                <div>
+                  <ChevronDownIcon />
+                </div>
+              )}
             </button>
+            <ul>
+              {chartType?.subItems?.map((sub, sx) => (
+                <li
+                  className={`w-full pl-8 py-2 pr-2 text-center sidebar-item ${sub.key === selectedChartType ? 'active' : ''}`}
+                  key={sx}
+                >
+                  <button
+                    className={`flex items-center justify-between w-full text-left p-2`}
+                    onClick={() => handleOnSidebarClick(sub)}
+                  >
+                    {sub.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
