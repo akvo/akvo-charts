@@ -134,6 +134,8 @@ const ChartDisplay = () => {
         return <StackLine {...props} />;
       case chartTypes.MAP:
         return <MapDisplay {...mapConfig} />;
+      case chartTypes.CHOROPLETH_MAP:
+        return <MapDisplay {...mapConfig} />;
       default:
         return null;
     }
