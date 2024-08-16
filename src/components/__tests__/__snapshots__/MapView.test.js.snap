@@ -127,6 +127,9 @@ exports[`MapView chart matches MapView snapshot 1`] = `
         class="leaflet-bottom leaflet-right"
       >
         <div
+          class="legend leaflet-control"
+        />
+        <div
           class="leaflet-control-attribution leaflet-control"
         >
           <a

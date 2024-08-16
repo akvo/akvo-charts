@@ -10,7 +10,7 @@ import React, {
 import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
 import { LeafletProvider } from '../context/LeafletProvider';
-import { TileLayer, Marker, GeoJson } from './Map';
+import { TileLayer, Marker, GeoJson, LegendControl } from './Map';
 import { string2WindowObj } from '../utils/string';
 import { getGeoJSONProps } from '../utils/mapHelper';
 
@@ -139,6 +139,10 @@ const MapView = ({ tile, layer, config, data }, ref) => {
           {...geoProps}
         />
       ))}
+      <LegendControl
+        data={data?.map((d) => d?.[layer?.choropleth])?.filter((d) => d)}
+        color={layer?.color}
+      />
     </LeafletProvider>
   );
 };
