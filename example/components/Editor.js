@@ -24,8 +24,7 @@ import {
 const Editor = () => {
   const { isRaw, isMap, rawConfig, defaultConfig, chartConfig, mapConfig } =
     useChartContext();
-  const { selectedChartType, fullScreen } =
-    useDisplayContext();
+  const { selectedChartType, fullScreen } = useDisplayContext();
 
   const [preload, setPreload] = useState(true);
   const [mapPreload, setMapPreload] = useState(true);
