@@ -363,7 +363,7 @@ var useECharts = function useECharts(_ref) {
   return chartRef;
 };
 
-var styles = {"container":"ae-container"};
+var styles = {"container":"ae-container","legend":"ae-legend"};
 
 var _getOptions = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
@@ -961,17 +961,15 @@ var GeoJson = function GeoJson(_ref) {
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? {} : _ref$data,
     _ref$style = _ref.style,
-    _style = _ref$style === void 0 ? {} : _ref$style;
+    style = _ref$style === void 0 ? {} : _ref$style;
+  var _useState = React.useState(null),
+    layer = _useState[0],
+    setLayer = _useState[1];
   var mapRef = useLeaflet();
-  React.useEffect(function () {
-    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology') {
+  var loadGeoJson = React.useCallback(function () {
+    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology' && !layer) {
       try {
-        L$1.geoJSON(data, {
-          style: function style(feature) {
-            return typeof _style === 'function' ? _style(feature) : _extends({}, _style, {
-              fillOpacity: parseFloat((_style === null || _style === void 0 ? void 0 : _style.fillOpacity) || 0.2, 10)
-            });
-          },
+        var gl = L$1.geoJSON(data, {
           onEachFeature: function onEachFeature(_, layer) {
             if (typeof onClick === 'function') {
               layer.on({
@@ -988,26 +986,26 @@ var GeoJson = function GeoJson(_ref) {
               });
             }
           }
-        }).addTo(mapRef.current);
+        });
+        setLayer(gl);
+        gl.addTo(mapRef.current);
       } catch (err) {
         console.error('GeoJson', err);
       }
     }
-  }, [mapRef, data, _style, onClick, onMouseOver]);
+    if (layer) {
+      layer.resetStyle();
+      layer.setStyle(function (feature) {
+        return typeof style === 'function' ? style(feature) : _extends({}, style, {
+          fillOpacity: parseFloat((style === null || style === void 0 ? void 0 : style.fillOpacity) || 0.2, 10)
+        });
+      });
+    }
+  }, [mapRef, layer, data, style, onClick, onMouseOver]);
+  React.useEffect(function () {
+    loadGeoJson();
+  }, [loadGeoJson]);
   return null;
-};
-
-var string2WindowObj = function string2WindowObj(path) {
-  if (path === void 0) {
-    path = '';
-  }
-  var obj = path.split('.').reduce(function (obj, key) {
-    return obj && obj[key];
-  }, window);
-  if (typeof obj === 'undefined' || typeof obj === 'string') {
-    return null;
-  }
-  return obj;
 };
 
 var _excluded$2 = ["onClick", "onMouseOver", "mapKey", "choropleth", "color", "style"];
@@ -1060,7 +1058,9 @@ var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref, data) {
   if (data === void 0) {
     data = [];
   }
-  var allProps = props;
+  var allProps = _extends({}, props, {
+    style: _style
+  });
   if (typeof _onClick === 'function') {
     allProps = _extends({}, allProps, {
       onClick: function onClick(props) {
@@ -1105,6 +1105,53 @@ var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref, data) {
   return allProps;
 };
 
+var LegendControl = function LegendControl(_ref) {
+  var _ref$data = _ref.data,
+    data = _ref$data === void 0 ? [] : _ref$data,
+    _ref$color = _ref.color,
+    color = _ref$color === void 0 ? [] : _ref$color;
+  var mapRef = useLeaflet();
+  var legendRef = React.useRef(null);
+  var loadLegend = React.useCallback(function () {
+    if (mapRef !== null && mapRef !== void 0 && mapRef.current && !(legendRef !== null && legendRef !== void 0 && legendRef.current)) {
+      legendRef.current = L$1.control({
+        position: 'bottomright'
+      });
+    }
+    if (legendRef !== null && legendRef !== void 0 && legendRef.current && mapRef !== null && mapRef !== void 0 && mapRef.current) {
+      mapRef.current.removeControl(legendRef.current);
+      legendRef.current.onAdd = function () {
+        var div = L$1.DomUtil.create('div', styles.legend);
+        var grades = calculateRanges(data, color.length);
+        grades.forEach(function (g, gx) {
+          var min = g[0],
+            max = g[1];
+          div.innerHTML += "<span class=\"icon\" style=\"background-color: " + (color === null || color === void 0 ? void 0 : color[gx]) + ";\"></span> " + min + " - " + max + " <br/>";
+        });
+        return div;
+      };
+      legendRef.current.addTo(mapRef.current);
+    }
+  }, [mapRef, legendRef, data, color]);
+  React.useEffect(function () {
+    loadLegend();
+  }, [loadLegend]);
+  return null;
+};
+
+var string2WindowObj = function string2WindowObj(path) {
+  if (path === void 0) {
+    path = '';
+  }
+  var obj = path.split('.').reduce(function (obj, key) {
+    return obj && obj[key];
+  }, window);
+  if (typeof obj === 'undefined' || typeof obj === 'string') {
+    return null;
+  }
+  return obj;
+};
+
 var _excluded$3 = ["url", "source"];
 var getGeoJSONList = function getGeoJSONList(d) {
   if (!d) {
@@ -1118,7 +1165,7 @@ var getGeoJSONList = function getGeoJSONList(d) {
   return [d];
 };
 var MapView = function MapView(_ref, ref) {
-  var _data$filter2;
+  var _data$filter2, _data$map;
   var tile = _ref.tile,
     layer = _ref.layer,
     config = _ref.config,
@@ -1224,6 +1271,13 @@ var MapView = function MapView(_ref, ref) {
       key: sx,
       data: sd
     }, geoProps));
+  }), /*#__PURE__*/React__default.createElement(LegendControl, {
+    data: data === null || data === void 0 ? void 0 : (_data$map = data.map(function (d) {
+      return d === null || d === void 0 ? void 0 : d[layer === null || layer === void 0 ? void 0 : layer.choropleth];
+    })) === null || _data$map === void 0 ? void 0 : _data$map.filter(function (d) {
+      return d;
+    }),
+    color: layer === null || layer === void 0 ? void 0 : layer.color
   }));
 };
 var MapView$1 = React.forwardRef(MapView);
