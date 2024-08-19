@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import L from 'leaflet';
 import mIcon from 'leaflet/dist/images/marker-icon.png';
 import mShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -12,6 +12,7 @@ const Marker = ({
   markerLayer,
   ...options
 }) => {
+  const [preload, setPreload] = useState(true);
   const mapRef = useLeaflet();
 
   const defaultIcon = typeof mIcon === 'object' ? mIcon?.src : mIcon;
@@ -26,8 +27,9 @@ const Marker = ({
     shadowSize: [41, 41]
   });
 
-  useEffect(() => {
-    if (mapRef.current) {
+  const setMarker = useCallback(() => {
+    if (mapRef.current && preload) {
+      setPreload(false);
       const mapLayer = markerLayer || mapRef.current;
       const marker = L.marker(latlng, { icon: Icon, ...options }).addTo(
         mapLayer
@@ -36,7 +38,11 @@ const Marker = ({
         marker.bindPopup(label);
       }
     }
-  }, [Icon, mapRef, label, latlng, options, markerLayer]);
+  }, [Icon, mapRef, preload, label, latlng, options, markerLayer]);
+
+  useEffect(() => {
+    setMarker();
+  }, [setMarker]);
 
   return null;
 };
