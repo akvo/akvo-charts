@@ -232,8 +232,6 @@ export const choroplethExampleData = [
 export const choroplethExampleColor = [
   '#FFEDA0',
   '#FED976',
-  '#FFEDA0',
-  '#FED976',
   '#FEB24C',
   '#FC4E2A',
   '#FD8D3C',
