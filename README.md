@@ -55,6 +55,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
       - [Data](#data-1)
       - [Config](#config-1)
       - [Example usage of MapView](#example-usage-of-mapview)
+      - [Example usage with Choropleth Mapping](#example-usage-with-choropleth-mapping)
 
 ---
 
@@ -1123,10 +1124,14 @@ The `MapView` component provides an easy way to render a map in your React appli
 | `style` _(optional)_  | object                                                  | Defines the styling for GeoJSON lines and polygons using [Path options](https://leafletjs.com/reference.html#path-option), including properties like color, weight, and fillColor. |
 | `onClick(map, props)` _(optional)_| function _or_ string                                    | A function that is triggered when a layer feature is clicked. It receives the [map: Map instance](https://leafletjs.com/reference.html#map-factory) and [props: GeoJSON event properties](https://leafletjs.com/reference.html#geojsonevent-properties) as arguments, allowing you to interact with the map or the feature.   |
 | `onMouseOver(map, props)` _(optional)_| function _or_ string                                    | A function that is triggered when the mouse hovers over a layer feature. It receives the [map: Map instance](https://leafletjs.com/reference.html#map-factory) and [props: GeoJSON event properties](https://leafletjs.com/reference.html#geojsonevent-properties) as arguments, enabling hover-based interactions. |
-
+|`color` _(optional)_ | array | An array of colors used for choropleth mapping. Each feature will be colored according to its data value based on this color scale.|
+|`mapKey` _(optional)_ |string | The key in the GeoJSON feature properties that is used to map the data values for the choropleth map.|
+|`choropleth` _(optional)_ | string | The data attribute used for determining the color scale in the choropleth map. This value should match the data property in your dataset.|
 
 
 #### data
+
+An array of objects that define either marker points or data for choropleth mapping. For markers, objects should include point (latitude, longitude) and label. For choropleth, objects should include keys that match [mapKey](#layer) and the corresponding data value (e.g., density).
 
 | Prop	| Type |	Description |
 |-------|------|--------------|
@@ -1206,6 +1211,68 @@ const MapViewExample = () => {
 };
 
 export default MapViewExample;
+```
+
+#### Example Usage with Choropleth Mapping
+
+Here is an example of how to define a layer in MapView for applying a choropleth map:
+
+```jsx
+const ChoroPlethExample = () => {
+  const config = {
+    center: [-6.2, 106.816666],
+    zoom: 8,
+    height: "100vh",
+    width: "100%",
+  };
+
+  const data = [
+    {
+      Propinsi: "DI. ACEH",
+      density: 92,
+    },
+    {
+      Propinsi: "SUMATERA UTARA",
+      density: 205,
+    },
+    // more data here
+  ];
+
+  const onClick = (map, { target }) => map.fitBounds(target._bounds);
+  const layer = {
+    source: "window.topoData",
+    url: "https://akvo.github.io/akvo-charts/static/geojson/indonesia-prov.geojson",
+    style: {
+      color: "#92400e",
+      weight: 1,
+      fillColor: "#fbbf24",
+      fillOpacity: 0.7,
+    },
+    color: [
+      "#FFEDA0",
+      "#FED976",
+      "#FFEDA0",
+      "#FED976",
+    ],
+    mapKey: "Propinsi",
+    choropleth: "density",
+    onClick: onClick,
+  };
+
+  const tile = {
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    attribution: "© OpenStreetMap",
+  };
+
+  return (
+    <div>
+      <MapView tile={tile} layer={layer} data={data} config={config} />
+    </div>
+  );
+};
+
+export default ChoroPlethExample;
 ```
 
 ---

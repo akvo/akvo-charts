@@ -4,13 +4,15 @@ import React, {
   useEffect,
   useRef,
   useState,
-  useImperativeHandle
+  useImperativeHandle,
+  useMemo
 } from 'react';
 import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
 import { LeafletProvider } from '../context/LeafletProvider';
-import { TileLayer, Marker, GeoJson } from './Map';
+import { TileLayer, Marker, GeoJson, LegendControl } from './Map';
 import { string2WindowObj } from '../utils/string';
+import { getGeoJSONProps } from '../utils/mapHelper';
 
 const getGeoJSONList = (d) => {
   if (!d) {
@@ -31,29 +33,15 @@ const MapView = ({ tile, layer, config, data }, ref) => {
   const [geoData, setGeoData] = useState(null);
   const [sourceData, setSourceData] = useState(null);
   const [preload, setPreload] = useState(true);
+  const [markerLayer, setMakerLayer] = useState(null);
 
   const mapInstance = useRef(null);
 
-  const {
-    url: layerURL,
-    source: layerSource,
-    onClick: layerOnClick,
-    ...layerProps
-  } = layer;
+  const { url: layerURL, source: layerSource, ...layerProps } = layer;
 
-  const geoProps =
-    typeof layerOnClick === 'function'
-      ? {
-          ...layerProps,
-          onClick: (props) => {
-            try {
-              layerOnClick(mapInstance.current.getMap(), props);
-            } catch (err) {
-              console.error('GeoJson|onClick', err);
-            }
-          }
-        }
-      : layerProps;
+  const geoProps = useMemo(() => {
+    return getGeoJSONProps(mapInstance, layerProps, data);
+  }, [layerProps, data]);
 
   const loadGeoDataFromURL = useCallback(async () => {
     if (layerURL && !geoData) {
@@ -75,6 +63,8 @@ const MapView = ({ tile, layer, config, data }, ref) => {
 
   useEffect(() => {
     if (mapInstance?.current && preload) {
+      setPreload(false);
+
       if (config?.zoom) {
         mapInstance.current.getMap().setZoom(config.zoom);
       }
@@ -82,8 +72,8 @@ const MapView = ({ tile, layer, config, data }, ref) => {
       if (config?.center) {
         mapInstance.current.getMap().panTo(config.center);
       }
-
-      setPreload(false);
+      const lg = L.layerGroup().addTo(mapInstance.current.getMap());
+      setMakerLayer(lg);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource?.includes('window')) {
@@ -97,13 +87,22 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         setSourceData(layerSource);
       }
     }
+    if (
+      markerLayer &&
+      data?.filter((d) => d?.point)?.length === 0 &&
+      markerLayer.getLayers().length
+    ) {
+      markerLayer.clearLayers();
+    }
   }, [
     mapInstance,
     preload,
     sourceData,
     layerSource,
+    markerLayer,
     config?.zoom,
-    config?.center
+    config?.center,
+    data
   ]);
 
   // Expose the Leaflet map instance via ref
@@ -116,13 +115,16 @@ const MapView = ({ tile, layer, config, data }, ref) => {
       height={config?.height}
     >
       <TileLayer {...tile} />
-      {data?.map((d, dx) => (
-        <Marker
-          latlng={d?.point}
-          label={d?.label}
-          key={dx}
-        />
-      ))}
+      {data
+        ?.filter((d) => d?.point)
+        ?.map((d, dx) => (
+          <Marker
+            latlng={d?.point}
+            label={d?.label}
+            markerLayer={markerLayer}
+            key={dx}
+          />
+        ))}
       {getGeoJSONList(geoData).map((gd, gx) => (
         <GeoJson
           key={gx}
@@ -137,6 +139,10 @@ const MapView = ({ tile, layer, config, data }, ref) => {
           {...geoProps}
         />
       ))}
+      <LegendControl
+        data={data?.map((d) => d?.[layer?.choropleth])?.filter((d) => d)}
+        color={layer?.color}
+      />
     </LeafletProvider>
   );
 };

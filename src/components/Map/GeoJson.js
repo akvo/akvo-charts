@@ -1,18 +1,16 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import L from 'leaflet';
 
 import { useLeaflet } from '../../context/LeafletProvider';
 
 const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
+  const [layer, setLayer] = useState(null);
   const mapRef = useLeaflet();
-  useEffect(() => {
-    if (mapRef.current && data?.type && data?.type !== 'Topology') {
+
+  const loadGeoJson = useCallback(() => {
+    if (mapRef.current && data?.type && data?.type !== 'Topology' && !layer) {
       try {
-        L.geoJSON(data, {
-          style: () => ({
-            ...style,
-            fillOpacity: parseFloat(style?.fillOpacity || 0.2, 10)
-          }),
+        const gl = L.geoJSON(data, {
           onEachFeature: (_, layer) => {
             if (typeof onClick === 'function') {
               layer.on({
@@ -30,12 +28,29 @@ const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
               });
             }
           }
-        }).addTo(mapRef.current);
+        });
+        setLayer(gl);
+        gl.addTo(mapRef.current);
       } catch (err) {
         console.error('GeoJson', err);
       }
     }
-  }, [mapRef, data, style, onClick, onMouseOver]);
+    if (layer) {
+      layer.resetStyle();
+      layer.setStyle((feature) =>
+        typeof style === 'function'
+          ? style(feature)
+          : {
+              ...style,
+              fillOpacity: parseFloat(style?.fillOpacity || 0.2, 10)
+            }
+      );
+    }
+  }, [mapRef, layer, data, style, onClick, onMouseOver]);
+
+  useEffect(() => {
+    loadGeoJson();
+  }, [loadGeoJson]);
 
   return null;
 };

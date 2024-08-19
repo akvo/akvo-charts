@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo, createContext, forwardRef, useImpera
 import { init } from 'echarts';
 import { feature } from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import L$1 from 'leaflet';
 import mIcon from 'leaflet/dist/images/marker-icon.png';
 import mShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -360,7 +360,7 @@ var useECharts = function useECharts(_ref) {
   return chartRef;
 };
 
-var styles = {"container":"ae-container"};
+var styles = {"container":"ae-container","legend":"ae-legend"};
 
 var _getOptions = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
@@ -867,7 +867,7 @@ var LeafletProvider = forwardRef(function (_ref, ref) {
   var mapContainer = useRef(null);
   useEffect(function () {
     if (!mapRef.current) {
-      var map = L.map(mapContainer.current, {
+      var map = L$1.map(mapContainer.current, {
         center: [0, 0],
         zoom: 2
       });
@@ -902,19 +902,23 @@ var useLeaflet = function useLeaflet() {
   return useContext(LeafletContext);
 };
 
-var _excluded = ["latlng", "label", "icon"];
+var _excluded = ["latlng", "label", "icon", "markerLayer"];
 var Marker = function Marker(_ref) {
   var _ref$latlng = _ref.latlng,
-    latlng = _ref$latlng === void 0 ? [0, 0] : _ref$latlng,
+    latlng = _ref$latlng === void 0 ? null : _ref$latlng,
     _ref$label = _ref.label,
     label = _ref$label === void 0 ? null : _ref$label,
     _ref$icon = _ref.icon,
     icon = _ref$icon === void 0 ? {} : _ref$icon,
+    markerLayer = _ref.markerLayer,
     options = _objectWithoutPropertiesLoose(_ref, _excluded);
+  var _useState = useState(true),
+    preload = _useState[0],
+    setPreload = _useState[1];
   var mapRef = useLeaflet();
   var defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
   var defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
-  var Icon = L.icon({
+  var Icon = L$1.icon({
     iconUrl: (icon === null || icon === void 0 ? void 0 : icon.url) || defaultIcon,
     shadowUrl: (icon === null || icon === void 0 ? void 0 : icon.shadow) || defaultShadow,
     iconSize: [25, 41],
@@ -922,16 +926,21 @@ var Marker = function Marker(_ref) {
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
-  useEffect(function () {
-    if (mapRef.current) {
-      var marker = L.marker(latlng, _extends({
+  var setMarker = useCallback(function () {
+    if (mapRef.current && preload) {
+      setPreload(false);
+      var mapLayer = markerLayer || mapRef.current;
+      var marker = L$1.marker(latlng, _extends({
         icon: Icon
-      }, options)).addTo(mapRef.current);
+      }, options)).addTo(mapLayer);
       if (label) {
         marker.bindPopup(label);
       }
     }
-  }, [Icon, mapRef, label, latlng, options]);
+  }, [Icon, mapRef, preload, label, latlng, options, markerLayer]);
+  useEffect(function () {
+    setMarker();
+  }, [setMarker]);
   return null;
 };
 
@@ -943,7 +952,7 @@ var TileLayer = function TileLayer(_ref) {
   useEffect(function () {
     if (mapRef.current) {
       if (url) {
-        L.tileLayer(url, _extends({}, props)).addTo(mapRef.current);
+        L$1.tileLayer(url, _extends({}, props)).addTo(mapRef.current);
       }
     }
   }, [mapRef, props, url]);
@@ -956,17 +965,15 @@ var GeoJson = function GeoJson(_ref) {
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? {} : _ref$data,
     _ref$style = _ref.style,
-    _style = _ref$style === void 0 ? {} : _ref$style;
+    style = _ref$style === void 0 ? {} : _ref$style;
+  var _useState = useState(null),
+    layer = _useState[0],
+    setLayer = _useState[1];
   var mapRef = useLeaflet();
-  useEffect(function () {
-    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology') {
+  var loadGeoJson = useCallback(function () {
+    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology' && !layer) {
       try {
-        L.geoJSON(data, {
-          style: function style() {
-            return _extends({}, _style, {
-              fillOpacity: parseFloat((_style === null || _style === void 0 ? void 0 : _style.fillOpacity) || 0.2, 10)
-            });
-          },
+        var gl = L$1.geoJSON(data, {
           onEachFeature: function onEachFeature(_, layer) {
             if (typeof onClick === 'function') {
               layer.on({
@@ -983,12 +990,162 @@ var GeoJson = function GeoJson(_ref) {
               });
             }
           }
-        }).addTo(mapRef.current);
+        });
+        setLayer(gl);
+        gl.addTo(mapRef.current);
       } catch (err) {
         console.error('GeoJson', err);
       }
     }
-  }, [mapRef, data, _style, onClick, onMouseOver]);
+    if (layer) {
+      layer.resetStyle();
+      layer.setStyle(function (feature) {
+        return typeof style === 'function' ? style(feature) : _extends({}, style, {
+          fillOpacity: parseFloat((style === null || style === void 0 ? void 0 : style.fillOpacity) || 0.2, 10)
+        });
+      });
+    }
+  }, [mapRef, layer, data, style, onClick, onMouseOver]);
+  useEffect(function () {
+    loadGeoJson();
+  }, [loadGeoJson]);
+  return null;
+};
+
+var _excluded$2 = ["onClick", "onMouseOver", "mapKey", "choropleth", "color", "style"];
+var calculateRanges = function calculateRanges(data, numRanges) {
+  if (data === void 0) {
+    data = [];
+  }
+  if (numRanges === void 0) {
+    numRanges = 1;
+  }
+  var sortedData = data.slice().sort(function (a, b) {
+    return a - b;
+  });
+  if (sortedData.length === 0) return [];
+  var minRange = Math.min.apply(Math, sortedData);
+  var maxRange = Math.max.apply(Math, sortedData);
+  var logMin = Math.log10(minRange);
+  var logMax = Math.log10(maxRange);
+  var logStep = (logMax - logMin) / numRanges;
+  var ranges = [];
+  for (var i = 0; i < numRanges; i++) {
+    var rangeStart = Math.pow(10, logMin + i * logStep);
+    var rangeEnd = i === numRanges - 1 ? maxRange : Math.pow(10, logMin + (i + 1) * logStep);
+    ranges.push([Math.floor(rangeStart), Math.floor(rangeEnd)]);
+  }
+  return ranges;
+};
+var getColor = function getColor(ranges, value, colors) {
+  var _colors;
+  if (ranges === void 0) {
+    ranges = [];
+  }
+  if (value === void 0) {
+    value = 0;
+  }
+  if (colors === void 0) {
+    colors = [];
+  }
+  var numColors = colors.length;
+  if (numColors === 0) return '#FFFFFF';
+  var findIndex = ranges.findIndex(function (r) {
+    var min = r[0],
+      max = r[1];
+    return value >= min && value <= max;
+  });
+  return ((_colors = colors) === null || _colors === void 0 ? void 0 : _colors[findIndex]) || colors[0];
+};
+var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref, data) {
+  var _onClick = _ref.onClick,
+    _onMouseOver = _ref.onMouseOver,
+    mapKey = _ref.mapKey,
+    choropleth = _ref.choropleth,
+    color = _ref.color,
+    _style = _ref.style,
+    props = _objectWithoutPropertiesLoose(_ref, _excluded$2);
+  if (data === void 0) {
+    data = [];
+  }
+  var allProps = _extends({}, props, {
+    style: _style
+  });
+  if (typeof _onClick === 'function') {
+    allProps = _extends({}, allProps, {
+      onClick: function onClick(props) {
+        try {
+          _onClick(mapInstance.current.getMap(), props);
+        } catch (err) {
+          console.error('GeoJson|onClick', err);
+        }
+      }
+    });
+  }
+  if (typeof _onMouseOver === 'function') {
+    allProps = _extends({}, allProps, {
+      onMouseOver: function onMouseOver(props) {
+        try {
+          _onMouseOver(mapInstance.current.getMap(), props);
+        } catch (err) {
+          console.error('GeoJson|onMouseOver', err);
+        }
+      }
+    });
+  }
+  if (mapKey && choropleth) {
+    allProps = _extends({}, allProps, {
+      style: function style(feature) {
+        var _data, _data2;
+        var findData = (_data = data) === null || _data === void 0 ? void 0 : _data.find(function (d) {
+          var _feature$properties;
+          return (d === null || d === void 0 ? void 0 : d[mapKey]) === (feature === null || feature === void 0 ? void 0 : (_feature$properties = feature.properties) === null || _feature$properties === void 0 ? void 0 : _feature$properties[mapKey]);
+        });
+        var value = (findData === null || findData === void 0 ? void 0 : findData[choropleth]) || 0;
+        var values = (_data2 = data) === null || _data2 === void 0 ? void 0 : _data2.map(function (d) {
+          return d === null || d === void 0 ? void 0 : d[choropleth];
+        });
+        var ranges = calculateRanges(values, color === null || color === void 0 ? void 0 : color.length);
+        return _extends({}, _style, {
+          fillColor: getColor(ranges, value, color)
+        });
+      }
+    });
+  }
+  return allProps;
+};
+
+var LegendControl = function LegendControl(_ref) {
+  var _ref$data = _ref.data,
+    data = _ref$data === void 0 ? [] : _ref$data,
+    _ref$color = _ref.color,
+    color = _ref$color === void 0 ? [] : _ref$color;
+  var mapRef = useLeaflet();
+  var legendRef = useRef(null);
+  var loadLegend = useCallback(function () {
+    if (mapRef !== null && mapRef !== void 0 && mapRef.current && !(legendRef !== null && legendRef !== void 0 && legendRef.current)) {
+      legendRef.current = L$1.control({
+        position: 'bottomright'
+      });
+    }
+    if (legendRef !== null && legendRef !== void 0 && legendRef.current && mapRef !== null && mapRef !== void 0 && mapRef.current) {
+      mapRef.current.removeControl(legendRef.current);
+      legendRef.current.onAdd = function () {
+        var div = L$1.DomUtil.create('div', styles.legend);
+        var grades = calculateRanges(data, color.length);
+        grades.forEach(function (g, gx) {
+          var min = g[0],
+            max = g[1];
+          div.innerHTML += "<span class=\"icon\" style=\"background-color: " + (color === null || color === void 0 ? void 0 : color[gx]) + ";\"></span> " + min + " - " + max + " <br/>";
+        });
+        return div;
+      };
+      legendRef.current.addTo(mapRef.current);
+    }
+  }, [mapRef, legendRef, data, color]);
+  useEffect(function () {
+    loadLegend();
+  }, [loadLegend]);
   return null;
 };
 
@@ -999,13 +1156,13 @@ var string2WindowObj = function string2WindowObj(path) {
   var obj = path.split('.').reduce(function (obj, key) {
     return obj && obj[key];
   }, window);
-  if (typeof obj === 'undefined' || typeof obj === 'string') {
+  if (typeof obj === 'undefined') {
     return null;
   }
   return obj;
 };
 
-var _excluded$2 = ["url", "source", "onClick"];
+var _excluded$3 = ["url", "source"];
 var getGeoJSONList = function getGeoJSONList(d) {
   if (!d) {
     return [];
@@ -1018,6 +1175,7 @@ var getGeoJSONList = function getGeoJSONList(d) {
   return [d];
 };
 var MapView = function MapView(_ref, ref) {
+  var _data$filter2, _data$map;
   var tile = _ref.tile,
     layer = _ref.layer,
     config = _ref.config,
@@ -1031,20 +1189,16 @@ var MapView = function MapView(_ref, ref) {
   var _useState3 = useState(true),
     preload = _useState3[0],
     setPreload = _useState3[1];
+  var _useState4 = useState(null),
+    markerLayer = _useState4[0],
+    setMakerLayer = _useState4[1];
   var mapInstance = useRef(null);
   var layerURL = layer.url,
     layerSource = layer.source,
-    layerOnClick = layer.onClick,
-    layerProps = _objectWithoutPropertiesLoose(layer, _excluded$2);
-  var geoProps = typeof layerOnClick === 'function' ? _extends({}, layerProps, {
-    onClick: function onClick(props) {
-      try {
-        layerOnClick(mapInstance.current.getMap(), props);
-      } catch (err) {
-        console.error('GeoJson|onClick', err);
-      }
-    }
-  }) : layerProps;
+    layerProps = _objectWithoutPropertiesLoose(layer, _excluded$3);
+  var geoProps = useMemo(function () {
+    return getGeoJSONProps(mapInstance, layerProps, data);
+  }, [layerProps, data]);
   var loadGeoDataFromURL = useCallback(function () {
     try {
       var _temp2 = function () {
@@ -1072,14 +1226,17 @@ var MapView = function MapView(_ref, ref) {
     loadGeoDataFromURL();
   }, [loadGeoDataFromURL]);
   useEffect(function () {
+    var _data$filter;
     if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
+      setPreload(false);
       if (config !== null && config !== void 0 && config.zoom) {
         mapInstance.current.getMap().setZoom(config.zoom);
       }
       if (config !== null && config !== void 0 && config.center) {
         mapInstance.current.getMap().panTo(config.center);
       }
-      setPreload(false);
+      var lg = L.layerGroup().addTo(mapInstance.current.getMap());
+      setMakerLayer(lg);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource !== null && layerSource !== void 0 && layerSource.includes('window')) {
@@ -1092,7 +1249,12 @@ var MapView = function MapView(_ref, ref) {
         setSourceData(layerSource);
       }
     }
-  }, [mapInstance, preload, sourceData, layerSource, config === null || config === void 0 ? void 0 : config.zoom, config === null || config === void 0 ? void 0 : config.center]);
+    if (markerLayer && (data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
+      return d === null || d === void 0 ? void 0 : d.point;
+    })) === null || _data$filter === void 0 ? void 0 : _data$filter.length) === 0 && markerLayer.getLayers().length) {
+      markerLayer.clearLayers();
+    }
+  }, [mapInstance, preload, sourceData, layerSource, markerLayer, config === null || config === void 0 ? void 0 : config.zoom, config === null || config === void 0 ? void 0 : config.center, data]);
   useImperativeHandle(ref, function () {
     return mapInstance.current;
   });
@@ -1100,10 +1262,13 @@ var MapView = function MapView(_ref, ref) {
     ref: mapInstance,
     width: config === null || config === void 0 ? void 0 : config.width,
     height: config === null || config === void 0 ? void 0 : config.height
-  }, /*#__PURE__*/React.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : data.map(function (d, dx) {
+  }, /*#__PURE__*/React.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : (_data$filter2 = data.filter(function (d) {
+    return d === null || d === void 0 ? void 0 : d.point;
+  })) === null || _data$filter2 === void 0 ? void 0 : _data$filter2.map(function (d, dx) {
     return /*#__PURE__*/React.createElement(Marker, {
       latlng: d === null || d === void 0 ? void 0 : d.point,
       label: d === null || d === void 0 ? void 0 : d.label,
+      markerLayer: markerLayer,
       key: dx
     });
   }), getGeoJSONList(geoData).map(function (gd, gx) {
@@ -1116,6 +1281,13 @@ var MapView = function MapView(_ref, ref) {
       key: sx,
       data: sd
     }, geoProps));
+  }), /*#__PURE__*/React.createElement(LegendControl, {
+    data: data === null || data === void 0 ? void 0 : (_data$map = data.map(function (d) {
+      return d === null || d === void 0 ? void 0 : d[layer === null || layer === void 0 ? void 0 : layer.choropleth];
+    })) === null || _data$map === void 0 ? void 0 : _data$map.filter(function (d) {
+      return d;
+    }),
+    color: layer === null || layer === void 0 ? void 0 : layer.color
   }));
 };
 var MapView$1 = forwardRef(MapView);
