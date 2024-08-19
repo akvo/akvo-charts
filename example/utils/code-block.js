@@ -10,7 +10,8 @@ const importBlocks = {
   [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`,
   [chartTypes.SCATTER_PLOT]: `import { ${chartTypes.SCATTER_PLOT} } from "akvo-charts";`,
   [chartTypes.STACK_LINE]: `import { ${chartTypes.STACK_LINE} } from "akvo-charts";`,
-  [chartTypes.MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`
+  [chartTypes.MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`,
+  [chartTypes.CHOROPLETH_MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`
 };
 
 const renderImport = (type) => {
@@ -52,6 +53,7 @@ const renderCodes = (type, props) => {
     case chartTypes.STACK_LINE:
       return `<StackLine ${attributes} />`;
     case chartTypes.MAP:
+    case chartTypes.CHOROPLETH_MAP:
       return `<MapView ${attributes} />`;
     default:
       return 'Undefined chart type.';
