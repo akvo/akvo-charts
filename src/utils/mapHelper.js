@@ -1,13 +1,23 @@
 export const calculateRanges = (data = [], numRanges = 1) => {
   const sortedData = data.slice().sort((a, b) => a - b);
+  if (sortedData.length === 0) return [];
+
+  // Calculate the minimum and maximum range from the data
+  const minRange = Math.min(...sortedData);
+  const maxRange = Math.max(...sortedData);
+
+  // Calculate logarithmic step size
+  const logMin = Math.log10(minRange);
+  const logMax = Math.log10(maxRange);
+  const logStep = (logMax - logMin) / numRanges;
+
   const ranges = [];
 
   for (let i = 0; i < numRanges; i++) {
-    const rangeStart =
-      sortedData[Math.floor((i * sortedData.length) / numRanges)];
+    const rangeStart = Math.pow(10, logMin + i * logStep);
     const rangeEnd =
-      sortedData[Math.floor(((i + 1) * sortedData.length) / numRanges) - 1];
-    ranges.push([rangeStart, rangeEnd]);
+      i === numRanges - 1 ? maxRange : Math.pow(10, logMin + (i + 1) * logStep);
+    ranges.push([Math.floor(rangeStart), Math.floor(rangeEnd)]);
   }
 
   return ranges;
