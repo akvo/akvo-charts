@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import './styles.css';
 import {
   useDisplayContext,
@@ -80,6 +80,8 @@ const sidebarList = [
 ];
 
 const Sidebar = () => {
+  const [openSubItems, setOpenSubItems] = useState([]);
+
   const chartDispatch = useChartDispatch();
   const displayDispatch = useDisplayDispatch();
 
@@ -87,6 +89,18 @@ const Sidebar = () => {
   const { isMap, isEdited, mapConfig } = useChartContext();
 
   const handleOnSidebarClick = ({ key }) => {
+    const hasSubItems = sidebarList.find(
+      (k) => k?.key === key && k?.subItems?.length
+    );
+    if (hasSubItems) {
+      // toggle submenu items
+      setOpenSubItems(
+        (prevOpenItems) =>
+          prevOpenItems.includes(key)
+            ? prevOpenItems.filter((id) => id !== key) // Close if already open
+            : [...prevOpenItems, key] // Open if not already open
+      );
+    }
     const isMapType = [chartTypes.MAP, chartTypes.CHOROPLETH_MAP].includes(key);
     if (isMap && !isMapType) {
       chartDispatch({
@@ -155,12 +169,16 @@ const Sidebar = () => {
                 </div>
               </div>
               {chartType?.subItems?.length > 0 && (
-                <div>
+                <div
+                  className={`${openSubItems.includes(chartType?.key) ? 'rotate-0' : 'rotate-90'} transition-all`}
+                >
                   <ChevronDownIcon />
                 </div>
               )}
             </button>
-            <ul>
+            <ul
+              className={`${openSubItems.includes(chartType?.key) ? 'block' : 'hidden'} transition-all`}
+            >
               {chartType?.subItems?.map((sub, sx) => (
                 <li
                   className={`w-full pl-8 py-2 pr-2 text-center sidebar-item ${sub.key === selectedChartType ? 'active' : ''}`}
