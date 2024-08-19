@@ -912,6 +912,9 @@ var Marker = function Marker(_ref) {
     icon = _ref$icon === void 0 ? {} : _ref$icon,
     markerLayer = _ref.markerLayer,
     options = _objectWithoutPropertiesLoose(_ref, _excluded);
+  var _useState = useState(true),
+    preload = _useState[0],
+    setPreload = _useState[1];
   var mapRef = useLeaflet();
   var defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
   var defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
@@ -923,8 +926,9 @@ var Marker = function Marker(_ref) {
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
-  useEffect(function () {
-    if (mapRef.current) {
+  var setMarker = useCallback(function () {
+    if (mapRef.current && preload) {
+      setPreload(false);
       var mapLayer = markerLayer || mapRef.current;
       var marker = L$1.marker(latlng, _extends({
         icon: Icon
@@ -933,7 +937,10 @@ var Marker = function Marker(_ref) {
         marker.bindPopup(label);
       }
     }
-  }, [Icon, mapRef, label, latlng, options, markerLayer]);
+  }, [Icon, mapRef, preload, label, latlng, options, markerLayer]);
+  useEffect(function () {
+    setMarker();
+  }, [setMarker]);
   return null;
 };
 
@@ -1016,11 +1023,17 @@ var calculateRanges = function calculateRanges(data, numRanges) {
   var sortedData = data.slice().sort(function (a, b) {
     return a - b;
   });
+  if (sortedData.length === 0) return [];
+  var minRange = Math.min.apply(Math, sortedData);
+  var maxRange = Math.max.apply(Math, sortedData);
+  var logMin = Math.log10(minRange);
+  var logMax = Math.log10(maxRange);
+  var logStep = (logMax - logMin) / numRanges;
   var ranges = [];
   for (var i = 0; i < numRanges; i++) {
-    var rangeStart = sortedData[Math.floor(i * sortedData.length / numRanges)];
-    var rangeEnd = sortedData[Math.floor((i + 1) * sortedData.length / numRanges) - 1];
-    ranges.push([rangeStart, rangeEnd]);
+    var rangeStart = Math.pow(10, logMin + i * logStep);
+    var rangeEnd = i === numRanges - 1 ? maxRange : Math.pow(10, logMin + (i + 1) * logStep);
+    ranges.push([Math.floor(rangeStart), Math.floor(rangeEnd)]);
   }
   return ranges;
 };
@@ -1143,7 +1156,7 @@ var string2WindowObj = function string2WindowObj(path) {
   var obj = path.split('.').reduce(function (obj, key) {
     return obj && obj[key];
   }, window);
-  if (typeof obj === 'undefined' || typeof obj === 'string') {
+  if (typeof obj === 'undefined') {
     return null;
   }
   return obj;
