@@ -7,7 +7,8 @@ export const chartTypes = {
   STACK_CLUSTER: 'StackClusterColumn',
   SCATTER_PLOT: 'ScatterPlot',
   STACK_LINE: 'StackLine',
-  MAP: 'MapView'
+  MAP: 'MapView',
+  CHOROPLETH_MAP: 'MapViewChoropleth'
 };
 
 export const excludeHorizontal = [
@@ -87,6 +88,156 @@ export const scatterPlotExampleData = [
   { label: 'Product 3', x: 3, y: 50 },
   { label: 'Product 4', x: 4, y: 45 },
   { label: 'Product 5', x: 5, y: 40 }
+];
+
+export const choroplethExampleData = [
+  {
+    Propinsi: 'DI. ACEH',
+    density: 92
+  },
+  {
+    Propinsi: 'SUMATERA UTARA',
+    density: 205
+  },
+  {
+    Propinsi: 'SUMATERA BARAT',
+    density: 133
+  },
+  {
+    Propinsi: 'RIAU',
+    density: 75
+  },
+  {
+    Propinsi: 'JAMBI',
+    density: 72
+  },
+  {
+    Propinsi: 'SUMATERA SELATAN',
+    density: 93
+  },
+  {
+    Propinsi: 'BENGKULU',
+    density: 102
+  },
+  {
+    Propinsi: 'LAMPUNG',
+    density: 262
+  },
+  {
+    Propinsi: 'BANGKA BELITUNG',
+    density: 90
+  },
+  {
+    Propinsi: 'KEPULAUAN RIAU',
+    density: 258
+  },
+  {
+    Propinsi: 'DKI JAKARTA',
+    density: 15978
+  },
+  {
+    Propinsi: 'JAWA BARAT',
+    density: 1379
+  },
+  {
+    Propinsi: 'JAWA TENGAH',
+    density: 1120
+  },
+  {
+    Propinsi: 'DAERAH ISTIMEWA YOGYAKARTA',
+    density: 1185
+  },
+  {
+    Propinsi: 'JAWA TIMUR',
+    density: 855
+  },
+  {
+    Propinsi: 'BANTEN',
+    density: 1248
+  },
+  {
+    Propinsi: 'BALI',
+    density: 755
+  },
+  {
+    Propinsi: 'NUSATENGGARA BARAT',
+    density: 290
+  },
+  {
+    Propinsi: 'NUSA TENGGARA TIMUR',
+    density: 111
+  },
+  {
+    Propinsi: 'KALIMANTAN BARAT',
+    density: 37
+  },
+  {
+    Propinsi: 'KALIMANTAN TENGAH',
+    density: 18
+  },
+  {
+    Propinsi: 'KALIMANTAN SELATAN',
+    density: 106
+  },
+  {
+    Propinsi: 'KALIMANTAN TIMUR',
+    density: 30
+  },
+  {
+    Propinsi: 'KALIMANTAN UTARA',
+    density: 9
+  },
+  {
+    Propinsi: 'SULAWESI UTARA',
+    density: 190
+  },
+  {
+    Propinsi: 'SULAWESI TENGAH',
+    density: 49
+  },
+  {
+    Propinsi: 'SULAWESI SELATAN',
+    density: 196
+  },
+  {
+    Propinsi: 'SULAWESI TENGGARA',
+    density: 70
+  },
+  {
+    Propinsi: 'GORONTALO',
+    density: 105
+  },
+  {
+    Propinsi: 'SULAWESI BARAT',
+    density: 86
+  },
+  {
+    Propinsi: 'MALUKU',
+    density: 40
+  },
+  {
+    Propinsi: 'MALUKU UTARA',
+    density: 41
+  },
+  {
+    Propinsi: 'PAPUA BARAT',
+    density: 11
+  },
+  {
+    Propinsi: 'PAPUA',
+    density: 14
+  }
+];
+
+export const choroplethExampleColor = [
+  '#FFEDA0',
+  '#FED976',
+  '#FEB24C',
+  '#FC4E2A',
+  '#FD8D3C',
+  '#E31A1C',
+  '#BD0026',
+  '#800026'
 ];
 
 export const basePath = '/akvo-charts';
