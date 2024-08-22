@@ -1,8 +1,150 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`StackLine chart matches StackLine snapshot 1`] = `
-<div
-  className="container"
-  role="figure"
-/>
+"<svg width=\\"400\\" height=\\"400\\" xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\" version=\\"1.1\\" baseProfile=\\"full\\" viewBox=\\"0 0 400 400\\">
+<rect width=\\"400\\" height=\\"400\\" x=\\"0\\" y=\\"0\\" fill=\\"none\\"></rect>
+<path d=\\"M44.16 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 292.5L384 292.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 244.5L384 244.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 196.5L384 196.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 148.5L384 148.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 100.5L384 100.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"-6\\" transform=\\"translate(44.16 80)\\" fill=\\"#000\\">Values</text>
+<path d=\\"M44.16 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#000\\" stroke-linecap=\\"round\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"6\\" transform=\\"translate(214.08 385)\\" fill=\\"#000\\">Categories</text>
+<path d=\\"M44.5 340L44.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M157.5 340L157.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M270.5 340L270.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M384.5 340L384.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 340)\\" fill=\\"#000\\">0</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 292)\\" fill=\\"#000\\">50</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 244)\\" fill=\\"#000\\">100</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 196)\\" fill=\\"#000\\">150</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 148)\\" fill=\\"#000\\">200</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 100)\\" fill=\\"#000\\">250</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(44.16 348)\\" fill=\\"#000\\">Matcha Latte</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(157.44 348)\\" fill=\\"#000\\">Milk Tea</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(270.72 348)\\" fill=\\"#000\\">Cheese Cocoa</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(384 348)\\" fill=\\"#000\\">Walnut Brownie</text>
+<g clip-path=\\"url(#zr3-c0)\\">
+<path d=\\"M44.16 298.432L157.44 260.224L270.72 257.056L384 270.496L384 340L270.72 340L157.44 340L44.16 340Z\\" fill=\\"#4475B4\\" fill-opacity=\\"0.7\\" class=\\"zr3-cls-3\\"></path>
+</g>
+<g clip-path=\\"url(#zr3-c1)\\">
+<path d=\\"M44.16 216.064L157.44 189.76L270.72 194.464L384 218.752L384 270.496L270.72 257.056L157.44 260.224L44.16 298.432Z\\" fill=\\"#73ADD1\\" fill-opacity=\\"0.7\\" class=\\"zr3-cls-5\\"></path>
+</g>
+<g clip-path=\\"url(#zr3-c2)\\">
+<path d=\\"M44.16 126.112L157.44 136.864L270.72 115.264L384 181.216L384 218.752L270.72 194.464L157.44 189.76L44.16 216.064Z\\" fill=\\"#AAD9E8\\" fill-opacity=\\"0.7\\" class=\\"zr3-cls-7\\"></path>
+</g>
+<g clip-path=\\"url(#zr3-c0)\\">
+<path d=\\"M44.16 298.432L157.44 260.224L270.72 257.056L384 270.496\\" fill=\\"transparent\\" stroke=\\"#4475B4\\" stroke-width=\\"2\\" stroke-linejoin=\\"bevel\\" class=\\"zr3-cls-8\\"></path>
+</g>
+<g clip-path=\\"url(#zr3-c1)\\">
+<path d=\\"M44.16 216.064L157.44 189.76L270.72 194.464L384 218.752\\" fill=\\"transparent\\" stroke=\\"#73ADD1\\" stroke-width=\\"2\\" stroke-linejoin=\\"bevel\\" class=\\"zr3-cls-8\\"></path>
+</g>
+<g clip-path=\\"url(#zr3-c2)\\">
+<path d=\\"M44.16 126.112L157.44 136.864L270.72 115.264L384 181.216\\" fill=\\"transparent\\" stroke=\\"#AAD9E8\\" stroke-width=\\"2\\" stroke-linejoin=\\"bevel\\" class=\\"zr3-cls-8\\"></path>
+</g>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,44.16,298.432)\\" fill=\\"#fff\\" stroke=\\"#4475B4\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,157.44,260.224)\\" fill=\\"#fff\\" stroke=\\"#4475B4\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,270.72,257.056)\\" fill=\\"#fff\\" stroke=\\"#4475B4\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,384,270.496)\\" fill=\\"#fff\\" stroke=\\"#4475B4\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,44.16,216.064)\\" fill=\\"#fff\\" stroke=\\"#73ADD1\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,157.44,189.76)\\" fill=\\"#fff\\" stroke=\\"#73ADD1\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,270.72,194.464)\\" fill=\\"#fff\\" stroke=\\"#73ADD1\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,384,218.752)\\" fill=\\"#fff\\" stroke=\\"#73ADD1\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,44.16,126.112)\\" fill=\\"#fff\\" stroke=\\"#AAD9E8\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,157.44,136.864)\\" fill=\\"#fff\\" stroke=\\"#AAD9E8\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,270.72,115.264)\\" fill=\\"#fff\\" stroke=\\"#AAD9E8\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M1 0A1 1 0 1 1 1 -0.0001\\" transform=\\"matrix(0,0,0,0,384,181.216)\\" fill=\\"#fff\\" stroke=\\"#AAD9E8\\" stroke-width=\\"0\\" class=\\"zr3-cls-9\\"></path>
+<path d=\\"M-5 -5l184.14 0l0 24l-184.14 0Z\\" transform=\\"translate(112.93 40)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(107.43 40)\\" fill=\\"#4475B4\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(107.43 40)\\" fill=\\"#333\\">2015</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(107.43 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-10\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(168.81 40)\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(168.81 40)\\" fill=\\"#333\\">2016</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(168.81 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-10\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(230.19 40)\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(230.19 40)\\" fill=\\"#333\\">2017</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(230.19 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-10\\"></path>
+<path d=\\"M-84.24 -5l168.48 0l0 24l-168.48 0Z\\" transform=\\"translate(205 5)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:14px;font-family:sans-serif;font-weight:bold;\\" xml:space=\\"preserve\\" y=\\"7\\" transform=\\"translate(205 5)\\" fill=\\"#000\\">StackLine Chart Example</text>
+<defs >
+<clipPath id=\\"zr3-c0\\">
+<path d=\\"M43 99l0 0l0 242l0 0Z\\" fill=\\"#000\\" class=\\"zr3-cls-1 zr3-cls-2\\"></path>
+</clipPath>
+<clipPath id=\\"zr3-c1\\">
+<path d=\\"M43 99l0 0l0 242l0 0Z\\" fill=\\"#000\\" class=\\"zr3-cls-4 zr3-cls-2\\"></path>
+</clipPath>
+<clipPath id=\\"zr3-c2\\">
+<path d=\\"M43 99l0 0l0 242l0 0Z\\" fill=\\"#000\\" class=\\"zr3-cls-6 zr3-cls-2\\"></path>
+</clipPath>
+</defs>
+<style ><![CDATA[
+.zr3-cls-0:hover {
+pointer-events:none;
+}
+.zr3-cls-1 {
+animation:zr3-ani-0 1s linear both;
+}
+.zr3-cls-2:hover {
+cursor:pointer;
+fill:rgba(0,0,0,1);
+}
+.zr3-cls-3:hover {
+cursor:pointer;
+fill:rgba(74,128,198,1);
+}
+.zr3-cls-4 {
+animation:zr3-ani-1 1s linear both;
+}
+.zr3-cls-5:hover {
+cursor:pointer;
+fill:rgba(126,190,229,1);
+}
+.zr3-cls-6 {
+animation:zr3-ani-2 1s linear both;
+}
+.zr3-cls-7:hover {
+cursor:pointer;
+fill:rgba(187,238,255,1);
+}
+.zr3-cls-8:hover {
+cursor:pointer;
+}
+.zr3-cls-9:hover {
+cursor:pointer;
+fill:rgba(255,255,255,1);
+}
+.zr3-cls-10:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+@keyframes zr3-ani-0 {
+0% {
+d:path(\\"M43 99l0 0l0 242l0 0Z\\");
+}
+100% {
+d:path(\\"M43 99l343 0l0 242l-343 0Z\\");
+}
+}
+@keyframes zr3-ani-1 {
+0% {
+d:path(\\"M43 99l0 0l0 242l0 0Z\\");
+}
+100% {
+d:path(\\"M43 99l343 0l0 242l-343 0Z\\");
+}
+}
+@keyframes zr3-ani-2 {
+0% {
+d:path(\\"M43 99l0 0l0 242l0 0Z\\");
+}
+100% {
+d:path(\\"M43 99l343 0l0 242l-343 0Z\\");
+}
+}
+]]>
+
+</style>
+</svg>"
 `;
