@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -22,8 +22,8 @@ const getOptions = ({
   };
 };
 
-const Line = ({ config, data, rawConfig }) => {
-  const chartRef = useECharts({
+const Line = ({ config, data, rawConfig }, ref) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'line'
     },
@@ -34,6 +34,8 @@ const Line = ({ config, data, rawConfig }) => {
       getOptions({ horizontal, dimensions, overrideItemStyle })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -43,4 +45,4 @@ const Line = ({ config, data, rawConfig }) => {
   );
 };
 
-export default Line;
+export default forwardRef(Line);
