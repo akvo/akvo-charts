@@ -1,8 +1,206 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`StackClusterColumn chart matches StackClusterColumn snapshot 1`] = `
-<div
-  className="container"
-  role="figure"
-/>
+"<svg width=\\"400\\" height=\\"400\\" xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\" version=\\"1.1\\" baseProfile=\\"full\\" viewBox=\\"0 0 400 400\\">
+<rect width=\\"400\\" height=\\"400\\" x=\\"0\\" y=\\"0\\" fill=\\"none\\"></rect>
+<path d=\\"M44.16 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 292.5L384 292.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 244.5L384 244.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 196.5L384 196.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 148.5L384 148.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M44.16 100.5L384 100.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"-6\\" transform=\\"translate(44.16 80)\\" fill=\\"#000\\">Values</text>
+<path d=\\"M44.16 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#000\\" stroke-linecap=\\"round\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"6\\" transform=\\"translate(214.08 385)\\" fill=\\"#000\\">Categories</text>
+<path d=\\"M44.5 340L44.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M214.5 340L214.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M384.5 340L384.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 340)\\" fill=\\"#000\\">0</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 292)\\" fill=\\"#000\\">20</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 244)\\" fill=\\"#000\\">40</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 196)\\" fill=\\"#000\\">60</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 148)\\" fill=\\"#000\\">80</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(36.16 100)\\" fill=\\"#000\\">100</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(86.64 348)\\" fill=\\"#000\\">Matcha Latte</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(256.56 348)\\" fill=\\"#000\\">Cheese Cocoa</text>
+<path d=\\"M53.9304 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-1 zr3-cls-2\\"></path>
+<path d=\\"M138.8904 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-3 zr3-cls-2\\"></path>
+<path d=\\"M223.8504 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-4 zr3-cls-2\\"></path>
+<path d=\\"M308.8104 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-5 zr3-cls-2\\"></path>
+<path d=\\"M75.7368 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-6 zr3-cls-7\\"></path>
+<path d=\\"M160.6968 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-8 zr3-cls-7\\"></path>
+<path d=\\"M245.6568 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-9 zr3-cls-7\\"></path>
+<path d=\\"M330.6168 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-10 zr3-cls-7\\"></path>
+<path d=\\"M97.5432 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-11 zr3-cls-12\\"></path>
+<path d=\\"M182.5032 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-13 zr3-cls-12\\"></path>
+<path d=\\"M267.4632 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-14 zr3-cls-12\\"></path>
+<path d=\\"M352.4232 340l21.8064 0l0 0l-21.8064 0Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-15 zr3-cls-12\\"></path>
+<path d=\\"M-5 -5l184.14 0l0 24l-184.14 0Z\\" transform=\\"translate(112.93 40)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(107.43 40)\\" fill=\\"#4475B4\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(107.43 40)\\" fill=\\"#333\\">2015</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(107.43 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-16\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(168.81 40)\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(168.81 40)\\" fill=\\"#333\\">2016</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(168.81 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-16\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(230.19 40)\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(230.19 40)\\" fill=\\"#333\\">2017</text>
+<path d=\\"M5.5 0l51.38 0l0 14l-51.38 0Z\\" transform=\\"translate(230.19 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-16\\"></path>
+<path d=\\"M-117.28 -5l234.56 0l0 24l-234.56 0Z\\" transform=\\"translate(205 5)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:14px;font-family:sans-serif;font-weight:bold;\\" xml:space=\\"preserve\\" y=\\"7\\" transform=\\"translate(205 5)\\" fill=\\"#000\\">StackClusterColumn Chart Example</text>
+<style ><![CDATA[
+.zr3-cls-0:hover {
+pointer-events:none;
+}
+.zr3-cls-1 {
+animation:zr3-ani-0 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-2:hover {
+cursor:pointer;
+fill:rgba(74,128,198,1);
+}
+.zr3-cls-3 {
+animation:zr3-ani-1 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-4 {
+animation:zr3-ani-2 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-5 {
+animation:zr3-ani-3 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-6 {
+animation:zr3-ani-4 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-7:hover {
+cursor:pointer;
+fill:rgba(126,190,229,1);
+}
+.zr3-cls-8 {
+animation:zr3-ani-5 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-9 {
+animation:zr3-ani-6 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-10 {
+animation:zr3-ani-7 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-11 {
+animation:zr3-ani-8 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-12:hover {
+cursor:pointer;
+fill:rgba(187,238,255,1);
+}
+.zr3-cls-13 {
+animation:zr3-ani-9 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-14 {
+animation:zr3-ani-10 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-15 {
+animation:zr3-ani-11 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-16:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+@keyframes zr3-ani-0 {
+0% {
+d:path(\\"M53.9 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M53.9 340l21.8 0l0 -103.9l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-1 {
+0% {
+d:path(\\"M138.9 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M138.9 340l21.8 0l0 -199.4l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-2 {
+0% {
+d:path(\\"M223.9 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M223.9 340l21.8 0l0 -207.4l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-3 {
+0% {
+d:path(\\"M308.8 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M308.8 340l21.8 0l0 -173.8l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-4 {
+0% {
+d:path(\\"M75.7 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M75.7 340l21.8 0l0 -205.9l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-5 {
+0% {
+d:path(\\"M160.7 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M160.7 340l21.8 0l0 -176.2l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-6 {
+0% {
+d:path(\\"M245.7 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M245.7 340l21.8 0l0 -156.5l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-7 {
+0% {
+d:path(\\"M330.6 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M330.6 340l21.8 0l0 -129.4l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-8 {
+0% {
+d:path(\\"M97.5 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M97.5 340l21.8 0l0 -224.9l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-9 {
+0% {
+d:path(\\"M182.5 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M182.5 340l21.8 0l0 -132.2l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-10 {
+0% {
+d:path(\\"M267.5 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M267.5 340l21.8 0l0 -198l-21.8 0Z\\");
+}
+}
+@keyframes zr3-ani-11 {
+0% {
+d:path(\\"M352.4 340l21.8 0l0 0l-21.8 0Z\\");
+}
+100% {
+d:path(\\"M352.4 340l21.8 0l0 -93.8l-21.8 0Z\\");
+}
+}
+]]>
+
+</style>
+</svg>"
 `;

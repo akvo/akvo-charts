@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import StackClusterColumn from '../StackClusterColumn';
-import renderer from 'react-test-renderer';
 
 describe('StackClusterColumn chart', () => {
   test('renders StackClusterColumn component with 2d array data format', () => {
@@ -16,7 +15,10 @@ describe('StackClusterColumn chart', () => {
     const config = {
       title: 'StackClusterColumn Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -41,7 +43,10 @@ describe('StackClusterColumn chart', () => {
     const config = {
       title: 'StackClusterColumn Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -65,7 +70,10 @@ describe('StackClusterColumn chart', () => {
     const config = {
       title: 'StackClusterColumn Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -80,7 +88,7 @@ describe('StackClusterColumn chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches StackClusterColumn snapshot', () => {
+  test('matches StackClusterColumn snapshot', async () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -92,17 +100,23 @@ describe('StackClusterColumn chart', () => {
     const config = {
       title: 'StackClusterColumn Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <StackClusterColumn
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+    render(
+      <StackClusterColumn
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });
