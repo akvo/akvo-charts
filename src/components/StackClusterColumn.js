@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -28,8 +28,8 @@ const getOptions = ({
   };
 };
 
-const StackClusterColumn = ({ config, data, rawConfig }) => {
-  const chartRef = useECharts({
+const StackClusterColumn = ({ config, data, rawConfig }, ref) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'bar',
       barGap: 0
@@ -51,6 +51,8 @@ const StackClusterColumn = ({ config, data, rawConfig }) => {
       })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -60,4 +62,4 @@ const StackClusterColumn = ({ config, data, rawConfig }) => {
   );
 };
 
-export default StackClusterColumn;
+export default forwardRef(StackClusterColumn);
