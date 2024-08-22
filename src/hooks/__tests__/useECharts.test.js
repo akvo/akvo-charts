@@ -18,7 +18,8 @@ describe('useECharts', () => {
   beforeEach(() => {
     chartInstanceMock = {
       setOption: jest.fn(),
-      dispose: jest.fn()
+      dispose: jest.fn(),
+      clear: jest.fn()
     };
     echarts.init = jest.fn(() => chartInstanceMock);
     transformConfig.mockImplementation((config) => config);
@@ -36,7 +37,7 @@ describe('useECharts', () => {
   });
 
   const TestComponent = ({ config, data, getOptions, rawConfig }) => {
-    const chartRef = useECharts({ config, data, getOptions, rawConfig });
+    const [chartRef] = useECharts({ config, data, getOptions, rawConfig });
     return <div ref={chartRef} />;
   };
 
@@ -58,7 +59,9 @@ describe('useECharts', () => {
     });
 
     await waitFor(() => {
-      expect(echarts.init).toHaveBeenCalledWith(container.firstChild);
+      expect(echarts.init).toHaveBeenCalledWith(container.firstChild, null, {
+        renderer: 'canvas'
+      });
 
       expect(transformConfig).toHaveBeenCalledWith({
         ...config,
@@ -91,7 +94,7 @@ describe('useECharts', () => {
   it('should handle rawConfig and set options accordingly', async () => {
     const rawConfig = { title: { text: 'Raw Config Chart' } };
 
-    const { container } = render(<TestComponent rawConfig={rawConfig} />);
+    render(<TestComponent rawConfig={rawConfig} />);
 
     await act(async () => {
       jest.advanceTimersByTime(0);
@@ -112,7 +115,8 @@ describe('useECharts', () => {
     unmount();
 
     await waitFor(() => {
-      expect(chartInstanceMock.dispose).toHaveBeenCalled();
+      expect(chartInstanceMock.clear).toHaveBeenCalled();
+      expect(chartInstanceMock.clear).toHaveBeenCalledTimes(1);
     });
   });
 });
