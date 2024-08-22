@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Line from '../Line';
-import renderer from 'react-test-renderer';
 
 describe('Line chart', () => {
   test('renders Line component with 2d array data format', () => {
@@ -16,7 +15,10 @@ describe('Line chart', () => {
     const config = {
       title: 'Line Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -41,7 +43,10 @@ describe('Line chart', () => {
     const config = {
       title: 'Line Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -65,7 +70,10 @@ describe('Line chart', () => {
     const config = {
       title: 'Line Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -80,7 +88,7 @@ describe('Line chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches Line snapshot', () => {
+  test('matches Line snapshot', async () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -92,17 +100,24 @@ describe('Line chart', () => {
     const config = {
       title: 'Line Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <Line
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+
+    render(
+      <Line
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });
