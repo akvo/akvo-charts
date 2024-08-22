@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Doughnut from '../Doughnut';
-import renderer from 'react-test-renderer';
 
 describe('Doughnut chart', () => {
   test('renders Doughnut component with 2d array data format', () => {
@@ -14,7 +13,10 @@ describe('Doughnut chart', () => {
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'Doughnut Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -37,7 +39,10 @@ describe('Doughnut chart', () => {
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'Doughnut Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -59,7 +64,10 @@ describe('Doughnut chart', () => {
     };
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'Doughnut Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -74,27 +82,48 @@ describe('Doughnut chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches Doughnut snapshot', () => {
+  test('matches Doughnut snapshot', async () => {
     const data = [
-      ['product', '2015', '2016', '2017'],
-      ['Matcha Latte', 43.3, 85.8, 93.7],
-      ['Milk Tea', 83.1, 73.4, 55.1],
-      ['Cheese Cocoa', 86.4, 65.2, 82.5],
-      ['Walnut Brownie', 72.4, 53.9, 39.1]
+      {
+        product: 'Product 1',
+        sales: 30
+      },
+      {
+        product: 'Product 2',
+        sales: 20
+      },
+      {
+        product: 'Product 3',
+        sales: 50
+      },
+      {
+        product: 'Product 4',
+        sales: 45
+      },
+      {
+        product: 'Product 5',
+        sales: 40
+      }
     ];
 
     const config = {
-      title: 'Doughnut Chart Example'
+      title: 'Doughnut Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <Doughnut
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+    render(
+      <Doughnut
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });
