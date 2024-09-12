@@ -1,10 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Bar from '../Bar';
-import renderer from 'react-test-renderer';
 
 describe('Bar chart', () => {
-  test('renders Bar component with 2d array data format', () => {
+  test('renders Bar component with 2d array data format', async () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -16,18 +15,25 @@ describe('Bar chart', () => {
     const config = {
       title: 'Bar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
+    const ref = React.createRef();
     render(
       <Bar
         config={config}
         data={data}
+        ref={ref}
       />
     );
 
-    const chartContainer = screen.getByRole('figure');
-    expect(chartContainer).toBeInTheDocument();
+    await waitFor(() => {
+      const chartContainer = screen.getByRole('figure');
+      expect(chartContainer).toBeInTheDocument();
+    });
   });
 
   test('renders Bar component with row based key-value format (object array)', () => {
@@ -41,7 +47,10 @@ describe('Bar chart', () => {
     const config = {
       title: 'Bar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -65,7 +74,10 @@ describe('Bar chart', () => {
     const config = {
       title: 'Bar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -80,29 +92,50 @@ describe('Bar chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches Bar snapshot', () => {
+  test('matches Bar snapshot', async () => {
     const data = [
-      ['product', '2015', '2016', '2017'],
-      ['Matcha Latte', 43.3, 85.8, 93.7],
-      ['Milk Tea', 83.1, 73.4, 55.1],
-      ['Cheese Cocoa', 86.4, 65.2, 82.5],
-      ['Walnut Brownie', 72.4, 53.9, 39.1]
+      {
+        product: 'Product 1',
+        sales: 30
+      },
+      {
+        product: 'Product 2',
+        sales: 20
+      },
+      {
+        product: 'Product 3',
+        sales: 50
+      },
+      {
+        product: 'Product 4',
+        sales: 45
+      },
+      {
+        product: 'Product 5',
+        sales: 40
+      }
     ];
 
     const config = {
       title: 'Bar Chart Example',
-      xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      xAxisLabel: 'Product',
+      yAxisLabel: 'Sales',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <Bar
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+    render(
+      <Bar
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });

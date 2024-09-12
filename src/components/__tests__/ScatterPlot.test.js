@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import ScatterPlot from '../ScatterPlot';
-import renderer from 'react-test-renderer';
 
 describe('ScatterPlot chart', () => {
   test('renders ScatterPlot component with 2d array data format', () => {
@@ -12,7 +11,10 @@ describe('ScatterPlot chart', () => {
     ];
 
     const config = {
-      title: 'ScatterPlot Chart Example'
+      title: 'ScatterPlot Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -33,7 +35,10 @@ describe('ScatterPlot chart', () => {
       { label: 'C', x: 5, y: 7 }
     ];
     const config = {
-      title: 'ScatterPlot Chart Example'
+      title: 'ScatterPlot Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -55,7 +60,10 @@ describe('ScatterPlot chart', () => {
     };
 
     const config = {
-      title: 'ScatterPlot Chart Example'
+      title: 'ScatterPlot Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -70,7 +78,7 @@ describe('ScatterPlot chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches ScatterPlot snapshot', () => {
+  test('matches ScatterPlot snapshot', async () => {
     const data = [
       ['A', 1, 2],
       ['B', 1, 3],
@@ -78,17 +86,23 @@ describe('ScatterPlot chart', () => {
     ];
 
     const config = {
-      title: 'ScatterPlot Chart Example'
+      title: 'ScatterPlot Chart Example',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <ScatterPlot
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+    render(
+      <ScatterPlot
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -22,7 +22,7 @@ const getOptions = ({ dimensions = [], radius, overrideItemStyle }) => {
   };
 };
 
-const Doughnut = ({ config, data, size = 40, rawConfig }) => {
+const Doughnut = ({ config, data, size = 40, rawConfig }, ref) => {
   const torus = useMemo(() => {
     if (size >= MAX) {
       return 0;
@@ -30,7 +30,7 @@ const Doughnut = ({ config, data, size = 40, rawConfig }) => {
     return MAX - size;
   }, [size]);
 
-  const chartRef = useECharts({
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'pie',
       radius: [`${torus}%`, `${MAX}%`]
@@ -46,6 +46,8 @@ const Doughnut = ({ config, data, size = 40, rawConfig }) => {
       })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -55,4 +57,4 @@ const Doughnut = ({ config, data, size = 40, rawConfig }) => {
   );
 };
 
-export default Doughnut;
+export default forwardRef(Doughnut);

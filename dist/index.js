@@ -293,74 +293,75 @@ var useECharts = function useECharts(_ref) {
     _ref$rawOverrides = _ref.rawOverrides,
     rawOverrides = _ref$rawOverrides === void 0 ? {} : _ref$rawOverrides;
   var chartRef = React.useRef(null);
+  var _useState = React.useState(null),
+    chartInstance = _useState[0],
+    setChartInstance = _useState[1];
   React.useEffect(function () {
-    var chart;
-    var options = {};
-    if (chartRef.current) {
-      setTimeout(function () {
-        if (!chart && chartRef.current) {
-          chart = echarts.init(chartRef.current);
-          if (!Object.keys(rawConfig).length) {
-            var horizontal = false;
-            if (config !== null && config !== void 0 && config.horizontal) {
-              horizontal = config.horizontal;
-            }
-            var itemStyle = {
-              color: null,
-              borderColor: null,
-              borderWidth: null,
-              borderType: null,
-              opacity: null
-            };
-            if (config !== null && config !== void 0 && config.itemStyle) {
-              itemStyle = _extends({}, config.itemStyle);
-            }
-            var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
-              itemStyle: filterObjNullValue(itemStyle)
-            } : {};
-            var _normalizeData = normalizeData(data),
-              dimensions = _normalizeData.dimensions,
-              source = _normalizeData.source;
-            var transformedConfig = transformConfig(_extends({}, config, {
-              dimensions: dimensions
-            }));
-            options = _extends({}, transformedConfig, {
-              dataset: {
-                dimensions: dimensions,
-                source: source
-              }
-            }, getOptions({
-              dimensions: dimensions,
-              transformedConfig: transformedConfig,
-              overrideItemStyle: overrideItemStyle,
-              horizontal: horizontal
-            }));
-          } else {
-            options = rawConfig !== null && rawConfig !== void 0 && rawConfig.series ? _extends({}, rawConfig, {
-              series: rawConfig.series.map(function (s) {
-                return _extends({}, rawOverrides, s, {
-                  type: (rawOverrides === null || rawOverrides === void 0 ? void 0 : rawOverrides.type) || (s === null || s === void 0 ? void 0 : s.type)
-                });
-              })
-            }) : rawConfig;
-          }
-          if (chart) {
-            try {
-              chart.setOption(options);
-            } catch (err) {
-              console.error('useECharts', err);
-            }
-          }
-        }
-      }, 0);
+    if (!chartInstance && chartRef.current) {
+      var initProps = config !== null && config !== void 0 && config.width && config !== null && config !== void 0 && config.height ? {
+        width: config.width,
+        height: config.height
+      } : {};
+      var chart = echarts.init(chartRef.current, (config === null || config === void 0 ? void 0 : config.theme) || null, _extends({
+        renderer: (config === null || config === void 0 ? void 0 : config.renderer) || 'canvas'
+      }, initProps));
+      setChartInstance(chart);
     }
-    return function () {
-      if (chart) {
-        chart.dispose();
+    var options = {};
+    if (!Object.keys(rawConfig).length) {
+      var horizontal = false;
+      if (config !== null && config !== void 0 && config.horizontal) {
+        horizontal = config.horizontal;
       }
-    };
-  }, [config, rawConfig, data, rawOverrides, getOptions]);
-  return chartRef;
+      var itemStyle = {
+        color: null,
+        borderColor: null,
+        borderWidth: null,
+        borderType: null,
+        opacity: null
+      };
+      if (config !== null && config !== void 0 && config.itemStyle) {
+        itemStyle = _extends({}, config.itemStyle);
+      }
+      var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
+        itemStyle: filterObjNullValue(itemStyle)
+      } : {};
+      var _normalizeData = normalizeData(data),
+        dimensions = _normalizeData.dimensions,
+        source = _normalizeData.source;
+      var transformedConfig = transformConfig(_extends({}, config, {
+        dimensions: dimensions
+      }));
+      options = _extends({}, transformedConfig, {
+        dataset: {
+          dimensions: dimensions,
+          source: source
+        }
+      }, getOptions({
+        dimensions: dimensions,
+        transformedConfig: transformedConfig,
+        overrideItemStyle: overrideItemStyle,
+        horizontal: horizontal
+      }));
+    } else {
+      options = rawConfig !== null && rawConfig !== void 0 && rawConfig.series ? _extends({}, rawConfig, {
+        series: rawConfig.series.map(function (s) {
+          return _extends({}, rawOverrides, s, {
+            type: (rawOverrides === null || rawOverrides === void 0 ? void 0 : rawOverrides.type) || (s === null || s === void 0 ? void 0 : s.type)
+          });
+        })
+      }) : rawConfig;
+    }
+    if (chartInstance) {
+      try {
+        chartInstance.clear();
+        chartInstance.setOption(options);
+      } catch (err) {
+        console.error('useECharts', err);
+      }
+    }
+  }, [chartInstance, chartRef, config, rawConfig, data, rawOverrides, getOptions]);
+  return [chartRef, chartInstance];
 };
 
 var styles = {"container":"ae-container","legend":"ae-legend"};
@@ -385,27 +386,32 @@ var _getOptions = function getOptions(_ref) {
     series: series
   };
 };
-var Bar = function Bar(_ref2) {
+var Bar = function Bar(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'bar'
-    },
-    rawConfig: rawConfig,
-    config: config,
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle,
-        horizontal = _ref3.horizontal;
-      return _getOptions({
-        horizontal: horizontal,
-        dimensions: dimensions,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'bar'
+      },
+      rawConfig: rawConfig,
+      config: config,
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          overrideItemStyle = _ref3.overrideItemStyle,
+          horizontal = _ref3.horizontal;
+        return _getOptions({
+          horizontal: horizontal,
+          dimensions: dimensions,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -413,6 +419,7 @@ var Bar = function Bar(_ref2) {
     className: styles.container
   });
 };
+var Bar$1 = React.forwardRef(Bar);
 
 var _getOptions$1 = function getOptions(_ref) {
   var _ref$horizontal = _ref.horizontal,
@@ -434,27 +441,32 @@ var _getOptions$1 = function getOptions(_ref) {
     series: series
   };
 };
-var Line = function Line(_ref2) {
+var Line = function Line(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'line'
-    },
-    rawConfig: rawConfig,
-    config: config,
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle,
-        horizontal = _ref3.horizontal;
-      return _getOptions$1({
-        horizontal: horizontal,
-        dimensions: dimensions,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'line'
+      },
+      rawConfig: rawConfig,
+      config: config,
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          overrideItemStyle = _ref3.overrideItemStyle,
+          horizontal = _ref3.horizontal;
+        return _getOptions$1({
+          horizontal: horizontal,
+          dimensions: dimensions,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -462,6 +474,7 @@ var Line = function Line(_ref2) {
     className: styles.container
   });
 };
+var Line$1 = React.forwardRef(Line);
 
 var _getOptions$2 = function getOptions(_ref) {
   var _ref$dimensions = _ref.dimensions,
@@ -480,27 +493,32 @@ var _getOptions$2 = function getOptions(_ref) {
     }, overrideItemStyle)]
   };
 };
-var Pie = function Pie(_ref2) {
+var Pie = function Pie(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'pie'
-    },
-    rawConfig: rawConfig,
-    config: _extends({}, config, {
-      showAxis: false
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'pie'
+      },
+      rawConfig: rawConfig,
+      config: _extends({}, config, {
+        showAxis: false
+      }),
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          overrideItemStyle = _ref3.overrideItemStyle;
+        return _getOptions$2({
+          dimensions: dimensions,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
     }),
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
-      return _getOptions$2({
-        dimensions: dimensions,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -508,6 +526,7 @@ var Pie = function Pie(_ref2) {
     className: styles.container
   });
 };
+var Pie$1 = React.forwardRef(Pie);
 
 var MAX = 60;
 var _getOptions$3 = function getOptions(_ref) {
@@ -528,7 +547,7 @@ var _getOptions$3 = function getOptions(_ref) {
     }, overrideItemStyle)]
   };
 };
-var Doughnut = function Doughnut(_ref2) {
+var Doughnut = function Doughnut(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     _ref2$size = _ref2.size,
@@ -540,25 +559,30 @@ var Doughnut = function Doughnut(_ref2) {
     }
     return MAX - size;
   }, [size]);
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'pie',
-      radius: [torus + "%", MAX + "%"]
-    },
-    rawConfig: rawConfig,
-    config: _extends({}, config, {
-      showAxis: false
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'pie',
+        radius: [torus + "%", MAX + "%"]
+      },
+      rawConfig: rawConfig,
+      config: _extends({}, config, {
+        showAxis: false
+      }),
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          overrideItemStyle = _ref3.overrideItemStyle;
+        return _getOptions$3({
+          dimensions: dimensions,
+          radius: [torus + "%", MAX + "%"],
+          overrideItemStyle: overrideItemStyle
+        });
+      }
     }),
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        overrideItemStyle = _ref3.overrideItemStyle;
-      return _getOptions$3({
-        dimensions: dimensions,
-        radius: [torus + "%", MAX + "%"],
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -566,6 +590,7 @@ var Doughnut = function Doughnut(_ref2) {
     className: styles.container
   });
 };
+var Doughnut$1 = React.forwardRef(Doughnut);
 
 var scatterTransform = function scatterTransform(input) {
   if (Array.isArray(input)) {
@@ -625,7 +650,7 @@ var _getOptions$4 = function getOptions(_ref3) {
     }
   };
 };
-var ScatterPlot = function ScatterPlot(_ref4) {
+var ScatterPlot = function ScatterPlot(_ref4, ref) {
   var config = _ref4.config,
     data = _ref4.data,
     _ref4$symbolSize = _ref4.symbolSize,
@@ -633,23 +658,28 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     _ref4$showLabel = _ref4.showLabel,
     showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
     rawConfig = _ref4.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'scatter'
-    },
-    rawConfig: rawConfig,
-    config: config,
-    getOptions: function getOptions(_ref5) {
-      var transformedConfig = _ref5.transformedConfig,
-        overrideItemStyle = _ref5.overrideItemStyle;
-      return _getOptions$4({
-        data: data,
-        symbolSize: symbolSize,
-        showLabel: showLabel,
-        transformedConfig: transformedConfig,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'scatter'
+      },
+      rawConfig: rawConfig,
+      config: config,
+      getOptions: function getOptions(_ref5) {
+        var transformedConfig = _ref5.transformedConfig,
+          overrideItemStyle = _ref5.overrideItemStyle;
+        return _getOptions$4({
+          data: data,
+          symbolSize: symbolSize,
+          showLabel: showLabel,
+          transformedConfig: transformedConfig,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -657,6 +687,7 @@ var ScatterPlot = function ScatterPlot(_ref4) {
     className: styles.container
   });
 };
+var ScatterPlot$1 = React.forwardRef(ScatterPlot);
 
 var _getOptions$5 = function getOptions(_ref) {
   var dimensions = _ref.dimensions,
@@ -688,33 +719,38 @@ var _getOptions$5 = function getOptions(_ref) {
     series: series
   };
 };
-var StackBar = function StackBar(_ref2) {
+var StackBar = function StackBar(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     _ref2$stackMapping = _ref2.stackMapping,
     stackMapping = _ref2$stackMapping === void 0 ? {} : _ref2$stackMapping,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'bar',
-      stack: 'defaultStack'
-    },
-    rawConfig: rawConfig,
-    config: config,
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle,
-        horizontal = _ref3.horizontal;
-      return _getOptions$5({
-        dimensions: dimensions,
-        stackMapping: stackMapping,
-        horizontal: horizontal,
-        transformedConfig: transformedConfig,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'bar',
+        stack: 'defaultStack'
+      },
+      rawConfig: rawConfig,
+      config: config,
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          transformedConfig = _ref3.transformedConfig,
+          overrideItemStyle = _ref3.overrideItemStyle,
+          horizontal = _ref3.horizontal;
+        return _getOptions$5({
+          dimensions: dimensions,
+          stackMapping: stackMapping,
+          horizontal: horizontal,
+          transformedConfig: transformedConfig,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -722,6 +758,7 @@ var StackBar = function StackBar(_ref2) {
     className: styles.container
   });
 };
+var StackBar$1 = React.forwardRef(StackBar);
 
 var _getOptions$6 = function getOptions(_ref) {
   var transformedConfig = _ref.transformedConfig,
@@ -748,30 +785,35 @@ var _getOptions$6 = function getOptions(_ref) {
     series: series
   };
 };
-var StackClusterColumn = function StackClusterColumn(_ref2) {
+var StackClusterColumn = function StackClusterColumn(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'bar',
-      barGap: 0
-    },
-    rawConfig: rawConfig,
-    config: config,
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle,
-        horizontal = _ref3.horizontal;
-      return _getOptions$6({
-        horizontal: horizontal,
-        dimensions: dimensions,
-        transformedConfig: transformedConfig,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'bar',
+        barGap: 0
+      },
+      rawConfig: rawConfig,
+      config: config,
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          transformedConfig = _ref3.transformedConfig,
+          overrideItemStyle = _ref3.overrideItemStyle,
+          horizontal = _ref3.horizontal;
+        return _getOptions$6({
+          horizontal: horizontal,
+          dimensions: dimensions,
+          transformedConfig: transformedConfig,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -779,6 +821,7 @@ var StackClusterColumn = function StackClusterColumn(_ref2) {
     className: styles.container
   });
 };
+var StackClusterColumn$1 = React.forwardRef(StackClusterColumn);
 
 var _getOptions$7 = function getOptions(_ref) {
   var _extends2;
@@ -810,30 +853,35 @@ var _getOptions$7 = function getOptions(_ref) {
     boundaryGap: false
   }), _extends2.series = series, _extends2));
 };
-var StacLine = function StacLine(_ref2) {
+var StacLine = function StacLine(_ref2, ref) {
   var config = _ref2.config,
     data = _ref2.data,
     rawConfig = _ref2.rawConfig;
-  var chartRef = useECharts({
-    rawOverrides: {
-      type: 'line',
-      stack: 'defaultStack'
-    },
-    rawConfig: rawConfig,
-    config: config,
-    data: data,
-    getOptions: function getOptions(_ref3) {
-      var dimensions = _ref3.dimensions,
-        transformedConfig = _ref3.transformedConfig,
-        overrideItemStyle = _ref3.overrideItemStyle,
-        horizontal = _ref3.horizontal;
-      return _getOptions$7({
-        dimensions: dimensions,
-        horizontal: horizontal,
-        transformedConfig: transformedConfig,
-        overrideItemStyle: overrideItemStyle
-      });
-    }
+  var _useECharts = useECharts({
+      rawOverrides: {
+        type: 'line',
+        stack: 'defaultStack'
+      },
+      rawConfig: rawConfig,
+      config: config,
+      data: data,
+      getOptions: function getOptions(_ref3) {
+        var dimensions = _ref3.dimensions,
+          transformedConfig = _ref3.transformedConfig,
+          overrideItemStyle = _ref3.overrideItemStyle,
+          horizontal = _ref3.horizontal;
+        return _getOptions$7({
+          dimensions: dimensions,
+          horizontal: horizontal,
+          transformedConfig: transformedConfig,
+          overrideItemStyle: overrideItemStyle
+        });
+      }
+    }),
+    chartRef = _useECharts[0],
+    chartInstance = _useECharts[1];
+  React.useImperativeHandle(ref, function () {
+    return chartInstance;
   });
   return /*#__PURE__*/React__default.createElement("div", {
     ref: chartRef,
@@ -841,6 +889,7 @@ var StacLine = function StacLine(_ref2) {
     className: styles.container
   });
 };
+var StackLine = React.forwardRef(StacLine);
 
 // A type of promise-like that resolves synchronously and supports only one observer
 
@@ -1295,13 +1344,13 @@ var MapView = function MapView(_ref, ref) {
 };
 var MapView$1 = React.forwardRef(MapView);
 
-exports.Bar = Bar;
-exports.Doughnut = Doughnut;
-exports.Line = Line;
+exports.Bar = Bar$1;
+exports.Doughnut = Doughnut$1;
+exports.Line = Line$1;
 exports.MapView = MapView$1;
-exports.Pie = Pie;
-exports.ScatterPlot = ScatterPlot;
-exports.StackBar = StackBar;
-exports.StackClusterColumn = StackClusterColumn;
-exports.StackLine = StacLine;
+exports.Pie = Pie$1;
+exports.ScatterPlot = ScatterPlot$1;
+exports.StackBar = StackBar$1;
+exports.StackClusterColumn = StackClusterColumn$1;
+exports.StackLine = StackLine;
 //# sourceMappingURL=index.js.map

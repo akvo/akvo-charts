@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -59,14 +59,11 @@ const getOptions = ({
   };
 };
 
-const ScatterPlot = ({
-  config,
-  data,
-  symbolSize = 10,
-  showLabel = true,
-  rawConfig
-}) => {
-  const chartRef = useECharts({
+const ScatterPlot = (
+  { config, data, symbolSize = 10, showLabel = true, rawConfig },
+  ref
+) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'scatter'
     },
@@ -82,6 +79,8 @@ const ScatterPlot = ({
       })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -91,4 +90,4 @@ const ScatterPlot = ({
   );
 };
 
-export default ScatterPlot;
+export default forwardRef(ScatterPlot);

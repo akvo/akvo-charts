@@ -1,8 +1,65 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Pie chart matches Pie snapshot 1`] = `
-<div
-  className="container"
-  role="figure"
-/>
+"<svg width=\\"400\\" height=\\"400\\" xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\" version=\\"1.1\\" baseProfile=\\"full\\" viewBox=\\"0 0 400 400\\">
+<rect width=\\"400\\" height=\\"400\\" x=\\"0\\" y=\\"0\\" fill=\\"none\\"></rect>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#4475B4\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#73ADD1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#AAD9E8\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#FEE08F\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M200 80L200 200Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-1\\"></path>
+<path d=\\"M200 80L200 200Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-2\\"></path>
+<path d=\\"M200 80L200 200Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-3\\"></path>
+<path d=\\"M200 80L200 200Z\\" fill=\\"#FEE08F\\" class=\\"zr3-cls-4\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(281.9767 80.0672)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Matcha Latte</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(349.0294 239.704)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Milk ...</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(104.3501 311.8128)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Cheese Cocoa</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(83.3909 105.7042)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Walnut Bro...</text>
+<path d=\\"M-5 -5l298.26 0l0 48l-298.26 0Z\\" transform=\\"translate(55.87 40)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-5\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(50.37 40)\\" fill=\\"#4475B4\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(50.37 40)\\" fill=\\"#333\\">Matcha Latte</text>
+<path d=\\"M5.5 0l94.22 0l0 14l-94.22 0Z\\" transform=\\"translate(50.37 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-6\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(154.59 40)\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(154.59 40)\\" fill=\\"#333\\">Milk Tea</text>
+<path d=\\"M5.5 0l69.86 0l0 14l-69.86 0Z\\" transform=\\"translate(154.59 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-6\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(234.45 40)\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(234.45 40)\\" fill=\\"#333\\">Cheese Cocoa</text>
+<path d=\\"M5.5 0l104.18 0l0 14l-104.18 0Z\\" transform=\\"translate(234.45 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-6\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(50.37 64)\\" fill=\\"#FEE08F\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(50.37 64)\\" fill=\\"#333\\">Walnut Brownie</text>
+<path d=\\"M5.5 0l108.74 0l0 14l-108.74 0Z\\" transform=\\"translate(50.37 64)\\" fill=\\"transparent\\" class=\\"zr3-cls-6\\"></path>
+<path d=\\"M-63.52 -5l127.04 0l0 24l-127.04 0Z\\" transform=\\"translate(205 5)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:14px;font-family:sans-serif;font-weight:bold;\\" xml:space=\\"preserve\\" y=\\"7\\" transform=\\"translate(205 5)\\" fill=\\"#000\\">Pie Chart Example</text>
+<style ><![CDATA[
+.zr3-cls-0:hover {
+cursor:pointer;
+}
+.zr3-cls-1:hover {
+cursor:pointer;
+fill:rgba(74,128,198,1);
+}
+.zr3-cls-2:hover {
+cursor:pointer;
+fill:rgba(126,190,229,1);
+}
+.zr3-cls-3:hover {
+cursor:pointer;
+fill:rgba(187,238,255,1);
+}
+.zr3-cls-4:hover {
+cursor:pointer;
+fill:rgba(255,246,157,1);
+}
+.zr3-cls-5:hover {
+pointer-events:none;
+}
+.zr3-cls-6:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+
+]]>
+
+</style>
+</svg>"
 `;

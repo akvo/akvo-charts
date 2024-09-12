@@ -1,8 +1,114 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Bar chart matches Bar snapshot 1`] = `
-<div
-  className="container"
-  role="figure"
-/>
+"<svg width=\\"400\\" height=\\"400\\" xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\" version=\\"1.1\\" baseProfile=\\"full\\" viewBox=\\"0 0 400 400\\">
+<rect width=\\"400\\" height=\\"400\\" x=\\"0\\" y=\\"0\\" fill=\\"none\\"></rect>
+<path d=\\"M37.44 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M37.44 292.5L384 292.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M37.44 244.5L384 244.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M37.44 196.5L384 196.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M37.44 148.5L384 148.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M37.44 100.5L384 100.5\\" fill=\\"transparent\\" stroke=\\"#E0E6F1\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"-6\\" transform=\\"translate(37.44 80)\\" fill=\\"#000\\">Sales</text>
+<path d=\\"M37.44 340.5L384 340.5\\" fill=\\"transparent\\" stroke=\\"#000\\" stroke-linecap=\\"round\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;font-weight:bold;\\" y=\\"6\\" transform=\\"translate(210.72 385)\\" fill=\\"#000\\">Product</text>
+<path d=\\"M37.5 340L37.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M107.5 340L107.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M176.5 340L176.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M245.5 340L245.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M314.5 340L314.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M384.5 340L384.5 345\\" fill=\\"transparent\\" stroke=\\"#000\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 340)\\" fill=\\"#000\\">0</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 292)\\" fill=\\"#000\\">10</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 244)\\" fill=\\"#000\\">20</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 196)\\" fill=\\"#000\\">30</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 148)\\" fill=\\"#000\\">40</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(29.44 100)\\" fill=\\"#000\\">50</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(72.096 348)\\" fill=\\"#000\\">Product 1</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(141.408 348)\\" fill=\\"#000\\">Product 2</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(210.72 348)\\" fill=\\"#000\\">Product 3</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(280.032 348)\\" fill=\\"#000\\">Product 4</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" y=\\"6\\" transform=\\"translate(349.344 348)\\" fill=\\"#000\\">Product 5</text>
+<path d=\\"M48.1834 340l47.8253 0l0 0l-47.8253 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-1 zr3-cls-2\\"></path>
+<path d=\\"M117.4954 340l47.8253 0l0 0l-47.8253 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-3 zr3-cls-2\\"></path>
+<path d=\\"M186.8074 340l47.8253 0l0 0l-47.8253 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-4 zr3-cls-2\\"></path>
+<path d=\\"M256.1194 340l47.8253 0l0 0l-47.8253 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-5 zr3-cls-2\\"></path>
+<path d=\\"M325.4314 340l47.8253 0l0 0l-47.8253 0Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-6 zr3-cls-2\\"></path>
+<path d=\\"M-5 -5l62.58 0l0 24l-62.58 0Z\\" transform=\\"translate(173.71 40)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(168.21 40)\\" fill=\\"#4475B4\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(168.21 40)\\" fill=\\"#333\\">sales</text>
+<path d=\\"M5.5 0l52.58 0l0 14l-52.58 0Z\\" transform=\\"translate(168.21 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M-64.29 -5l128.58 0l0 24l-128.58 0Z\\" transform=\\"translate(205 5)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-0\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:14px;font-family:sans-serif;font-weight:bold;\\" xml:space=\\"preserve\\" y=\\"7\\" transform=\\"translate(205 5)\\" fill=\\"#000\\">Bar Chart Example</text>
+<style ><![CDATA[
+.zr3-cls-0:hover {
+pointer-events:none;
+}
+.zr3-cls-1 {
+animation:zr3-ani-0 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-2:hover {
+cursor:pointer;
+fill:rgba(74,128,198,1);
+}
+.zr3-cls-3 {
+animation:zr3-ani-1 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-4 {
+animation:zr3-ani-2 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-5 {
+animation:zr3-ani-3 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-6 {
+animation:zr3-ani-4 1s cubic-bezier(0.33,1,0.68,1) both;
+}
+.zr3-cls-7:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+@keyframes zr3-ani-0 {
+0% {
+d:path(\\"M48.2 340l47.8 0l0 0l-47.8 0Z\\");
+}
+100% {
+d:path(\\"M48.2 340l47.8 0l0 -144l-47.8 0Z\\");
+}
+}
+@keyframes zr3-ani-1 {
+0% {
+d:path(\\"M117.5 340l47.8 0l0 0l-47.8 0Z\\");
+}
+100% {
+d:path(\\"M117.5 340l47.8 0l0 -96l-47.8 0Z\\");
+}
+}
+@keyframes zr3-ani-2 {
+0% {
+d:path(\\"M186.8 340l47.8 0l0 0l-47.8 0Z\\");
+}
+100% {
+d:path(\\"M186.8 340l47.8 0l0 -240l-47.8 0Z\\");
+}
+}
+@keyframes zr3-ani-3 {
+0% {
+d:path(\\"M256.1 340l47.8 0l0 0l-47.8 0Z\\");
+}
+100% {
+d:path(\\"M256.1 340l47.8 0l0 -216l-47.8 0Z\\");
+}
+}
+@keyframes zr3-ani-4 {
+0% {
+d:path(\\"M325.4 340l47.8 0l0 0l-47.8 0Z\\");
+}
+100% {
+d:path(\\"M325.4 340l47.8 0l0 -192l-47.8 0Z\\");
+}
+}
+]]>
+
+</style>
+</svg>"
 `;

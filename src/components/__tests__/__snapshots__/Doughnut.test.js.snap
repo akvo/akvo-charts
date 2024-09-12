@@ -1,8 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Doughnut chart matches Doughnut snapshot 1`] = `
-<div
-  className="container"
-  role="figure"
-/>
+"<svg width=\\"400\\" height=\\"400\\" xmlns=\\"http://www.w3.org/2000/svg\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\" version=\\"1.1\\" baseProfile=\\"full\\" viewBox=\\"0 0 400 400\\">
+<rect width=\\"400\\" height=\\"400\\" x=\\"0\\" y=\\"0\\" fill=\\"none\\"></rect>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#4475B4\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#73ADD1\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#AAD9E8\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#FEE08F\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"\\" fill=\\"transparent\\" stroke=\\"#FDAE60\\" class=\\"zr3-cls-0\\"></path>
+<path d=\\"M200 80L200 160Z\\" fill=\\"#4475B4\\" class=\\"zr3-cls-1\\"></path>
+<path d=\\"M200 80L200 160Z\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-2\\"></path>
+<path d=\\"M200 80L200 160Z\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-3\\"></path>
+<path d=\\"M200 80L200 160Z\\" fill=\\"#FEE08F\\" class=\\"zr3-cls-4\\"></path>
+<path d=\\"M200 80L200 160Z\\" fill=\\"#FDAE60\\" class=\\"zr3-cls-5\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(285.8388 82.1431)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Product 1</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" transform=\\"translate(351.97 171.5583)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Prod...</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(295.5966 311.8488)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Product 3</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(65.0436 270.7815)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Product 4</text>
+<text dominant-baseline=\\"central\\" text-anchor=\\"end\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" transform=\\"translate(95.1903 94.9652)\\" fill=\\"#333\\" fill-opacity=\\"0\\" stroke=\\"rgb(255,255,255)\\" stroke-width=\\"2\\" paint-order=\\"stroke\\" stroke-opacity=\\"0\\" stroke-miterlimit=\\"2\\">Product 5</text>
+<path d=\\"M-5 -5l344.4 0l0 48l-344.4 0Z\\" transform=\\"translate(32.8 40)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-6\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(27.3 40)\\" fill=\\"#4475B4\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(27.3 40)\\" fill=\\"#333\\">Product 1</text>
+<path d=\\"M5.5 0l76.1 0l0 14l-76.1 0Z\\" transform=\\"translate(27.3 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(113.4 40)\\" fill=\\"#73ADD1\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(113.4 40)\\" fill=\\"#333\\">Product 2</text>
+<path d=\\"M5.5 0l76.1 0l0 14l-76.1 0Z\\" transform=\\"translate(113.4 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(199.5 40)\\" fill=\\"#AAD9E8\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(199.5 40)\\" fill=\\"#333\\">Product 3</text>
+<path d=\\"M5.5 0l76.1 0l0 14l-76.1 0Z\\" transform=\\"translate(199.5 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(285.6 40)\\" fill=\\"#FEE08F\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(285.6 40)\\" fill=\\"#333\\">Product 4</text>
+<path d=\\"M5.5 0l76.1 0l0 14l-76.1 0Z\\" transform=\\"translate(285.6 40)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M19.5 7A7 7 0 1 1 19.5 6.9993\\" transform=\\"translate(27.3 64)\\" fill=\\"#FDAE60\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"start\\" style=\\"font-size:12px;font-family:sans-serif;\\" xml:space=\\"preserve\\" x=\\"30\\" y=\\"7\\" transform=\\"translate(27.3 64)\\" fill=\\"#333\\">Product 5</text>
+<path d=\\"M5.5 0l76.1 0l0 14l-76.1 0Z\\" transform=\\"translate(27.3 64)\\" fill=\\"transparent\\" class=\\"zr3-cls-7\\"></path>
+<path d=\\"M-83.89 -5l167.78 0l0 24l-167.78 0Z\\" transform=\\"translate(205 5)\\" fill=\\"rgb(0,0,0)\\" fill-opacity=\\"0\\" stroke=\\"#ccc\\" stroke-width=\\"0\\" class=\\"zr3-cls-6\\"></path>
+<text dominant-baseline=\\"central\\" text-anchor=\\"middle\\" style=\\"font-size:14px;font-family:sans-serif;font-weight:bold;\\" xml:space=\\"preserve\\" y=\\"7\\" transform=\\"translate(205 5)\\" fill=\\"#000\\">Doughnut Chart Example</text>
+<style ><![CDATA[
+.zr3-cls-0:hover {
+cursor:pointer;
+}
+.zr3-cls-1:hover {
+cursor:pointer;
+fill:rgba(74,128,198,1);
+}
+.zr3-cls-2:hover {
+cursor:pointer;
+fill:rgba(126,190,229,1);
+}
+.zr3-cls-3:hover {
+cursor:pointer;
+fill:rgba(187,238,255,1);
+}
+.zr3-cls-4:hover {
+cursor:pointer;
+fill:rgba(255,246,157,1);
+}
+.zr3-cls-5:hover {
+cursor:pointer;
+fill:rgba(255,191,105,1);
+}
+.zr3-cls-6:hover {
+pointer-events:none;
+}
+.zr3-cls-7:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+
+]]>
+
+</style>
+</svg>"
 `;

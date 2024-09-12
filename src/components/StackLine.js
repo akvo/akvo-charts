@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -39,8 +39,8 @@ const getOptions = ({
   };
 };
 
-const StacLine = ({ config, data, rawConfig }) => {
-  const chartRef = useECharts({
+const StacLine = ({ config, data, rawConfig }, ref) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'line',
       stack: 'defaultStack'
@@ -62,6 +62,8 @@ const StacLine = ({ config, data, rawConfig }) => {
       })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -71,4 +73,4 @@ const StacLine = ({ config, data, rawConfig }) => {
   );
 };
 
-export default StacLine;
+export default forwardRef(StacLine);

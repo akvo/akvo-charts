@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -38,8 +38,8 @@ const getOptions = ({
   };
 };
 
-const StackBar = ({ config, data, stackMapping = {}, rawConfig }) => {
-  const chartRef = useECharts({
+const StackBar = ({ config, data, stackMapping = {}, rawConfig }, ref) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'bar',
       stack: 'defaultStack'
@@ -62,6 +62,8 @@ const StackBar = ({ config, data, stackMapping = {}, rawConfig }) => {
       })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -71,4 +73,4 @@ const StackBar = ({ config, data, stackMapping = {}, rawConfig }) => {
   );
 };
 
-export default StackBar;
+export default forwardRef(StackBar);

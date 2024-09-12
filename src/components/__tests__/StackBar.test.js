@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import StackBar from '../StackBar';
-import renderer from 'react-test-renderer';
 
 describe('StackBar chart', () => {
   test('renders StackBar component with 2d array data format', () => {
@@ -16,7 +15,10 @@ describe('StackBar chart', () => {
     const config = {
       title: 'StackBar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     render(
@@ -41,9 +43,11 @@ describe('StackBar chart', () => {
     const config = {
       title: 'StackBar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
-
     render(
       <StackBar
         config={config}
@@ -65,7 +69,10 @@ describe('StackBar chart', () => {
     const config = {
       title: 'StackBar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
     const stackMapping = {
@@ -86,7 +93,7 @@ describe('StackBar chart', () => {
     expect(chartContainer).toBeInTheDocument();
   });
 
-  test('matches StackBar snapshot', () => {
+  test('matches StackBar snapshot', async () => {
     const data = [
       ['product', '2015', '2016', '2017'],
       ['Matcha Latte', 43.3, 85.8, 93.7],
@@ -98,17 +105,23 @@ describe('StackBar chart', () => {
     const config = {
       title: 'StackBar Chart Example',
       xAxisLabel: 'Categories',
-      yAxisLabel: 'Values'
+      yAxisLabel: 'Values',
+      renderer: 'svg',
+      width: 400,
+      height: 400
     };
 
-    const tree = renderer
-      .create(
-        <StackBar
-          config={config}
-          data={data}
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const ref = React.createRef();
+    render(
+      <StackBar
+        config={config}
+        data={data}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current.renderToSVGString()).toMatchSnapshot();
+    });
   });
 });

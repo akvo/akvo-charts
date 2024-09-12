@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useECharts } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -20,8 +20,8 @@ const getOptions = ({ dimensions = [], overrideItemStyle }) => {
   };
 };
 
-const Pie = ({ config, data, rawConfig }) => {
-  const chartRef = useECharts({
+const Pie = ({ config, data, rawConfig }, ref) => {
+  const [chartRef, chartInstance] = useECharts({
     rawOverrides: {
       type: 'pie'
     },
@@ -32,6 +32,8 @@ const Pie = ({ config, data, rawConfig }) => {
       getOptions({ dimensions, overrideItemStyle })
   });
 
+  useImperativeHandle(ref, () => chartInstance);
+
   return (
     <div
       ref={chartRef}
@@ -41,4 +43,4 @@ const Pie = ({ config, data, rawConfig }) => {
   );
 };
 
-export default Pie;
+export default forwardRef(Pie);
