@@ -18,7 +18,13 @@ export const LeafletProvider = forwardRef(
 
     useEffect(() => {
       if (!mapRef.current) {
-        const map = L.map(mapContainer.current, { center: [0, 0], zoom: 2 });
+        const map = L.map(mapContainer.current, {
+          center: [0, 0],
+          zoom: 2,
+          maxZoom: 19,
+          _layersMaxZoom: 19
+        });
+
         mapRef.current = map;
       }
 
