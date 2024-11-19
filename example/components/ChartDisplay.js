@@ -5,6 +5,7 @@ import {
   Bar,
   Doughnut,
   Line,
+  Map,
   MapView,
   Pie,
   ScatterPlot,
@@ -136,13 +137,31 @@ const ChartDisplay = () => {
         return <MapDisplay {...mapConfig} />;
       case chartTypes.CHOROPLETH_MAP:
         return <MapDisplay {...mapConfig} />;
+      case chartTypes.CLUSTER_MAP:
+        return (
+          <Map.View {...mapConfig}>
+            <Map.MarkerClusterGroup>
+              {mapConfig?.data
+                ?.filter((d) => d?.point)
+                ?.map((d, dx) => (
+                  <Map.Marker
+                    latlng={d?.point}
+                    label={d?.label}
+                    key={dx}
+                  />
+                ))}
+            </Map.MarkerClusterGroup>
+          </Map.View>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <div className={`${isMap ? '' : 'pt-10'} h-full lg:h-[90vh] chart-display`}>{chartComponent()}</div>
+    <div className={`${isMap ? '' : 'pt-10'} h-full lg:h-[90vh] chart-display`}>
+      {chartComponent()}
+    </div>
   );
 };
 

@@ -8,7 +8,8 @@ export const chartTypes = {
   SCATTER_PLOT: 'ScatterPlot',
   STACK_LINE: 'StackLine',
   MAP: 'MapView',
-  CHOROPLETH_MAP: 'MapViewChoropleth'
+  CHOROPLETH_MAP: 'MapViewChoropleth',
+  CLUSTER_MAP: 'MapViewCluster'
 };
 
 export const excludeHorizontal = [
