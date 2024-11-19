@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import mIcon from 'leaflet/dist/images/marker-icon.png';
 import mShadow from 'leaflet/dist/images/marker-shadow.png';
+import * as topojson from 'topojson-client';
 
 export const MarkerIcon = () => {
   const defaultIcon = typeof mIcon === 'object' ? mIcon?.src : mIcon;
@@ -16,4 +17,19 @@ export const MarkerIcon = () => {
   });
 
   return Icon;
+};
+
+export const getGeoJSONList = (d) => {
+  if (!d) {
+    return [];
+  }
+  if (d?.type === 'Topology') {
+    /**
+     * Convert TopoJSON to GeoJSON
+     */
+    return Object.keys(d.objects).map((kd) =>
+      topojson.feature(d, d.objects[kd])
+    );
+  }
+  return [d];
 };
