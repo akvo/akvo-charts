@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster';
 import { useLeaflet } from '../../context/LeafletProvider';
-import { MarkerIcon } from './Utils';
+import { fnMarker } from './Utils';
 
 const MarkerClusterGroup = ({
   children,
@@ -27,16 +27,16 @@ const MarkerClusterGroup = ({
         iconCreateFunction:
           typeof fnIcon === 'function'
             ? (cluster) => {
-                return L.divIcon(fnIcon(cluster));
+                const divIcon = fnIcon(cluster);
+                if (divIcon?.iconSize) {
+                  Object.assign(divIcon, {
+                    iconSize: L.point(divIcon.iconSize, divIcon.iconSize, true)
+                  });
+                }
+                return L.divIcon(divIcon);
               }
             : null
       }).addTo(mapRef.current);
-
-      clusterGroupRef.current = clusterGroup;
-
-      if (clusterGroup.getLayers().length) {
-        clusterGroup.clearLayers();
-      }
 
       clusterGroupRef.current = clusterGroup;
 
@@ -57,13 +57,7 @@ const MarkerClusterGroup = ({
       const markers = React.Children.map(children, (child) => {
         if (child && child.props.latlng) {
           const { latlng, ...childProps } = child.props;
-          const m = L.marker(latlng, {
-            icon: MarkerIcon(),
-            ...childProps
-          });
-          if (childProps?.label) {
-            m.bindPopup(childProps?.label);
-          }
+          const m = fnMarker(latlng, childProps);
           return m;
         }
         return null;
@@ -71,11 +65,17 @@ const MarkerClusterGroup = ({
 
       // Add valid markers to the cluster group
       if (markers) {
-        clusterGroupRef.current.clearLayers();
         clusterGroupRef.current.addLayers(markers.filter(Boolean));
+        mapRef.current.fitBounds(clusterGroupRef.current.getBounds());
       }
     }
-  }, [children]);
+
+    return () => {
+      if (clusterGroupRef.current) {
+        clusterGroupRef.current.clearLayers();
+      }
+    };
+  }, [children, mapRef]);
 
   return null; // This component does not render any DOM directly
 };
