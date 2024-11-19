@@ -57,10 +57,14 @@ const MarkerClusterGroup = ({
       const markers = React.Children.map(children, (child) => {
         if (child && child.props.latlng) {
           const { latlng, ...childProps } = child.props;
-          return L.marker(latlng, {
+          const m = L.marker(latlng, {
             icon: MarkerIcon(),
             ...childProps
           });
+          if (childProps?.label) {
+            m.bindPopup(childProps?.label);
+          }
+          return m;
         }
         return null;
       });
