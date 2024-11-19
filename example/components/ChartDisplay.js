@@ -115,6 +115,42 @@ const ChartDisplay = () => {
     isEdited
   ]);
 
+  const dummyFnIcon = (cluster) => {
+    const result = Object.values(
+      mapConfig?.data?.reduce((acc, item) => {
+        const { serviceLevel, color } = item;
+
+        if (!acc[serviceLevel]) {
+          acc[serviceLevel] = { value: serviceLevel, color, count: 0 };
+        }
+        acc[serviceLevel].count++;
+
+        return acc;
+      }, {})
+    );
+    const totalValue = result.reduce((s, { count }) => s + count, 0);
+    const radius = 40;
+    const circleLength = Math.PI * (radius * 2);
+    let spaceLeft = circleLength;
+    return {
+      html: `<svg width="100%" height="100%" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="40" fill="#ffffffad"/>
+            ${result
+              .map((item, index) => {
+                const v = index === 0 ? circleLength : spaceLeft;
+                spaceLeft -= (item.count / totalValue) * circleLength;
+                return `
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke="${
+                    item.color ? item.color : 'red'
+                  }" stroke-dasharray="${v} ${circleLength}" />`;
+              })
+              .join(
+                ''
+              )} <text x="50%" y="50%" fill="black" text-anchor="middle" dy=".3em" font-size="18px">${cluster.getChildCount()}</text></svg>`,
+      className: `custom-marker-cluster`,
+      iconSize: 60
+    };
+  };
+
   const chartComponent = () => {
     switch (selectedChartType) {
       case chartTypes.BAR:
@@ -140,15 +176,30 @@ const ChartDisplay = () => {
       case chartTypes.CLUSTER_MAP:
         return (
           <Map.View {...mapConfig}>
-            <Map.MarkerClusterGroup>
+            <Map.MarkerClusterGroup fnIcon={dummyFnIcon}>
               {mapConfig?.data
                 ?.filter((d) => d?.point)
                 ?.map((d, dx) => (
                   <Map.Marker
                     latlng={d?.point}
-                    label={d?.label}
                     key={dx}
-                  />
+                    icon={{
+                      className: 'custom-marker',
+                      iconSize: [32, 32],
+                      html: `<span style="background-color:${d?.color}; border:2px solid #fff;"/>`
+                    }}
+                  >
+                    <ul className="w-full text-base space-y-1">
+                      <li className="w-full flex flex-wrap items-center gap-1">
+                        <strong>School: </strong>
+                        <span>{d?.label}</span>
+                      </li>
+                      <li className="flex items-center gap-1">
+                        <strong>Service Level: </strong>
+                        <span>{d?.serviceLevel}</span>
+                      </li>
+                    </ul>
+                  </Map.Marker>
                 ))}
             </Map.MarkerClusterGroup>
           </Map.View>

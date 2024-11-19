@@ -6,3 +6,19 @@
   display: flex;
   justify-content: center;
 }
+.chart-display .custom-marker {
+  span {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: block;
+  }
+}
+
+.chart-display .custom-marker-cluster {
+  border-radius: 50%;
+  color: #000000;
+  height: 33px;
+  text-align: center;
+  width: 33px;
+}
