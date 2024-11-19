@@ -3,7 +3,7 @@ import React, {
   Fragment,
   useContext,
   useRef,
-  useEffect,
+  useLayoutEffect,
   forwardRef,
   useImperativeHandle
 } from 'react';
@@ -16,7 +16,7 @@ export const LeafletProvider = forwardRef(
     const mapRef = useRef(null);
     const mapContainer = useRef(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (!mapRef.current) {
         const map = L.map(mapContainer.current, {
           center: [0, 0],
