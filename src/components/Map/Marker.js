@@ -4,12 +4,15 @@ import mIcon from 'leaflet/dist/images/marker-icon.png';
 import mShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import { useLeaflet } from '../../context/LeafletProvider';
+import { fnMarker } from './Utils';
 
 const Marker = ({
+  children,
   latlng = null,
   label = null,
   icon = {},
-  markerLayer,
+  markerLayer = null,
+  popUp = {},
   ...options
 }) => {
   const [preload, setPreload] = useState(true);
@@ -31,14 +34,16 @@ const Marker = ({
     if (mapRef.current && preload) {
       setPreload(false);
       const mapLayer = markerLayer || mapRef.current;
-      const marker = L.marker(latlng, { icon: Icon, ...options }).addTo(
-        mapLayer
-      );
-      if (label) {
-        marker.bindPopup(label);
-      }
+      const marker = fnMarker(latlng, {
+        icon: Icon,
+        label,
+        children,
+        ...options
+      });
+
+      marker.addTo(mapLayer);
     }
-  }, [Icon, mapRef, preload, label, latlng, options, markerLayer]);
+  }, [mapRef, preload, Icon, markerLayer, latlng, options, label, children]);
 
   useEffect(() => {
     setMarker();
