@@ -242,3 +242,30 @@ export const choroplethExampleColor = [
 ];
 
 export const basePath = '/akvo-charts';
+
+export const clusterExampleData = [
+  {
+    point: [-6.2251619, 106.714291],
+    label: 'SMP Negeri 115 Jakarta',
+    serviceLevel: 'No service',
+    color: '#febc11'
+  },
+  {
+    point: [-6.192708, 106.8393836],
+    label: 'Junior High School State 1 of JAKARTA',
+    serviceLevel: 'Limited',
+    color: '#fff176'
+  },
+  {
+    point: [-6.120255, 106.871146],
+    label: 'JUNIOR HIGH SCHOOL STATE 55 OF JAKARTA',
+    serviceLevel: 'Basic',
+    color: '#00b8ec'
+  },
+  {
+    point: [-6.2400094, 106.789988],
+    label: 'SMPN 11 JAKARTA',
+    serviceLevel: 'Basic',
+    color: '#00b8ec'
+  }
+];
