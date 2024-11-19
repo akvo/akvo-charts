@@ -1,3 +1,5 @@
+import ReactDOM from 'react-dom';
+
 export const calculateRanges = (data = [], numRanges = 1) => {
   const sortedData = data.slice().sort((a, b) => a - b);
   if (sortedData.length === 0) return [];
@@ -82,4 +84,12 @@ export const getGeoJSONProps = (
     };
   }
   return allProps;
+};
+
+export const renderReactToDiv = (children) => {
+  // Create a container div
+  const container = document.createElement('div');
+  // Render React children into the container
+  ReactDOM.render(children, container);
+  return container;
 };
