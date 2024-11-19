@@ -7,3 +7,4 @@ export { default as StackBar } from './components/StackBar';
 export { default as StackClusterColumn } from './components/StackClusterColumn';
 export { default as StackLine } from './components/StackLine';
 export { default as MapView } from './components/MapView';
+export * as Map from './components/Map';
