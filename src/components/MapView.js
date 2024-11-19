@@ -10,7 +10,6 @@ import React, {
 import L from 'leaflet';
 import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster';
 import { LeafletProvider } from '../context/LeafletProvider';
 import { TileLayer, Marker, GeoJson, LegendControl } from './Map';
 import { string2WindowObj } from '../utils/string';
@@ -36,7 +35,6 @@ const MapView = ({ tile, layer, config, data }, ref) => {
   const [sourceData, setSourceData] = useState(null);
   const [preload, setPreload] = useState(true);
   const [markerLayer, setMakerLayer] = useState(null);
-  const [clusterLayer, setClusterLayer] = useState(null);
 
   const mapInstance = useRef(null);
 
@@ -77,9 +75,6 @@ const MapView = ({ tile, layer, config, data }, ref) => {
       }
       const lg = L.layerGroup().addTo(mapInstance.current.getMap());
       setMakerLayer(lg);
-
-      const cl = L.markerClusterGroup().addTo(mapInstance.current.getMap());
-      setClusterLayer(cl);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource?.includes('window')) {

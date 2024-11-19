@@ -31,6 +31,22 @@ exports[`MapView chart matches MapView snapshot 1`] = `
             />
           </div>
         </div>
+        <div
+          class="leaflet-layer "
+          style="z-index: 1;"
+        >
+          <div
+            class="leaflet-tile-container leaflet-zoom-animated"
+            style="z-index: 19; left: 0px; top: 0px;"
+          >
+            <img
+              alt=""
+              class="leaflet-tile"
+              src="https://tile.openstreetmap.org/10/213/388.png"
+              style="width: 256px; height: 256px; left: -93px; top: -170px;"
+            />
+          </div>
+        </div>
       </div>
       <div
         class="leaflet-pane leaflet-overlay-pane"
