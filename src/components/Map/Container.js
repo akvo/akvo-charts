@@ -9,7 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import TileLayer from './TileLayer';
 import { LeafletProvider } from '../../context/LeafletProvider';
 
-const View = ({ children, tile, config }, ref) => {
+const Container = ({ children, tile, config }, ref) => {
   const [preload, setPreload] = useState(true);
 
   const mapInstance = useRef(null);
@@ -42,4 +42,4 @@ const View = ({ children, tile, config }, ref) => {
   );
 };
 
-export default forwardRef(View);
+export default forwardRef(Container);

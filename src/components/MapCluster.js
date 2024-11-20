@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import MarkerClusterGroup from './Map/MarkerClusterGroup';
 import Marker from './Map/Marker';
-import { default as Container } from './Map/View';
+import Container from './Map/Container';
 
 const CLUSTER_TYPE = {
   default: 0,
