@@ -1,9 +1,27 @@
 'use client';
 import { createContext, useContext, useReducer } from 'react';
-import { basicChartExampleData, chartTypes } from '../static/config';
+import {
+  basicChartExampleData,
+  chartTypes,
+  clusterExampleData
+} from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
+
+const defaultMapConfig = {
+  tile: {
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  },
+  config: {
+    center: [-6.2, 106.816666],
+    zoom: 8,
+    height: '100vh',
+    width: '100%'
+  }
+};
 
 const initalChartState = {
   rawConfig: {
@@ -51,11 +69,7 @@ const initalChartState = {
     stackMapping: {}
   },
   mapConfig: {
-    tile: {
-      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
-    },
+    ...defaultMapConfig,
     layer: {
       source: 'window.topoData',
       url: '/static/geojson/indonesia-prov.geojson',
@@ -80,12 +94,23 @@ const initalChartState = {
         point: [-6.175414, 106.827175],
         label: 'The National Monument'
       }
-    ],
-    config: {
-      center: [-6.2, 106.816666],
-      zoom: 8,
-      height: '100vh',
-      width: '100%'
+    ]
+  },
+  customMap: {
+    [chartTypes.CLUSTER_MAP]: {
+      ...defaultMapConfig,
+      data: clusterExampleData,
+      markerIcon: {
+        className: 'custom-marker',
+        iconSize: [32, 32],
+        html: true
+      },
+      clusterIcon: {
+        className: `custom-marker-cluster`,
+        iconSize: 60
+      },
+      groupKey: 'serviceLevel',
+      type: 'circle'
     }
   },
   chartConfig: {
@@ -152,6 +177,33 @@ const chartReducer = (state, action) => {
         chartConfig: {
           ...state.chartConfig,
           [action?.chartType]: action.payload
+        }
+      };
+    case 'RESET_CUSTOM_MAP':
+      return {
+        ...state,
+        customMap: {
+          ...state.customMap,
+          [action?.chartType]: initalChartState.customMap[action?.chartType]
+        }
+      };
+    case 'SET_CUSTOM_MAP':
+      return {
+        ...state,
+        customMap: {
+          ...state.customMap,
+          ...action.payload
+        }
+      };
+    case 'UPDATE_CUSTOM_MAP':
+      return {
+        ...state,
+        customMap: {
+          ...state.customMap,
+          [action?.chartType]: {
+            ...state.customMap[action?.chartType],
+            ...action.payload
+          }
         }
       };
     case 'RAW':
