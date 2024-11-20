@@ -27203,7 +27203,7 @@ var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
   return null;
 };
 
-var View = function View(_ref, ref) {
+var Container = function Container(_ref, ref) {
   var children = _ref.children,
     tile = _ref.tile,
     config = _ref.config;
@@ -27231,7 +27231,7 @@ var View = function View(_ref, ref) {
     height: config === null || config === void 0 ? void 0 : config.height
   }, /*#__PURE__*/React.createElement(TileLayer, tile), children);
 };
-var Container = forwardRef(View);
+var Container$1 = forwardRef(Container);
 
 
 
@@ -27242,7 +27242,7 @@ var index = {
   GeoJson: GeoJson,
   LegendControl: LegendControl,
   MarkerClusterGroup: MarkerClusterGroup,
-  View: Container,
+  Container: Container$1,
   MarkerIcon: MarkerIcon,
   getGeoJSONList: getGeoJSONList,
   fnMarker: fnMarker
@@ -28340,7 +28340,7 @@ var MapCluster = function MapCluster(_ref2, ref) {
     return clusterCircleIcon(cluster, data, groupKey, clusterIcon);
   }, _clusterTypes);
   var iconCreateFn = (clusterTypes === null || clusterTypes === void 0 ? void 0 : clusterTypes[CLUSTER_TYPE === null || CLUSTER_TYPE === void 0 ? void 0 : CLUSTER_TYPE[type]]) || clusterTypes["default"];
-  return /*#__PURE__*/React.createElement(Container, _extends({
+  return /*#__PURE__*/React.createElement(Container$1, _extends({
     ref: ref
   }, config), /*#__PURE__*/React.createElement(MarkerClusterGroup, {
     iconCreateFn: iconCreateFn
