@@ -1,5 +1,8 @@
 'use client';
-import { useDisplayContext, useDisplayDispatch } from '../context/DisplayContextProvider';
+import {
+  useDisplayContext,
+  useDisplayDispatch
+} from '../context/DisplayContextProvider';
 
 const Header = () => {
   const { fullScreen } = useDisplayContext();
@@ -22,7 +25,17 @@ const Header = () => {
         <button
           type="button"
           className="px-4 py-2 leading-3 font-bold rounded-none border-l border-zinc-300 bg-zinc-200 hover:bg-zinc-300"
-          onClick={() => displayDispatch({ type: 'FULL_SCREEN' })}
+          onClick={() => {
+            displayDispatch({ type: 'FULL_SCREEN' });
+            displayDispatch({
+              type: 'RERENDER_TRUE'
+            });
+            setTimeout(() => {
+              displayDispatch({
+                type: 'RERENDER_FALSE'
+              });
+            }, 100);
+          }}
         >
           {`${fullScreen ? '☑' : '☒'} Full Screen`}
         </button>

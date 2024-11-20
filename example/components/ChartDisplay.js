@@ -75,7 +75,7 @@ const ChartDisplay = () => {
     customMap,
     isMap
   } = useChartContext();
-  const { selectedChartType } = useDisplayContext();
+  const { selectedChartType, reRender } = useDisplayContext();
 
   const props = useMemo(() => {
     const rawConfig = rawOptions?.[selectedChartType] || {};
@@ -147,7 +147,7 @@ const ChartDisplay = () => {
 
   return (
     <div className={`${isMap ? '' : 'pt-10'} h-full lg:h-[90vh] chart-display`}>
-      {chartComponent()}
+      {reRender ? null : chartComponent()}
     </div>
   );
 };
