@@ -9,7 +9,7 @@ export const chartTypes = {
   STACK_LINE: 'StackLine',
   MAP: 'MapView',
   CHOROPLETH_MAP: 'MapViewChoropleth',
-  CLUSTER_MAP: 'MapViewCluster'
+  CLUSTER_MAP: 'MapCluster'
 };
 
 export const excludeHorizontal = [
