@@ -21,8 +21,7 @@ import {
 import {
   chartTypes,
   choroplethExampleColor,
-  choroplethExampleData,
-  clusterExampleData
+  choroplethExampleData
 } from '../../static/config';
 
 const sidebarList = [
@@ -153,14 +152,6 @@ const Sidebar = () => {
     if (key === chartTypes.MAP) {
       chartDispatch({
         type: 'RESET_MAP'
-      });
-    }
-    if (key === chartTypes.CLUSTER_MAP) {
-      chartDispatch({
-        type: 'UPDATE_MAP',
-        payload: {
-          data: clusterExampleData
-        }
       });
     }
   };
