@@ -44,9 +44,10 @@ const CodeDisplay = ({ jsonData = {}, isRaw = false, isMap = false }) => {
 
   const { selectedChartType: type } = useDisplayContext();
 
-  const code = isRaw && !isMap
-    ? codeBlock({ type, rawConfig: jsonData })
-    : codeBlock({ type, ...jsonData });
+  const code =
+    isRaw && !isMap
+      ? codeBlock(type, { rawConfig: jsonData })
+      : codeBlock(type, jsonData);
 
   const handleOnCopy = () => {
     navigator.clipboard.writeText(code);
