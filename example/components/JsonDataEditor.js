@@ -19,7 +19,7 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
   const [notify, setNotify] = useState(null);
 
-  const { isRaw, isMap } = useChartContext();
+  const { isRaw, isMap, customMap } = useChartContext();
   const { selectedChartType } = useDisplayContext();
 
   const chartDispatch = useChartDispatch();
@@ -39,10 +39,18 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
       });
 
       if (isMap) {
-        chartDispatch({
-          type: 'UPDATE_MAP',
-          payload: parsedOptions
-        });
+        if (customMap?.[selectedChartType]) {
+          chartDispatch({
+            type: 'UPDATE_CUSTOM_MAP',
+            chartType: selectedChartType,
+            payload: parsedOptions
+          });
+        } else {
+          chartDispatch({
+            type: 'UPDATE_MAP',
+            payload: parsedOptions
+          });
+        }
       }
     } catch (err) {
       console.error('Invalid JSON:', err);
