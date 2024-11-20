@@ -33,7 +33,7 @@ const renderCodes = (type, props) => {
         : props?.[p]
           ? typeof props[p] === 'object'
             ? `${p}={${obj2String(props[p], null, 0)}}`
-            : `${p}={${props[p]}}`
+            : `${p}={"${props[p]}"}`
           : ''
     )
     .join(` `)
