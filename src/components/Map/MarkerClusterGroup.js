@@ -7,7 +7,7 @@ import { fnMarker } from './Utils';
 
 const MarkerClusterGroup = ({
   children,
-  fnIcon,
+  iconCreateFn,
   onClick,
   onMarkerClick,
   ...props
@@ -25,9 +25,9 @@ const MarkerClusterGroup = ({
       const clusterGroup = L.markerClusterGroup({
         ...props,
         iconCreateFunction:
-          typeof fnIcon === 'function'
+          typeof iconCreateFn === 'function'
             ? (cluster) => {
-                const divIcon = fnIcon(cluster);
+                const divIcon = iconCreateFn(cluster);
                 if (divIcon?.iconSize) {
                   Object.assign(divIcon, {
                     iconSize: L.point(divIcon.iconSize, divIcon.iconSize, true)
@@ -49,7 +49,7 @@ const MarkerClusterGroup = ({
         clusterGroup.on('clusterclick', (e) => onClick(e));
       }
     }
-  }, [fnIcon, props, onMarkerClick, onClick, mapRef, preload]);
+  }, [iconCreateFn, props, onMarkerClick, onClick, mapRef, preload]);
 
   // Add markers as children
   useEffect(() => {
@@ -65,6 +65,7 @@ const MarkerClusterGroup = ({
 
       // Add valid markers to the cluster group
       if (markers) {
+        clusterGroupRef.current.refreshClusters();
         clusterGroupRef.current.addLayers(markers.filter(Boolean));
         mapRef.current.fitBounds(clusterGroupRef.current.getBounds());
       }
