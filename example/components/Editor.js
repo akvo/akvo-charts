@@ -22,8 +22,15 @@ import {
 } from '../static/config';
 
 const Editor = () => {
-  const { isRaw, isMap, rawConfig, defaultConfig, chartConfig, mapConfig } =
-    useChartContext();
+  const {
+    isRaw,
+    isMap,
+    rawConfig,
+    defaultConfig,
+    chartConfig,
+    mapConfig,
+    customMap
+  } = useChartContext();
   const { selectedChartType, fullScreen } = useDisplayContext();
 
   const [preload, setPreload] = useState(true);
@@ -36,6 +43,10 @@ const Editor = () => {
   );
   const [rawStore, setRawStore] = useLocalStorage('rawConfig', rawConfig);
   const [mapStore, setMapStore] = useLocalStorage('mapConfig', mapConfig);
+  const [customMapStore, setCustomMapStore] = useLocalStorage(
+    'customMap',
+    customMap
+  );
 
   const chartDispatch = useChartDispatch();
 
@@ -74,13 +85,14 @@ const Editor = () => {
       ? rawConfig?.[selectedChartType] || {}
       : chartConfig?.[selectedChartType] || res;
 
-    return isMap ? mapConfig : chartData;
+    return isMap ? customMap?.[selectedChartType] || mapConfig : chartData;
   }, [
     defaultConfig,
     chartConfig,
     isMap,
     isRaw,
     mapConfig,
+    customMap,
     rawConfig,
     selectedChartType
   ]);
@@ -103,6 +115,11 @@ const Editor = () => {
         type: 'UPDATE_MAP',
         payload: mapStore
       });
+
+      chartDispatch({
+        type: 'SET_CUSTOM_MAP',
+        payload: customMapStore
+      });
     }
   }, [
     chartDispatch,
@@ -111,12 +128,19 @@ const Editor = () => {
     preload,
     mapPreload,
     isMap,
-    mapStore
+    mapStore,
+    customMapStore
   ]);
 
   const storeData = () => {
     if (isMap) {
       setMapStore(mapConfig);
+      if (customMap?.[selectedChartType]) {
+        setCustomMapStore({
+          ...customMapStore,
+          [selectedChartType]: customMap[selectedChartType]
+        });
+      }
     } else {
       if (isRaw) {
         setRawStore(rawConfig);
@@ -137,6 +161,10 @@ const Editor = () => {
     if (isMap) {
       chartDispatch({
         type: 'RESET_MAP'
+      });
+      chartDispatch({
+        type: 'RESET_CUSTOM_MAP',
+        chartType: selectedChartType
       });
     }
     chartDispatch({

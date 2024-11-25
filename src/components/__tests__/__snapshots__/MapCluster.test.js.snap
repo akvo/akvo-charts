@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`MapView chart matches MapView snapshot 1`] = `
+exports[`MapCluster chart matches MapCluster snapshot 1`] = `
 <div>
   <div
     class="leaflet-container leaflet-touch leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
@@ -53,40 +53,10 @@ exports[`MapView chart matches MapView snapshot 1`] = `
       />
       <div
         class="leaflet-pane leaflet-shadow-pane"
-      >
-        <img
-          alt=""
-          class="leaflet-marker-shadow leaflet-zoom-hide"
-          src="marker-shadow.png"
-          style="margin-left: -12px; margin-top: -41px; width: 41px; height: 41px; left: -22px; top: 114px;"
-        />
-        <img
-          alt=""
-          class="leaflet-marker-shadow leaflet-zoom-hide"
-          src="marker-shadow.png"
-          style="margin-left: -12px; margin-top: -41px; width: 41px; height: 41px; left: 138px; top: 0px;"
-        />
-      </div>
+      />
       <div
         class="leaflet-pane leaflet-marker-pane"
-      >
-        <img
-          alt="Marker"
-          class="leaflet-marker-icon leaflet-zoom-hide leaflet-interactive"
-          role="button"
-          src="marker-icon.png"
-          style="margin-left: -12px; margin-top: -41px; width: 25px; height: 41px; left: -22px; top: 114px; z-index: 114;"
-          tabindex="0"
-        />
-        <img
-          alt="Marker"
-          class="leaflet-marker-icon leaflet-zoom-hide leaflet-interactive"
-          role="button"
-          src="marker-icon.png"
-          style="margin-left: -12px; margin-top: -41px; width: 25px; height: 41px; left: 138px; top: 0px; z-index: 0;"
-          tabindex="0"
-        />
-      </div>
+      />
       <div
         class="leaflet-pane leaflet-tooltip-pane"
       />
@@ -142,9 +112,6 @@ exports[`MapView chart matches MapView snapshot 1`] = `
       <div
         class="leaflet-bottom leaflet-right"
       >
-        <div
-          class="legend leaflet-control"
-        />
         <div
           class="leaflet-control-attribution leaflet-control"
         >

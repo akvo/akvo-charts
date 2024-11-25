@@ -9,7 +9,10 @@ import { BookOpenIcon, CheckIcon, TrashIcon } from './Icons';
 import SnackBar from './Snackbar';
 import dynamic from 'next/dynamic';
 import debounce from 'lodash/debounce';
-import { useDisplayContext } from '../context/DisplayContextProvider';
+import {
+  useDisplayContext,
+  useDisplayDispatch
+} from '../context/DisplayContextProvider';
 import { getConfigFromString, obj2String } from '../utils';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
@@ -19,10 +22,22 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
   const [notify, setNotify] = useState(null);
 
-  const { isRaw, isMap } = useChartContext();
+  const { isRaw, isMap, customMap } = useChartContext();
   const { selectedChartType } = useDisplayContext();
 
   const chartDispatch = useChartDispatch();
+  const displayDispatch = useDisplayDispatch();
+
+  const dispatchRerender = () => {
+    displayDispatch({
+      type: 'RERENDER_TRUE'
+    });
+    setTimeout(() => {
+      displayDispatch({
+        type: 'RERENDER_FALSE'
+      });
+    }, 100);
+  };
 
   const handleEditorChange = debounce((value) => {
     try {
@@ -39,11 +54,21 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
       });
 
       if (isMap) {
-        chartDispatch({
-          type: 'UPDATE_MAP',
-          payload: parsedOptions
-        });
+        if (customMap?.[selectedChartType]) {
+          chartDispatch({
+            type: 'UPDATE_CUSTOM_MAP',
+            chartType: selectedChartType,
+            payload: parsedOptions
+          });
+        } else {
+          chartDispatch({
+            type: 'UPDATE_MAP',
+            payload: parsedOptions
+          });
+        }
       }
+
+      dispatchRerender();
     } catch (err) {
       console.error('Invalid JSON:', err);
     }
@@ -71,6 +96,7 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
       setTimeout(() => {
         setNotify(null);
       }, 1000);
+      dispatchRerender();
     } catch (error) {
       handleOnError(error);
     }
@@ -83,6 +109,7 @@ const JsonDataEditor = ({ storeData, clearData, jsonData }) => {
       setTimeout(() => {
         setNotify(null);
       }, 1000);
+      dispatchRerender();
     } catch (error) {
       handleOnError(error);
     }

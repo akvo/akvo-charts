@@ -74,6 +74,11 @@ const sidebarList = [
         key: chartTypes.CHOROPLETH_MAP,
         name: 'Choropleth Map',
         icon: null
+      },
+      {
+        key: chartTypes.CLUSTER_MAP,
+        name: 'Cluster Map',
+        icon: null
       }
     ]
   }
@@ -101,7 +106,11 @@ const Sidebar = () => {
             : [...prevOpenItems, key] // Open if not already open
       );
     }
-    const isMapType = [chartTypes.MAP, chartTypes.CHOROPLETH_MAP].includes(key);
+    const isMapType = [
+      chartTypes.MAP,
+      chartTypes.CHOROPLETH_MAP,
+      chartTypes.CLUSTER_MAP
+    ].includes(key);
     if (isMap && !isMapType) {
       chartDispatch({
         type: 'MAP_HIDE'

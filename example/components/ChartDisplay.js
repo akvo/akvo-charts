@@ -5,6 +5,7 @@ import {
   Bar,
   Doughnut,
   Line,
+  MapCluster,
   MapView,
   Pie,
   ScatterPlot,
@@ -71,9 +72,10 @@ const ChartDisplay = () => {
     chartConfig,
     isEdited,
     mapConfig,
+    customMap,
     isMap
   } = useChartContext();
-  const { selectedChartType } = useDisplayContext();
+  const { selectedChartType, reRender } = useDisplayContext();
 
   const props = useMemo(() => {
     const rawConfig = rawOptions?.[selectedChartType] || {};
@@ -136,13 +138,17 @@ const ChartDisplay = () => {
         return <MapDisplay {...mapConfig} />;
       case chartTypes.CHOROPLETH_MAP:
         return <MapDisplay {...mapConfig} />;
+      case chartTypes.CLUSTER_MAP:
+        return <MapCluster {...customMap[chartTypes.CLUSTER_MAP]} />;
       default:
         return null;
     }
   };
 
   return (
-    <div className={`${isMap ? '' : 'pt-10'} h-full lg:h-[90vh] chart-display`}>{chartComponent()}</div>
+    <div className={`${isMap ? '' : 'pt-10'} h-full lg:h-[90vh] chart-display`}>
+      {reRender ? null : chartComponent()}
+    </div>
   );
 };
 

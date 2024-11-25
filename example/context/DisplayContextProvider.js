@@ -7,7 +7,8 @@ const DisplayDispatchContext = createContext(null);
 
 const initalDisplayState = {
   selectedChartType: chartTypes.BAR,
-  fullScreen: false
+  fullScreen: false,
+  reRender: false
 };
 
 const displayReducer = (state, action) => {
@@ -21,6 +22,16 @@ const displayReducer = (state, action) => {
       return {
         ...state,
         fullScreen: !state.fullScreen
+      };
+    case 'RERENDER_TRUE':
+      return {
+        ...state,
+        reRender: true
+      };
+    case 'RERENDER_FALSE':
+      return {
+        ...state,
+        reRender: false
       };
     default:
       throw Error(

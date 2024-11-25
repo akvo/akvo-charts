@@ -50,13 +50,23 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
       - [Props](#props-7)
       - [Example usage of StackLine chart](#example-usage-of-stackline-chart)
     - [MapView](#mapview)
-      - [Tile](#tile)
       - [Layer](#layer)
       - [Data](#data-1)
       - [Config](#config-1)
       - [Example usage of MapView](#example-usage-of-mapview)
       - [Example usage with Choropleth Mapping](#example-usage-with-choropleth-mapping)
-
+    - [MapCluster](#mapcluster)
+      - [markerIcon](#markericon)
+      - [clusterIcon](#clustericon)
+      - [Additional properties](#additional-properties)
+    - [Fully Customized Map](#fully-customized-map)
+      - [Container](#map-container)
+      - [GeoJson](#map-geojson)
+      - [LegendControl](#map-legend-control)
+      - [Marker](#map-marker)
+      - [MarkerClusterGroup](#map-marker-cluster-group)
+      - [TileLayer](#map-tile-layer)
+      - [Utils](#map-utils)
 ---
 
 ## Installation
@@ -1107,13 +1117,10 @@ export default StackLineChartExample;
 The `MapView` component provides an easy way to render a map in your React application using [Leaflet](https://leafletjs.com/). You can customize the map's appearance, add layers, plot points, and handle user interactions such as clicks. The map configuration is passed via the `config`, `data`, `tile`, and `layer` props.
 
 
-#### tile
+<a id="map-config"></a>
+#### config
 
-| Prop	| Type |	Description |
-|-------|------|--------------|
-| `url` | string |	A tile layer URL |
-| `maxZoom` |	number |	The maximum zoom level up to which this layer will be displayed (inclusive). |
-| `attribution` |	string | Display attribution data in a small text box on a map |
+
 
 #### layer
 
@@ -1275,4 +1282,265 @@ const ChoroPlethExample = () => {
 export default ChoroPlethExample;
 ```
 
+### MapCluster  
+The `MapCluster` component provides an initial implementation for map clustering in Akvo project use cases. It leverages [Container](#map-container), [MarkerClusterGroup](#map-marker-cluster-group), and [Marker](#map-marker) to group and display markers on a map.  
+
+#### Props  
+
+##### `markerIcon`  
+Defines the styling and attributes for individual marker icons.  
+| Prop         | Type               | Description                                 |
+|--------------|--------------------|---------------------------------------------|
+| `className`  | `string`           | CSS class for styling the marker icon.      |
+| `iconSize`   | `[number, number]` | Dimensions of the marker icon `[width, height]`. |
+| `html`       | `boolean`          | If `true`, uses a default HTML circle icon. |
+
+##### `clusterIcon`  
+Defines the styling and attributes for cluster icons.  
+| Prop         | Type           | Description                                 |
+|--------------|----------------|---------------------------------------------|
+| `className`  | `string`       | CSS class for styling the cluster icon.     |
+| `iconSize`   | `number`       | Size of the cluster icon in pixels.         |
+
+##### Additional Properties  
+| Prop           | Type                               | Description                                                                 |
+|----------------|------------------------------------|-----------------------------------------------------------------------------|
+| `groupKey`     | `string`                           | Key used to group data when `type` is set to `"circle"`.                    |
+| `type`         | `enum`(default&#124;circle) |Defines the clustering mode:                                               |
+|                |                                    | - `"default"`: Uses default styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). |
+|                |                                    | - `"circle"`: Uses predefined styles specific to common Akvo project use cases. |
+| `renderPopup`  | `function`                         | Function to render a custom child component in the marker popup.            |
+
 ---
+
+#### Example Usage  
+
+```jsx
+import React from "react";
+import MapCluster from "./MapCluster";
+
+const markerIcon = {
+  className: "custom-marker",
+  iconSize: [32, 32],
+  html: true,
+};
+
+const clusterIcon = {
+  className: "custom-marker-cluster",
+  iconSize: 60,
+};
+
+const tile = {
+  url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  maxZoom: 19,
+  attribution: "© OpenStreetMap",
+};
+
+const config = {
+  // Additional configuration options for the map can go here.
+};
+
+const data = [
+  // Provide the array of data points for the map here.
+];
+
+const Chart = () => {
+  return (
+    <div>
+      <MapCluster
+        tile={tile}
+        config={config}
+        data={data}
+        markerIcon={markerIcon}
+        clusterIcon={clusterIcon}
+        groupKey={"serviceLevel"}
+        type={"circle"}
+      />
+    </div>
+  );
+};
+
+export default Chart;
+```
+
+#### MapCluster Notes  
+- When using `"default"` for `type`, the component applies styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).  
+- When using `"circle"` for `type`, the component applies Akvo-specific predefined styles.  
+- Ensure the `data` prop is formatted correctly to include the required latitude and longitude coordinates for each marker.  
+- Customize `renderPopup` to display additional information for markers as needed.  
+
+
+---
+
+
+### Fully Customized Map  
+If the [MapView](#mapview) or [MapCluster](#mapcluster) components do not meet your specific requirements, you can use this fully customizable map component to create a tailored solution.  
+
+
+### Components  
+
+#### <a id="map-container"></a>Container  
+The `Container` component serves as the base for rendering a map.  
+
+| Prop         | Type           | Description                                   |
+|--------------|----------------|-----------------------------------------------|
+| `children`   | `node`         | Valid map or React components to be rendered inside the container. |
+| `tile`       | `object`       | Accepts all valid [Tile Layer options](#map-tile-layer). |
+| `config`     | `object`       | Accepts all valid [config options](#map-config). |
+
+---
+
+#### <a id="map-geojson"></a>GeoJson  
+The `GeoJson` component allows you to render GeoJSON data as layers on the map.  
+
+| Prop         | Type           | Description                                   |
+|--------------|----------------|-----------------------------------------------|
+| `onClick`    | `function`     | Event handler for click events on the layer. |
+| `onMouseOver`| `function`     | Event handler for mouseover events on the layer. |
+| `data`       | `object`       | Accepts valid [GeoJSON](https://en.wikipedia.org/wiki/GeoJSON) objects. |
+| `style`      | `object`       | Styles the layer, e.g., for choropleth maps, using React inline CSS format. |
+
+---
+
+#### <a id="map-legend-control"></a>LegendControl  
+The `LegendControl` component creates a legend control based on color ranges.  
+
+| Prop         | Type           | Description                                   |
+|--------------|----------------|-----------------------------------------------|
+| `data`       | `array`        | Single-dimension array defining legend data. |
+| `color`      | `array`        | Array of colors corresponding to the data ranges. |
+
+---
+
+#### <a id="map-marker"></a>Marker  
+The `Marker` component is used to display individual points on the map.  
+
+| Prop         | Type           | Description                                   |
+|--------------|----------------|-----------------------------------------------|
+| `children`   | `node`         | Valid React components to display in the marker popup. |
+| `latlng`     | `[number, number]` | Latitude and longitude of the marker `[latitude, longitude]`. |
+| `label`      | `string`       | Label or title for the marker.               |
+
+It also supports all [Marker options](https://leafletjs.com/reference.html#marker-option).  
+
+---
+
+#### <a id="map-marker-cluster-group"></a>MarkerClusterGroup  
+The `MarkerClusterGroup` component groups multiple markers into clusters.  
+
+| Prop            | Type           | Description                                   |
+|-----------------|----------------|-----------------------------------------------|
+| `children`      | `node`         | Valid React components to be clustered.      |
+| `iconCreateFn`  | `function`     | Function to customize the cluster icon.      |
+| `onClick`       | `function`     | Event handler for click events on the cluster. |
+| `onMarkerClick` | `function`     | Event handler for click events on individual markers. |
+
+It supports all [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options).  
+
+---
+
+#### <a id="map-tile-layer"></a>TileLayer  
+The `TileLayer` component is used to display map tiles.  
+
+| Prop         | Type           | Description                                   |
+|--------------|----------------|-----------------------------------------------|
+| `url`        | `string`       | The URL template for the tile layer.         |
+| `maxZoom`    | `number`       | The maximum zoom level for the layer.        |
+| `attribution`| `string`       | Attribution text to display on the map.      |
+
+It supports all [TileLayer options](https://leafletjs.com/reference.html#tilelayer-option).  
+
+---
+
+#### <a id="map-utils"></a>Utils  
+
+* `getGeoJSONList`: This utility function converts TopoJSON data to GeoJSON using the [topojson-client library](https://www.npmjs.com/package/topojson-client).  
+
+---
+
+#### Example Usage
+
+```jsx
+import { Map } from 'akvo-charts';
+
+const { getGeoJSONList } = Map;
+
+const DisplayMap = () => {
+  const mapConfig = {
+    config: {
+      center: [-6.2, 106.816666],
+      zoom: 8,
+      height: "100vh",
+      width: "100%",
+    },
+  };
+
+  const iconCreateFn = (cluster) => (
+    <div className="custom-cluster-icon">
+      {cluster.getChildCount()}
+    </div>
+  );
+
+  const geoProps = {
+    style: {
+      fillColor: "#f28c28",
+      weight: 2,
+      opacity: 1,
+      color: "white",
+      fillOpacity: 0.7,
+    },
+    onClick: (e) => console.log("Layer clicked!", e),
+  };
+  const data = [
+    // Provide the array of data points for the map here.
+  ];
+  const geoData = {
+  // Provide the object of geojson data for the map here.
+  }
+
+  return (
+    <Map.Container {...mapConfig}>
+      {getGeoJSONList(geoData).map((gd, gx) => (
+        <Map.GeoJson key={gx} data={gd} {...geoProps} />
+      ))}
+      <Map.MarkerClusterGroup iconCreateFn={iconCreateFn}>
+        {data
+          ?.filter((d) => d?.point)
+          ?.map((d, dx) => (
+            <Map.Marker
+              key={dx}
+              latlng={d.point}
+              icon={{
+                className: 'custom-marker',
+                iconSize: [32, 32],
+                html: `<span style="background-color:${d.color}; border:2px solid #fff;" />`,
+              }}
+            >
+              <ul className="w-full text-base space-y-1">
+                <li>
+                  <strong>School: </strong>
+                  <span>{d.label}</span>
+                </li>
+                <li>
+                  <strong>Service Level: </strong>
+                  <span>{d.serviceLevel}</span>
+                </li>
+              </ul>
+            </Map.Marker>
+          ))}
+      </Map.MarkerClusterGroup>
+    </Map.Container>
+  );
+};
+
+export default DisplayMap;
+```
+
+#### Map components Notes  
+- Customize `iconCreateFn` to define your cluster icons dynamically.  
+- Use `getGeoJSONList` to handle TopoJSON conversions and simplify rendering GeoJSON layers.  
+- Always define `style` properties for `GeoJson` to ensure proper rendering of layers.
+
+---
+
+[Back to top](#akvo-charts)

@@ -7,6 +7,7 @@ import React, {
   useImperativeHandle,
   useMemo
 } from 'react';
+import L from 'leaflet';
 import * as topojson from 'topojson-client';
 import 'leaflet/dist/leaflet.css';
 import { LeafletProvider } from '../context/LeafletProvider';

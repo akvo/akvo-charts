@@ -1,34 +1,39 @@
 import { chartTypes } from '../static/config';
 import { obj2String } from './string';
 
-const importBlocks = {
-  [chartTypes.BAR]: `import { ${chartTypes.BAR} } from "akvo-charts";`,
-  [chartTypes.LINE]: `import { ${chartTypes.LINE} } from "akvo-charts";`,
-  [chartTypes.PIE]: `import { ${chartTypes.PIE} } from "akvo-charts";`,
-  [chartTypes.DOUGHNUT]: `import { ${chartTypes.DOUGHNUT} } from "akvo-charts";`,
-  [chartTypes.STACK_BAR]: `import { ${chartTypes.STACK_BAR} } from "akvo-charts";`,
-  [chartTypes.STACK_CLUSTER]: `import { ${chartTypes.STACK_CLUSTER} } from "akvo-charts";`,
-  [chartTypes.SCATTER_PLOT]: `import { ${chartTypes.SCATTER_PLOT} } from "akvo-charts";`,
-  [chartTypes.STACK_LINE]: `import { ${chartTypes.STACK_LINE} } from "akvo-charts";`,
-  [chartTypes.MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`,
-  [chartTypes.CHOROPLETH_MAP]: `import { ${chartTypes.MAP} } from "akvo-charts";`
-};
+const importBlocks = Object.entries(chartTypes).reduce((acc, [key, value]) => {
+  acc[value] = `import { ${value} } from "akvo-charts";`;
+  return acc;
+}, {});
 
 const renderImport = (type) => {
   return importBlocks?.[type] || null;
 };
 
+const declarationList = [
+  'config',
+  'data',
+  'stackMapping',
+  'layer',
+  'tile',
+  'rawConfig',
+  'markerIcon',
+  'clusterIcon'
+];
+
+const formatJSX = (code) => {
+  return code.replace(/(\s*[\w-]+={[^}]*})/g, '\n\t\t\t$1').trim();
+};
+
 const renderCodes = (type, props) => {
   const attributes = Object.keys(props)
     .map((p) =>
-      ['config', 'data', 'stackMapping', 'layer', 'tile', 'rawConfig'].includes(
-        p
-      )
+      declarationList.includes(p)
         ? `${p}={${p}}`
         : props?.[p]
           ? typeof props[p] === 'object'
             ? `${p}={${obj2String(props[p], null, 0)}}`
-            : `${p}={${props[p]}}`
+            : `${p}={"${props[p]}"}`
           : ''
     )
     .join(` `)
@@ -55,29 +60,21 @@ const renderCodes = (type, props) => {
     case chartTypes.MAP:
     case chartTypes.CHOROPLETH_MAP:
       return `<MapView ${attributes} />`;
+    case chartTypes.CLUSTER_MAP:
+      return `<MapCluster ${attributes} />`;
     default:
       return 'Undefined chart type.';
   }
 };
 
-const renderVars = ({ config, data, stackMapping, layer, tile, rawConfig }) => {
+const renderVars = ({ layer, tile, rawConfig, ...vars }) => {
   const codes = [];
 
-  if (config) {
-    const configStr = obj2String(config);
-    codes.push(`const config = ${configStr};\n\n`);
-  }
-
-  if (data) {
-    const dataStr = obj2String(data);
-    codes.push(`const data = ${dataStr};\n\n`);
-  }
-
-  if (stackMapping) {
-    const stackMappingStr = obj2String(stackMapping);
-    codes.push(`const stackMapping = ${stackMappingStr};\n\n`);
-  }
-
+  declarationList.forEach((variable) => {
+    if (vars[variable]) {
+      codes.push(`const ${variable} = ${obj2String(vars[variable])};\n\n`);
+    }
+  });
   if (layer) {
     const { onClick, ...layerProps } = layer;
     let lp = layerProps;
@@ -109,7 +106,7 @@ const renderVars = ({ config, data, stackMapping, layer, tile, rawConfig }) => {
   return codes.join('');
 };
 
-const codeBlock = ({ type, ...props }) => {
+const codeBlock = (type, props = {}) => {
   const codes = [];
   if (renderImport(type)) {
     codes.push(`${renderImport(type)}\n\n`);
@@ -124,7 +121,7 @@ const codeBlock = ({ type, ...props }) => {
       `const Chart = () => {\n`,
       `\treturn (\n`,
       `\t\t<div>\n`,
-      `\t\t\t${renderCodes(type, props)}\n`,
+      `\t\t\t${formatJSX(renderCodes(type, props))}\n`,
       `\t\t</div>\n`,
       `\t);\n`,
       `};\n\n`,
