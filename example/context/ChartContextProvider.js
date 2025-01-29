@@ -79,7 +79,12 @@ const initalChartState = {
         fillColor: '#fbbf24',
         fillOpacity: 0.4
       },
-      onClick: '(map, { target }) => map.fitBounds(target._bounds)'
+      tooltip: {
+        show: true
+      },
+      onClick: '(map, { target }) => map.fitBounds(target._bounds)',
+      mapKey: 'Propinsi',
+      choropleth: 'density'
     },
     data: [
       {

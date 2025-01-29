@@ -3,7 +3,14 @@ import L from 'leaflet';
 
 import { useLeaflet } from '../../context/LeafletProvider';
 
-const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
+const GeoJson = ({
+  mapKey,
+  onClick,
+  onMouseOver,
+  data = {},
+  style = {},
+  tooltip = { show: false }
+}) => {
   const [layer, setLayer] = useState(null);
   const mapRef = useLeaflet();
 
@@ -11,7 +18,7 @@ const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
     if (mapRef.current && data?.type && data?.type !== 'Topology' && !layer) {
       try {
         const gl = L.geoJSON(data, {
-          onEachFeature: (_, layer) => {
+          onEachFeature: (feature, layer) => {
             if (typeof onClick === 'function') {
               layer.on({
                 click: (props) => {
@@ -25,6 +32,14 @@ const GeoJson = ({ onClick, onMouseOver, data = {}, style = {} }) => {
                 mouseover: (props) => {
                   onMouseOver(props);
                 }
+              });
+            }
+
+            if (tooltip?.show) {
+              console.log(feature?.properties, 'aa', mapKey);
+              layer.bindTooltip(feature?.properties?.[mapKey] || 'No name', {
+                permanent: false, // Show on hover
+                direction: 'auto'
               });
             }
           }

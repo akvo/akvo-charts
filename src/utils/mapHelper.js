@@ -69,6 +69,8 @@ export const getGeoJSONProps = (
   if (mapKey && choropleth) {
     allProps = {
       ...allProps,
+      mapKey,
+      choropleth,
       style: (feature) => {
         const findData = data?.find(
           (d) => d?.[mapKey] === feature?.properties?.[mapKey]
