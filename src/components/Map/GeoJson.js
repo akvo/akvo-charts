@@ -117,7 +117,17 @@ const GeoJson = ({
             }
       );
     }
-  }, [mapRef, layer, data, style, onClick, onMouseOver, tooltip, mapData]);
+  }, [
+    mapRef,
+    layer,
+    data,
+    style,
+    onClick,
+    onMouseOver,
+    tooltip,
+    mapData,
+    mapKey
+  ]);
 
   useEffect(() => {
     loadGeoJson();

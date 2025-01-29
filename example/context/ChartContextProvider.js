@@ -3,7 +3,9 @@ import { createContext, useContext, useReducer } from 'react';
 import {
   basicChartExampleData,
   chartTypes,
-  clusterExampleData
+  clusterExampleData,
+  choroplethExampleData,
+  choroplethExampleColor
 } from '../static/config';
 
 const ChartContext = createContext(null);
@@ -90,7 +92,7 @@ const initalChartState = {
         color: '#92400e',
         weight: 1,
         fillColor: '#fbbf24',
-        fillOpacity: 0.4
+        fillOpacity: 0.7
       },
       tooltip: {
         show: true,
@@ -99,22 +101,10 @@ const initalChartState = {
       },
       onClick: '(map, { target }) => map.fitBounds(target._bounds)',
       mapKey: 'Propinsi',
-      choropleth: 'density'
+      choropleth: 'density',
+      color: choroplethExampleColor
     },
-    data: [
-      {
-        point: [-6.170166, 106.831375],
-        label: 'Istiqlal Mosque'
-      },
-      {
-        point: [-6.174596, 106.830407],
-        label: 'Gambir Station'
-      },
-      {
-        point: [-6.175414, 106.827175],
-        label: 'The National Monument'
-      }
-    ]
+    data: choroplethExampleData
   },
   customMap: {
     [chartTypes.CLUSTER_MAP]: {
