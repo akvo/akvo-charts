@@ -48,7 +48,7 @@ describe('utils/mapHelper', () => {
     ];
 
     const props = getGeoJSONProps(mapRef, layer, data);
-    expect(Object.keys(props)).toEqual(['style']);
+    expect(Object.keys(props)).toEqual(['style', 'mapKey', 'choropleth']);
     expect(props?.style()).toEqual({
       color: '#92400e',
       weight: 1,
