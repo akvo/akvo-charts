@@ -8,25 +8,6 @@ import 'leaflet.markercluster';
 import 'leaflet/dist/leaflet.css';
 import { init } from 'echarts';
 
-function _extends() {
-  return _extends = Object.assign ? Object.assign.bind() : function (n) {
-    for (var e = 1; e < arguments.length; e++) {
-      var t = arguments[e];
-      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
-    }
-    return n;
-  }, _extends.apply(null, arguments);
-}
-function _objectWithoutPropertiesLoose(r, e) {
-  if (null == r) return {};
-  var t = {};
-  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
-    if (e.includes(n)) continue;
-    t[n] = r[n];
-  }
-  return t;
-}
-
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -26795,176 +26776,151 @@ if (process.env.NODE_ENV === 'production') {
 }
 });
 
-var _excluded = ["onClick", "onMouseOver", "mapKey", "choropleth", "color", "style"];
-var calculateRanges = function calculateRanges(data, numRanges) {
-  if (data === void 0) {
-    data = [];
-  }
-  if (numRanges === void 0) {
-    numRanges = 1;
-  }
-  var sortedData = data.slice().sort(function (a, b) {
-    return a - b;
-  });
+const calculateRanges = (data = [], numRanges = 1) => {
+  const sortedData = data.slice().sort((a, b) => a - b);
   if (sortedData.length === 0) return [];
-  var minRange = Math.min.apply(Math, sortedData);
-  var maxRange = Math.max.apply(Math, sortedData);
-  var logMin = Math.log10(minRange);
-  var logMax = Math.log10(maxRange);
-  var logStep = (logMax - logMin) / numRanges;
-  var ranges = [];
-  for (var i = 0; i < numRanges; i++) {
-    var rangeStart = Math.pow(10, logMin + i * logStep);
-    var rangeEnd = i === numRanges - 1 ? maxRange : Math.pow(10, logMin + (i + 1) * logStep);
+  const minRange = Math.min(...sortedData);
+  const maxRange = Math.max(...sortedData);
+  const logMin = Math.log10(minRange);
+  const logMax = Math.log10(maxRange);
+  const logStep = (logMax - logMin) / numRanges;
+  const ranges = [];
+  for (let i = 0; i < numRanges; i++) {
+    const rangeStart = Math.pow(10, logMin + i * logStep);
+    const rangeEnd = i === numRanges - 1 ? maxRange : Math.pow(10, logMin + (i + 1) * logStep);
     ranges.push([Math.floor(rangeStart), Math.floor(rangeEnd)]);
   }
   return ranges;
 };
-var getColor = function getColor(ranges, value, colors) {
-  var _colors;
-  if (ranges === void 0) {
-    ranges = [];
-  }
-  if (value === void 0) {
-    value = 0;
-  }
-  if (colors === void 0) {
-    colors = [];
-  }
-  var numColors = colors.length;
+const getColor = (ranges = [], value = 0, colors = []) => {
+  const numColors = colors.length;
   if (numColors === 0) return '#FFFFFF';
-  var findIndex = ranges.findIndex(function (r) {
-    var min = r[0],
-      max = r[1];
+  const findIndex = ranges.findIndex(r => {
+    const [min, max] = r;
     return value >= min && value <= max;
   });
-  return ((_colors = colors) === null || _colors === void 0 ? void 0 : _colors[findIndex]) || colors[0];
+  return (colors === null || colors === void 0 ? void 0 : colors[findIndex]) || colors[0];
 };
-var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref, data) {
-  var _onClick = _ref.onClick,
-    _onMouseOver = _ref.onMouseOver,
-    mapKey = _ref.mapKey,
-    choropleth = _ref.choropleth,
-    color = _ref.color,
-    _style = _ref.style,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded);
-  if (data === void 0) {
-    data = [];
-  }
-  var allProps = _extends({}, props, {
-    style: _style
-  });
-  if (typeof _onClick === 'function') {
-    allProps = _extends({}, allProps, {
-      onClick: function onClick(props) {
+const getGeoJSONProps = (mapInstance, {
+  onClick,
+  onMouseOver,
+  mapKey,
+  choropleth,
+  color,
+  style,
+  ...props
+}, data = []) => {
+  let allProps = {
+    ...props,
+    style
+  };
+  if (typeof onClick === 'function') {
+    allProps = {
+      ...allProps,
+      onClick: props => {
         try {
-          _onClick(mapInstance.current.getMap(), props);
+          onClick(mapInstance.current.getMap(), props);
         } catch (err) {
           console.error('GeoJson|onClick', err);
         }
       }
-    });
+    };
   }
-  if (typeof _onMouseOver === 'function') {
-    allProps = _extends({}, allProps, {
-      onMouseOver: function onMouseOver(props) {
+  if (typeof onMouseOver === 'function') {
+    allProps = {
+      ...allProps,
+      onMouseOver: props => {
         try {
-          _onMouseOver(mapInstance.current.getMap(), props);
+          onMouseOver(mapInstance.current.getMap(), props);
         } catch (err) {
           console.error('GeoJson|onMouseOver', err);
         }
       }
-    });
+    };
   }
   if (mapKey && choropleth) {
-    allProps = _extends({}, allProps, {
-      style: function style(feature) {
-        var _data, _data2;
-        var findData = (_data = data) === null || _data === void 0 ? void 0 : _data.find(function (d) {
+    allProps = {
+      ...allProps,
+      mapKey,
+      choropleth,
+      style: feature => {
+        const findData = data === null || data === void 0 ? void 0 : data.find(d => {
           var _feature$properties;
           return (d === null || d === void 0 ? void 0 : d[mapKey]) === (feature === null || feature === void 0 ? void 0 : (_feature$properties = feature.properties) === null || _feature$properties === void 0 ? void 0 : _feature$properties[mapKey]);
         });
-        var value = (findData === null || findData === void 0 ? void 0 : findData[choropleth]) || 0;
-        var values = (_data2 = data) === null || _data2 === void 0 ? void 0 : _data2.map(function (d) {
-          return d === null || d === void 0 ? void 0 : d[choropleth];
-        });
-        var ranges = calculateRanges(values, color === null || color === void 0 ? void 0 : color.length);
-        return _extends({}, _style, {
+        const value = (findData === null || findData === void 0 ? void 0 : findData[choropleth]) || 0;
+        const values = data === null || data === void 0 ? void 0 : data.map(d => d === null || d === void 0 ? void 0 : d[choropleth]);
+        const ranges = calculateRanges(values, color === null || color === void 0 ? void 0 : color.length);
+        return {
+          ...style,
           fillColor: getColor(ranges, value, color)
-        });
+        };
       }
-    });
+    };
   }
   return allProps;
 };
-var renderReactToDiv = function renderReactToDiv(children) {
-  var container = document.createElement('div');
+const renderReactToDiv = children => {
+  const container = document.createElement('div');
   reactDom.render(children, container);
   return container;
 };
 
-var _excluded$1 = ["children", "label", "popUp", "icon"];
-var MarkerIcon = function MarkerIcon(props) {
-  var _props;
-  if (props === void 0) {
-    props = {};
-  }
-  var defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
-  var defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
-  var Icon = (_props = props) !== null && _props !== void 0 && _props.html ? L$1.divIcon(props) : L$1.icon(_extends({
+const MarkerIcon = (props = {}) => {
+  const defaultIcon = typeof mIcon === 'object' ? mIcon === null || mIcon === void 0 ? void 0 : mIcon.src : mIcon;
+  const defaultShadow = typeof mShadow === 'object' ? mShadow === null || mShadow === void 0 ? void 0 : mShadow.src : mShadow;
+  const Icon = props !== null && props !== void 0 && props.html ? L$1.divIcon(props) : L$1.icon({
     iconUrl: defaultIcon,
     shadowUrl: defaultShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  }, props));
+    shadowSize: [41, 41],
+    ...props
+  });
   return Icon;
 };
-var getGeoJSONList = function getGeoJSONList(d) {
+const getGeoJSONList = d => {
   if (!d) {
     return [];
   }
   if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
-    return Object.keys(d.objects).map(function (kd) {
-      return feature(d, d.objects[kd]);
-    });
+    return Object.keys(d.objects).map(kd => feature(d, d.objects[kd]));
   }
   return [d];
 };
-var fnMarker = function fnMarker(latlng, _ref) {
-  var _ref$children = _ref.children,
-    children = _ref$children === void 0 ? null : _ref$children,
-    _ref$label = _ref.label,
-    label = _ref$label === void 0 ? null : _ref$label,
-    _ref$popUp = _ref.popUp,
-    popUp = _ref$popUp === void 0 ? {} : _ref$popUp,
-    _ref$icon = _ref.icon,
-    icon = _ref$icon === void 0 ? {} : _ref$icon,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded$1);
-  var m = L$1.marker(latlng, _extends({
-    icon: MarkerIcon(icon)
-  }, props));
-  if (label) {
-    m.bindPopup(label, popUp || {});
+const fnMarker = (latlng, {
+  children: _children = null,
+  label: _label = null,
+  popUp: _popUp = {},
+  icon: _icon = {},
+  ...props
+}) => {
+  const m = L$1.marker(latlng, {
+    icon: MarkerIcon(_icon),
+    ...props
+  });
+  if (_label) {
+    m.bindPopup(_label, _popUp || {});
   }
-  if (children) {
-    var content = renderReactToDiv(children);
-    m.bindPopup(content, popUp || {});
+  if (_children) {
+    const content = renderReactToDiv(_children);
+    m.bindPopup(content, _popUp || {});
   }
   return m;
 };
 
-var LeafletContext = createContext(null);
-var LeafletProvider = forwardRef(function (_ref, ref) {
-  var children = _ref.children,
-    width = _ref.width,
-    height = _ref.height;
-  var mapRef = useRef(null);
-  var mapContainer = useRef(null);
-  useLayoutEffect(function () {
+const LeafletContext = createContext(null);
+const LeafletProvider = forwardRef(({
+  children,
+  width,
+  height
+}, ref) => {
+  const mapRef = useRef(null);
+  const mapContainer = useRef(null);
+  useLayoutEffect(() => {
     if (!mapRef.current) {
-      var map = L$1.map(mapContainer.current, {
+      const map = L$1.map(mapContainer.current, {
         center: [0, 0],
         zoom: 2,
         maxZoom: 19,
@@ -26972,20 +26928,16 @@ var LeafletProvider = forwardRef(function (_ref, ref) {
       });
       mapRef.current = map;
     }
-    return function () {
+    return () => {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
     };
   }, []);
-  useImperativeHandle(ref, function () {
-    return {
-      getMap: function getMap() {
-        return mapRef.current;
-      }
-    };
-  });
+  useImperativeHandle(ref, () => ({
+    getMap: () => mapRef.current
+  }));
   return /*#__PURE__*/React.createElement(Fragment, null, /*#__PURE__*/React.createElement("div", {
     ref: mapContainer,
     style: {
@@ -26997,85 +26949,135 @@ var LeafletProvider = forwardRef(function (_ref, ref) {
     value: mapRef
   }, children));
 });
-var useLeaflet = function useLeaflet() {
+const useLeaflet = () => {
   return useContext(LeafletContext);
 };
 
-var _excluded$2 = ["children", "latlng", "label", "markerLayer"];
-var Marker = function Marker(_ref) {
-  var children = _ref.children,
-    _ref$latlng = _ref.latlng,
-    latlng = _ref$latlng === void 0 ? null : _ref$latlng,
-    _ref$label = _ref.label,
-    label = _ref$label === void 0 ? null : _ref$label,
-    _ref$markerLayer = _ref.markerLayer,
-    markerLayer = _ref$markerLayer === void 0 ? null : _ref$markerLayer,
-    options = _objectWithoutPropertiesLoose(_ref, _excluded$2);
-  var _useState = useState(true),
-    preload = _useState[0],
-    setPreload = _useState[1];
-  var mapRef = useLeaflet();
-  var setMarker = useCallback(function () {
+const Marker = ({
+  children,
+  latlng: _latlng = null,
+  label: _label = null,
+  markerLayer: _markerLayer = null,
+  ...options
+}) => {
+  const [preload, setPreload] = useState(true);
+  const mapRef = useLeaflet();
+  const setMarker = useCallback(() => {
     if (mapRef.current && preload) {
       setPreload(false);
-      var mapLayer = markerLayer || mapRef.current;
-      var marker = fnMarker(latlng, _extends({
-        label: label,
-        children: children
-      }, options));
+      const mapLayer = _markerLayer || mapRef.current;
+      const marker = fnMarker(_latlng, {
+        label: _label,
+        children,
+        ...options
+      });
       marker.addTo(mapLayer);
     }
-  }, [mapRef, preload, markerLayer, latlng, options, label, children]);
-  useEffect(function () {
+  }, [mapRef, preload, _markerLayer, _latlng, options, _label, children]);
+  useEffect(() => {
     setMarker();
   }, [setMarker]);
   return null;
 };
 
-var _excluded$3 = ["url"];
-var TileLayer = function TileLayer(_ref) {
-  var url = _ref.url,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded$3);
-  var mapRef = useLeaflet();
-  useEffect(function () {
+const TileLayer = ({
+  url,
+  ...props
+}) => {
+  const mapRef = useLeaflet();
+  useEffect(() => {
     if (mapRef.current) {
       if (url) {
-        L$1.tileLayer(url, _extends({}, props)).addTo(mapRef.current);
+        L$1.tileLayer(url, {
+          ...props
+        }).addTo(mapRef.current);
       }
     }
   }, [mapRef, props, url]);
   return null;
 };
 
-var GeoJson = function GeoJson(_ref) {
-  var onClick = _ref.onClick,
-    onMouseOver = _ref.onMouseOver,
-    _ref$data = _ref.data,
-    data = _ref$data === void 0 ? {} : _ref$data,
-    _ref$style = _ref.style,
-    style = _ref$style === void 0 ? {} : _ref$style;
-  var _useState = useState(null),
-    layer = _useState[0],
-    setLayer = _useState[1];
-  var mapRef = useLeaflet();
-  var loadGeoJson = useCallback(function () {
-    if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology' && !layer) {
+const GeoJson = ({
+  mapKey,
+  onClick,
+  onMouseOver,
+  data: _data = {},
+  style: _style = {},
+  tooltip: _tooltip = {
+    show: false,
+    showTooltipForAll: true,
+    tooltipComponent: null
+  },
+  mapData: _mapData = []
+}) => {
+  const [layer, setLayer] = useState(null);
+  const mapRef = useLeaflet();
+  const loadGeoJson = useCallback(() => {
+    if (mapRef.current && _data !== null && _data !== void 0 && _data.type && (_data === null || _data === void 0 ? void 0 : _data.type) !== 'Topology' && !layer) {
       try {
-        var gl = L$1.geoJSON(data, {
-          onEachFeature: function onEachFeature(_, layer) {
+        const gl = L$1.geoJSON(_data, {
+          onEachFeature: (feature, layer) => {
             if (typeof onClick === 'function') {
               layer.on({
-                click: function click(props) {
+                click: props => {
                   onClick(props);
                 }
               });
             }
             if (typeof onMouseOver === 'function') {
               layer.on({
-                mouseover: function mouseover(props) {
+                mouseover: props => {
                   onMouseOver(props);
                 }
               });
+            }
+            if (_tooltip !== null && _tooltip !== void 0 && _tooltip.show) {
+              var _feature$properties;
+              const name = (feature === null || feature === void 0 ? void 0 : (_feature$properties = feature.properties) === null || _feature$properties === void 0 ? void 0 : _feature$properties[mapKey]) || null;
+              const findMapData = _mapData.find(md => {
+                var _md$mapKey;
+                return (md === null || md === void 0 ? void 0 : (_md$mapKey = md[mapKey]) === null || _md$mapKey === void 0 ? void 0 : _md$mapKey.toLowerCase()) === (name === null || name === void 0 ? void 0 : name.toLowerCase());
+              });
+              if (_tooltip !== null && _tooltip !== void 0 && _tooltip.showTooltipForAll && !(_tooltip !== null && _tooltip !== void 0 && _tooltip.tooltipComponent)) {
+                layer.bindTooltip(name || 'No name', {
+                  permanent: false,
+                  direction: 'auto'
+                });
+              }
+              if (_tooltip !== null && _tooltip !== void 0 && _tooltip.showTooltipForAll && _tooltip !== null && _tooltip !== void 0 && _tooltip.tooltipComponent) {
+                const tooltipElement = document.createElement('div');
+                reactDom.render( /*#__PURE__*/React.createElement(_tooltip.tooltipComponent, {
+                  props: {
+                    name: name,
+                    ...findMapData
+                  }
+                }), tooltipElement);
+                layer.bindTooltip(tooltipElement, {
+                  permanent: false,
+                  direction: 'auto',
+                  className: 'custom-tooltip-wrapper'
+                });
+              }
+              if (!(_tooltip !== null && _tooltip !== void 0 && _tooltip.showTooltipForAll) && !(_tooltip !== null && _tooltip !== void 0 && _tooltip.tooltipComponent) && findMapData) {
+                layer.bindTooltip(name || 'No name', {
+                  permanent: false,
+                  direction: 'auto'
+                });
+              }
+              if (!(_tooltip !== null && _tooltip !== void 0 && _tooltip.showTooltipForAll) && _tooltip !== null && _tooltip !== void 0 && _tooltip.tooltipComponent && findMapData) {
+                const tooltipElement = document.createElement('div');
+                reactDom.render( /*#__PURE__*/React.createElement(_tooltip.tooltipComponent, {
+                  props: {
+                    name: name,
+                    ...findMapData
+                  }
+                }), tooltipElement);
+                layer.bindTooltip(tooltipElement, {
+                  permanent: false,
+                  direction: 'auto',
+                  className: 'custom-tooltip-wrapper'
+                });
+              }
             }
           }
         });
@@ -27087,29 +27089,27 @@ var GeoJson = function GeoJson(_ref) {
     }
     if (layer) {
       layer.resetStyle();
-      layer.setStyle(function (feature) {
-        return typeof style === 'function' ? style(feature) : _extends({}, style, {
-          fillOpacity: parseFloat((style === null || style === void 0 ? void 0 : style.fillOpacity) || 0.2, 10)
-        });
+      layer.setStyle(feature => typeof _style === 'function' ? _style(feature) : {
+        ..._style,
+        fillOpacity: parseFloat((_style === null || _style === void 0 ? void 0 : _style.fillOpacity) || 0.2, 10)
       });
     }
-  }, [mapRef, layer, data, style, onClick, onMouseOver]);
-  useEffect(function () {
+  }, [mapRef, layer, _data, _style, onClick, onMouseOver, _tooltip, _mapData, mapKey]);
+  useEffect(() => {
     loadGeoJson();
   }, [loadGeoJson]);
   return null;
 };
 
-var styles = {"container":"ae-container","legend":"ae-legend"};
+var styles = {"container":"_styles-module__container__1Lxpd","legend":"_styles-module__legend__2XKrJ"};
 
-var LegendControl = function LegendControl(_ref) {
-  var _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data,
-    _ref$color = _ref.color,
-    color = _ref$color === void 0 ? [] : _ref$color;
-  var mapRef = useLeaflet();
-  var legendRef = useRef(null);
-  var loadLegend = useCallback(function () {
+const LegendControl = ({
+  data: _data = [],
+  color: _color = []
+}) => {
+  const mapRef = useLeaflet();
+  const legendRef = useRef(null);
+  const loadLegend = useCallback(() => {
     if (mapRef !== null && mapRef !== void 0 && mapRef.current && !(legendRef !== null && legendRef !== void 0 && legendRef.current)) {
       legendRef.current = L$1.control({
         position: 'bottomright'
@@ -27117,44 +27117,41 @@ var LegendControl = function LegendControl(_ref) {
     }
     if (legendRef !== null && legendRef !== void 0 && legendRef.current && mapRef !== null && mapRef !== void 0 && mapRef.current) {
       mapRef.current.removeControl(legendRef.current);
-      legendRef.current.onAdd = function () {
-        var div = L$1.DomUtil.create('div', styles.legend);
-        var grades = calculateRanges(data, color.length);
-        grades.forEach(function (g, gx) {
-          var min = g[0],
-            max = g[1];
-          div.innerHTML += "<span class=\"icon\" style=\"background-color: " + (color === null || color === void 0 ? void 0 : color[gx]) + ";\"></span> " + min + " - " + max + " <br/>";
+      legendRef.current.onAdd = () => {
+        const div = L$1.DomUtil.create('div', styles.legend);
+        const grades = calculateRanges(_data, _color.length);
+        grades.forEach((g, gx) => {
+          const [min, max] = g;
+          div.innerHTML += `<span class="icon" style="background-color: ${_color === null || _color === void 0 ? void 0 : _color[gx]};"></span> ${min} - ${max} <br/>`;
         });
         return div;
       };
       legendRef.current.addTo(mapRef.current);
     }
-  }, [mapRef, legendRef, data, color]);
-  useEffect(function () {
+  }, [mapRef, legendRef, _data, _color]);
+  useEffect(() => {
     loadLegend();
   }, [loadLegend]);
   return null;
 };
 
-var _excluded$4 = ["children", "iconCreateFn", "onClick", "onMarkerClick"],
-  _excluded2 = ["latlng"];
-var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
-  var children = _ref.children,
-    iconCreateFn = _ref.iconCreateFn,
-    onClick = _ref.onClick,
-    onMarkerClick = _ref.onMarkerClick,
-    props = _objectWithoutPropertiesLoose(_ref, _excluded$4);
-  var _useState = useState(true),
-    preload = _useState[0],
-    setPreload = _useState[1];
-  var mapRef = useLeaflet();
-  var clusterGroupRef = useRef(null);
-  useEffect(function () {
+const MarkerClusterGroup = ({
+  children,
+  iconCreateFn,
+  onClick,
+  onMarkerClick,
+  ...props
+}) => {
+  const [preload, setPreload] = useState(true);
+  const mapRef = useLeaflet();
+  const clusterGroupRef = useRef(null);
+  useEffect(() => {
     if (preload && mapRef.current) {
       setPreload(false);
-      var clusterGroup = L$1.markerClusterGroup(_extends({}, props, {
-        iconCreateFunction: typeof iconCreateFn === 'function' ? function (cluster) {
-          var divIcon = iconCreateFn(cluster);
+      const clusterGroup = L$1.markerClusterGroup({
+        ...props,
+        iconCreateFunction: typeof iconCreateFn === 'function' ? cluster => {
+          const divIcon = iconCreateFn(cluster);
           if (divIcon !== null && divIcon !== void 0 && divIcon.iconSize) {
             Object.assign(divIcon, {
               iconSize: L$1.point(divIcon.iconSize, divIcon.iconSize, true)
@@ -27162,28 +27159,25 @@ var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
           }
           return L$1.divIcon(divIcon);
         } : null
-      })).addTo(mapRef.current);
+      }).addTo(mapRef.current);
       clusterGroupRef.current = clusterGroup;
       if (typeof onMarkerClick === 'function') {
-        clusterGroup.on('click', function (e) {
-          return onMarkerClick(e);
-        });
+        clusterGroup.on('click', e => onMarkerClick(e));
       }
       if (typeof onClick === 'function') {
-        clusterGroup.on('clusterclick', function (e) {
-          return onClick(e);
-        });
+        clusterGroup.on('clusterclick', e => onClick(e));
       }
     }
   }, [iconCreateFn, props, onMarkerClick, onClick, mapRef, preload]);
-  useEffect(function () {
+  useEffect(() => {
     if (clusterGroupRef.current) {
-      var markers = React.Children.map(children, function (child) {
+      const markers = React.Children.map(children, child => {
         if (child && child.props.latlng) {
-          var _child$props = child.props,
-            latlng = _child$props.latlng,
-            childProps = _objectWithoutPropertiesLoose(_child$props, _excluded2);
-          var m = fnMarker(latlng, childProps);
+          const {
+            latlng,
+            ...childProps
+          } = child.props;
+          const m = fnMarker(latlng, childProps);
           return m;
         }
         return null;
@@ -27194,7 +27188,7 @@ var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
         mapRef.current.fitBounds(clusterGroupRef.current.getBounds());
       }
     }
-    return function () {
+    return () => {
       if (clusterGroupRef.current) {
         clusterGroupRef.current.clearLayers();
       }
@@ -27203,15 +27197,14 @@ var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
   return null;
 };
 
-var Container = function Container(_ref, ref) {
-  var children = _ref.children,
-    tile = _ref.tile,
-    config = _ref.config;
-  var _useState = useState(true),
-    preload = _useState[0],
-    setPreload = _useState[1];
-  var mapInstance = useRef(null);
-  useEffect(function () {
+const Container = ({
+  children,
+  tile,
+  config
+}, ref) => {
+  const [preload, setPreload] = useState(true);
+  const mapInstance = useRef(null);
+  useEffect(() => {
     if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
       setPreload(false);
       if (config !== null && config !== void 0 && config.zoom) {
@@ -27222,9 +27215,7 @@ var Container = function Container(_ref, ref) {
       }
     }
   }, [config.center, config.zoom, mapInstance, preload]);
-  useImperativeHandle(ref, function () {
-    return mapInstance.current;
-  });
+  useImperativeHandle(ref, () => mapInstance.current);
   return /*#__PURE__*/React.createElement(LeafletProvider, {
     ref: mapInstance,
     width: config === null || config === void 0 ? void 0 : config.width,
@@ -27236,22 +27227,22 @@ var Container$1 = forwardRef(Container);
 
 
 var index = {
-  __proto__: null,
-  Marker: Marker,
-  TileLayer: TileLayer,
-  GeoJson: GeoJson,
-  LegendControl: LegendControl,
-  MarkerClusterGroup: MarkerClusterGroup,
-  Container: Container$1,
-  MarkerIcon: MarkerIcon,
-  getGeoJSONList: getGeoJSONList,
-  fnMarker: fnMarker
+	__proto__: null,
+	Marker: Marker,
+	TileLayer: TileLayer,
+	GeoJson: GeoJson,
+	LegendControl: LegendControl,
+	MarkerClusterGroup: MarkerClusterGroup,
+	Container: Container$1,
+	MarkerIcon: MarkerIcon,
+	getGeoJSONList: getGeoJSONList,
+	fnMarker: fnMarker
 };
 
-var backgroundColor = {
+const backgroundColor = {
   backgroundColor: 'transparent'
 };
-var Animation = {
+const Animation = {
   animation: true,
   animationThreshold: 2000,
   animationDuration: 1000,
@@ -27261,15 +27252,15 @@ var Animation = {
   animationEasingUpdate: 'cubicOut',
   animationDelayUpdate: 0
 };
-var TextStyle = {
+const TextStyle = {
   color: '#000',
   fontSize: 12,
   fontWeight: 'bold'
 };
-var Colors = {
+const Colors = {
   color: ['#4475B4', '#73ADD1', '#AAD9E8', '#FEE08F', '#FDAE60', '#F36C42', '#D73027']
 };
-var Legend = {
+const Legend = {
   show: true,
   icon: 'circle',
   top: 35,
@@ -27282,7 +27273,7 @@ var Legend = {
     fontSize: 12
   }
 };
-var Title = {
+const Title = {
   show: true,
   textAlign: 'center',
   left: '50%',
@@ -27292,14 +27283,14 @@ var Title = {
     fontWeight: 'bold'
   }
 };
-var Grid = {
+const Grid = {
   containLabel: true,
   left: '4%',
   right: '4%',
   bottom: '10%',
   top: '25%'
 };
-var Tooltip = {
+const Tooltip = {
   trigger: 'item',
   axisPointer: {
     type: 'shadow'
@@ -27310,7 +27301,7 @@ var Tooltip = {
     fontWeight: 'bold'
   }
 };
-var Axis = {
+const Axis = {
   axisLabel: {
     color: '#000',
     fontSize: 12,
@@ -27328,113 +27319,131 @@ var Axis = {
   }
 };
 
-var filterObjNullValue = function filterObjNullValue(obj) {
-  return Object.entries(obj).reduce(function (acc, _ref) {
-    var key = _ref[0],
-      value = _ref[1];
-    if (value !== null) {
-      acc[key] = value;
-    }
-    return acc;
-  }, {});
-};
-var transformConfig = function transformConfig(_ref2) {
-  var title = _ref2.title,
-    _ref2$subtitle = _ref2.subtitle,
-    subtitle = _ref2$subtitle === void 0 ? null : _ref2$subtitle,
-    _ref2$xAxisLabel = _ref2.xAxisLabel,
-    xAxisLabel = _ref2$xAxisLabel === void 0 ? null : _ref2$xAxisLabel,
-    _ref2$yAxisLabel = _ref2.yAxisLabel,
-    yAxisLabel = _ref2$yAxisLabel === void 0 ? null : _ref2$yAxisLabel,
-    _ref2$horizontal = _ref2.horizontal,
-    horizontal = _ref2$horizontal === void 0 ? false : _ref2$horizontal,
-    _ref2$textStyle = _ref2.textStyle,
-    textStyle = _ref2$textStyle === void 0 ? {
-      color: null,
-      fontStyle: null,
-      fontWeight: null,
-      fontFamily: null,
-      fontSize: null
-    } : _ref2$textStyle,
-    _ref2$legend = _ref2.legend,
-    legend = _ref2$legend === void 0 ? {
-      show: true,
-      icon: null,
-      top: null,
-      left: null,
-      align: null,
-      orient: null,
-      itemGap: null
-    } : _ref2$legend,
-    _ref2$color = _ref2.color,
-    color = _ref2$color === void 0 ? [] : _ref2$color,
-    _ref2$dimensions = _ref2.dimensions,
-    dimensions = _ref2$dimensions === void 0 ? [] : _ref2$dimensions,
-    _ref2$showAxis = _ref2.showAxis,
-    showAxis = _ref2$showAxis === void 0 ? true : _ref2$showAxis;
-  var defaultLegend = showAxis ? _extends({}, Legend, {
-    data: dimensions.slice(1)
-  }) : _extends({}, Legend);
-  var overrideTextStyle = Object.keys(filterObjNullValue(textStyle)).length ? filterObjNullValue(textStyle) : {};
-  var overrideColor = color.length ? {
-    color: color
-  } : _extends({}, Colors);
-  var overrideLegend = Object.keys(filterObjNullValue(legend)).length ? _extends({}, defaultLegend, {
-    top: subtitle ? 50 : defaultLegend.top
-  }, filterObjNullValue(legend)) : _extends({}, defaultLegend, {
-    top: subtitle ? 50 : defaultLegend.top
-  });
-  var axis = showAxis ? {
-    xAxis: _extends({
-      type: horizontal ? 'value' : 'category',
-      name: xAxisLabel,
-      nameTextStyle: _extends({}, TextStyle, overrideTextStyle),
+const filterObjNullValue = obj => Object.entries(obj).reduce((acc, [key, value]) => {
+  if (value !== null) {
+    acc[key] = value;
+  }
+  return acc;
+}, {});
+const transformConfig = ({
+  title,
+  subtitle: _subtitle = null,
+  xAxisLabel: _xAxisLabel = null,
+  yAxisLabel: _yAxisLabel = null,
+  horizontal: _horizontal = false,
+  textStyle: _textStyle = {
+    color: null,
+    fontStyle: null,
+    fontWeight: null,
+    fontFamily: null,
+    fontSize: null
+  },
+  legend: _legend = {
+    show: true,
+    icon: null,
+    top: null,
+    left: null,
+    align: null,
+    orient: null,
+    itemGap: null
+  },
+  color: _color = [],
+  dimensions: _dimensions = [],
+  showAxis: _showAxis = true
+}) => {
+  const defaultLegend = _showAxis ? {
+    ...Legend,
+    data: _dimensions.slice(1)
+  } : {
+    ...Legend
+  };
+  const overrideTextStyle = Object.keys(filterObjNullValue(_textStyle)).length ? filterObjNullValue(_textStyle) : {};
+  const overrideColor = _color.length ? {
+    color: _color
+  } : {
+    ...Colors
+  };
+  const overrideLegend = Object.keys(filterObjNullValue(_legend)).length ? {
+    ...defaultLegend,
+    top: _subtitle ? 50 : defaultLegend.top,
+    ...filterObjNullValue(_legend)
+  } : {
+    ...defaultLegend,
+    top: _subtitle ? 50 : defaultLegend.top
+  };
+  const axis = _showAxis ? {
+    xAxis: {
+      type: _horizontal ? 'value' : 'category',
+      name: _xAxisLabel,
+      nameTextStyle: {
+        ...TextStyle,
+        ...overrideTextStyle
+      },
       nameLocation: 'center',
-      nameGap: 45
-    }, Axis, {
-      axisLabel: _extends({}, Axis.axisLabel, overrideTextStyle)
-    }),
-    yAxis: _extends({
-      type: horizontal ? 'category' : 'value',
-      name: yAxisLabel,
-      nameTextStyle: _extends({}, TextStyle, overrideTextStyle),
+      nameGap: 45,
+      ...Axis,
+      axisLabel: {
+        ...Axis.axisLabel,
+        ...overrideTextStyle
+      }
+    },
+    yAxis: {
+      type: _horizontal ? 'category' : 'value',
+      name: _yAxisLabel,
+      nameTextStyle: {
+        ...TextStyle,
+        ...overrideTextStyle
+      },
       nameLocation: 'end',
-      nameGap: 20
-    }, Axis, {
-      axisLabel: _extends({}, Axis.axisLabel, overrideTextStyle)
-    })
+      nameGap: 20,
+      ...Axis,
+      axisLabel: {
+        ...Axis.axisLabel,
+        ...overrideTextStyle
+      }
+    }
   } : {};
-  return _extends({
-    title: _extends({}, Title, {
+  return {
+    title: {
+      ...Title,
       text: title,
-      subtext: subtitle ? subtitle : '',
-      textStyle: _extends({}, Title.textStyle, overrideTextStyle)
-    }),
-    grid: _extends({}, Grid),
-    legend: _extends({}, overrideLegend, {
-      textStyle: _extends({}, overrideLegend.textStyle, overrideTextStyle)
-    }),
-    tooltip: _extends({}, Tooltip, {
-      textStyle: _extends({}, Tooltip.textStyle, overrideTextStyle)
-    })
-  }, axis, {
-    series: []
-  }, overrideColor, backgroundColor, Animation);
+      subtext: _subtitle ? _subtitle : '',
+      textStyle: {
+        ...Title.textStyle,
+        ...overrideTextStyle
+      }
+    },
+    grid: {
+      ...Grid
+    },
+    legend: {
+      ...overrideLegend,
+      textStyle: {
+        ...overrideLegend.textStyle,
+        ...overrideTextStyle
+      }
+    },
+    tooltip: {
+      ...Tooltip,
+      textStyle: {
+        ...Tooltip.textStyle,
+        ...overrideTextStyle
+      }
+    },
+    ...axis,
+    series: [],
+    ...overrideColor,
+    ...backgroundColor,
+    ...Animation
+  };
 };
 
-var sortKeys = function sortKeys(keys) {
-  if (keys === void 0) {
-    keys = [];
-  }
-  var dynamicKey = keys.find(function (key) {
-    return isNaN(key);
-  });
-  var otherKeys = keys.filter(function (key) {
-    return key !== dynamicKey;
-  });
-  return [dynamicKey].concat(otherKeys);
+const sortKeys = (keys = []) => {
+  const dynamicKey = keys.find(key => isNaN(key));
+  const otherKeys = keys.filter(key => key !== dynamicKey);
+  return [dynamicKey, ...otherKeys];
 };
-var normalizeData = function normalizeData(data) {
+const normalizeData = data => {
   if ((data === null || data === void 0 ? void 0 : data.length) === 0) {
     return {
       dimensions: [],
@@ -27443,134 +27452,127 @@ var normalizeData = function normalizeData(data) {
   }
   if (Array.isArray(data)) {
     if (data.length > 0 && Array.isArray(data[0])) {
-      var categories = data[0],
-        rows = data.slice(1);
-      var dimensions = categories.map(function (item) {
-        return item.toLowerCase();
-      });
-      var source = rows.map(function (row) {
-        var obj = {};
-        categories.forEach(function (cat, index) {
+      const [categories, ...rows] = data;
+      const dimensions = categories.map(item => item.toLowerCase());
+      const source = rows.map(row => {
+        const obj = {};
+        categories.forEach((cat, index) => {
           obj[cat.toLowerCase()] = row[index] !== undefined ? row[index] : 0;
         });
         return obj;
       });
       return {
-        dimensions: dimensions,
-        source: source
+        dimensions,
+        source
       };
     } else if (data.length > 0 && typeof data[0] === 'object') {
-      var keys = Array.from(new Set(data.flatMap(function (d) {
-        return d ? Object.keys(d) : [];
-      })));
-      var sortedKeys = sortKeys(keys);
-      var _dimensions = sortedKeys;
-      var _source = data.filter(function (i) {
-        return i;
-      }).map(function (item) {
-        var obj = {};
-        sortedKeys.forEach(function (key) {
+      const keys = Array.from(new Set(data.flatMap(d => d ? Object.keys(d) : [])));
+      const sortedKeys = sortKeys(keys);
+      const dimensions = sortedKeys;
+      const source = data.filter(i => i).map(item => {
+        const obj = {};
+        sortedKeys.forEach(key => {
           obj[key] = item[key] !== undefined ? item[key] : 0;
         });
         return obj;
       });
       return {
-        dimensions: _dimensions,
-        source: _source
+        dimensions,
+        source
       };
     }
   } else if (typeof data === 'object') {
-    var _keys = Object.keys(data);
-    var maxLength = Math.max.apply(Math, _keys.map(function (key) {
-      return data[key].length;
-    }));
-    var _sortedKeys = sortKeys(_keys);
-    var _source2 = Array.from({
+    const keys = Object.keys(data);
+    const maxLength = Math.max(...keys.map(key => data[key].length));
+    const sortedKeys = sortKeys(keys);
+    const source = Array.from({
       length: maxLength
-    }, function (_, i) {
-      return _sortedKeys.reduce(function (acc, key) {
+    }, (_, i) => {
+      return sortedKeys.reduce((acc, key) => {
         acc[key] = data[key][i] !== undefined ? data[key][i] : 0;
         return acc;
       }, {});
     });
     return {
-      dimensions: _sortedKeys,
-      source: _source2
+      dimensions: sortedKeys,
+      source
     };
   }
   throw new Error('Unsupported data format');
 };
 
-var useECharts = function useECharts(_ref) {
-  var _ref$config = _ref.config,
-    config = _ref$config === void 0 ? {} : _ref$config,
-    _ref$data = _ref.data,
-    data = _ref$data === void 0 ? [] : _ref$data,
-    _ref$getOptions = _ref.getOptions,
-    getOptions = _ref$getOptions === void 0 ? function () {} : _ref$getOptions,
-    _ref$rawConfig = _ref.rawConfig,
-    rawConfig = _ref$rawConfig === void 0 ? {} : _ref$rawConfig,
-    _ref$rawOverrides = _ref.rawOverrides,
-    rawOverrides = _ref$rawOverrides === void 0 ? {} : _ref$rawOverrides;
-  var chartRef = useRef(null);
-  var _useState = useState(null),
-    chartInstance = _useState[0],
-    setChartInstance = _useState[1];
-  useEffect(function () {
+const useECharts = ({
+  config: _config = {},
+  data: _data = [],
+  getOptions: _getOptions = () => {},
+  rawConfig: _rawConfig = {},
+  rawOverrides: _rawOverrides = {}
+}) => {
+  const chartRef = useRef(null);
+  const [chartInstance, setChartInstance] = useState(null);
+  useEffect(() => {
     if (!chartInstance && chartRef.current) {
-      var initProps = config !== null && config !== void 0 && config.width && config !== null && config !== void 0 && config.height ? {
-        width: config.width,
-        height: config.height
+      const initProps = _config !== null && _config !== void 0 && _config.width && _config !== null && _config !== void 0 && _config.height ? {
+        width: _config.width,
+        height: _config.height
       } : {};
-      var chart = init(chartRef.current, (config === null || config === void 0 ? void 0 : config.theme) || null, _extends({
-        renderer: (config === null || config === void 0 ? void 0 : config.renderer) || 'canvas'
-      }, initProps));
+      const chart = init(chartRef.current, (_config === null || _config === void 0 ? void 0 : _config.theme) || null, {
+        renderer: (_config === null || _config === void 0 ? void 0 : _config.renderer) || 'canvas',
+        ...initProps
+      });
       setChartInstance(chart);
     }
-    var options = {};
-    if (!Object.keys(rawConfig).length) {
-      var horizontal = false;
-      if (config !== null && config !== void 0 && config.horizontal) {
-        horizontal = config.horizontal;
+    let options = {};
+    if (!Object.keys(_rawConfig).length) {
+      let horizontal = false;
+      if (_config !== null && _config !== void 0 && _config.horizontal) {
+        horizontal = _config.horizontal;
       }
-      var itemStyle = {
+      let itemStyle = {
         color: null,
         borderColor: null,
         borderWidth: null,
         borderType: null,
         opacity: null
       };
-      if (config !== null && config !== void 0 && config.itemStyle) {
-        itemStyle = _extends({}, config.itemStyle);
+      if (_config !== null && _config !== void 0 && _config.itemStyle) {
+        itemStyle = {
+          ..._config.itemStyle
+        };
       }
-      var overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
+      const overrideItemStyle = Object.keys(filterObjNullValue(itemStyle)).length ? {
         itemStyle: filterObjNullValue(itemStyle)
       } : {};
-      var _normalizeData = normalizeData(data),
-        dimensions = _normalizeData.dimensions,
-        source = _normalizeData.source;
-      var transformedConfig = transformConfig(_extends({}, config, {
-        dimensions: dimensions
-      }));
-      options = _extends({}, transformedConfig, {
+      const {
+        dimensions,
+        source
+      } = normalizeData(_data);
+      const transformedConfig = transformConfig({
+        ..._config,
+        dimensions
+      });
+      options = {
+        ...transformedConfig,
         dataset: {
-          dimensions: dimensions,
-          source: source
-        }
-      }, getOptions({
-        dimensions: dimensions,
-        transformedConfig: transformedConfig,
-        overrideItemStyle: overrideItemStyle,
-        horizontal: horizontal
-      }));
-    } else {
-      options = rawConfig !== null && rawConfig !== void 0 && rawConfig.series ? _extends({}, rawConfig, {
-        series: rawConfig.series.map(function (s) {
-          return _extends({}, rawOverrides, s, {
-            type: (rawOverrides === null || rawOverrides === void 0 ? void 0 : rawOverrides.type) || (s === null || s === void 0 ? void 0 : s.type)
-          });
+          dimensions,
+          source
+        },
+        ..._getOptions({
+          dimensions,
+          transformedConfig,
+          overrideItemStyle,
+          horizontal
         })
-      }) : rawConfig;
+      };
+    } else {
+      options = _rawConfig !== null && _rawConfig !== void 0 && _rawConfig.series ? {
+        ..._rawConfig,
+        series: _rawConfig.series.map(s => ({
+          ..._rawOverrides,
+          ...s,
+          type: (_rawOverrides === null || _rawOverrides === void 0 ? void 0 : _rawOverrides.type) || (s === null || s === void 0 ? void 0 : s.type)
+        }))
+      } : _rawConfig;
     }
     if (chartInstance) {
       try {
@@ -27580,57 +27582,51 @@ var useECharts = function useECharts(_ref) {
         console.error('useECharts', err);
       }
     }
-  }, [chartInstance, chartRef, config, rawConfig, data, rawOverrides, getOptions]);
+  }, [chartInstance, chartRef, _config, _rawConfig, _data, _rawOverrides, _getOptions]);
   return [chartRef, chartInstance];
 };
 
-var _getOptions = function getOptions(_ref) {
-  var _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
-    _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var series = dimensions.slice(1).map(function (dim) {
-    return _extends({
-      name: dim,
-      type: 'bar',
-      encode: {
-        x: horizontal ? dim : 'category',
-        y: horizontal ? 'category' : dim
-      }
-    }, overrideItemStyle);
-  });
+const getOptions = ({
+  horizontal: _horizontal = false,
+  dimensions: _dimensions = [],
+  overrideItemStyle
+}) => {
+  const series = _dimensions.slice(1).map(dim => ({
+    name: dim,
+    type: 'bar',
+    encode: {
+      x: _horizontal ? dim : 'category',
+      y: _horizontal ? 'category' : dim
+    },
+    ...overrideItemStyle
+  }));
   return {
-    series: series
+    series
   };
 };
-var Bar = function Bar(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'bar'
-      },
-      rawConfig: rawConfig,
-      config: config,
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          overrideItemStyle = _ref3.overrideItemStyle,
-          horizontal = _ref3.horizontal;
-        return _getOptions({
-          horizontal: horizontal,
-          dimensions: dimensions,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const Bar = ({
+  config,
+  data,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'bar'
+    },
+    rawConfig,
+    config,
+    data,
+    getOptions: ({
+      dimensions,
+      overrideItemStyle,
+      horizontal
+    }) => getOptions({
+      horizontal,
+      dimensions,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27639,53 +27635,47 @@ var Bar = function Bar(_ref2, ref) {
 };
 var Bar$1 = forwardRef(Bar);
 
-var _getOptions$1 = function getOptions(_ref) {
-  var _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
-    _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var series = dimensions.slice(1).map(function (dim) {
-    return _extends({
-      name: dim,
-      type: 'line',
-      encode: {
-        x: horizontal ? dim : 'category',
-        y: horizontal ? 'category' : dim
-      }
-    }, overrideItemStyle);
-  });
+const getOptions$1 = ({
+  horizontal: _horizontal = false,
+  dimensions: _dimensions = [],
+  overrideItemStyle
+}) => {
+  const series = _dimensions.slice(1).map(dim => ({
+    name: dim,
+    type: 'line',
+    encode: {
+      x: _horizontal ? dim : 'category',
+      y: _horizontal ? 'category' : dim
+    },
+    ...overrideItemStyle
+  }));
   return {
-    series: series
+    series
   };
 };
-var Line = function Line(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'line'
-      },
-      rawConfig: rawConfig,
-      config: config,
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          overrideItemStyle = _ref3.overrideItemStyle,
-          horizontal = _ref3.horizontal;
-        return _getOptions$1({
-          horizontal: horizontal,
-          dimensions: dimensions,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const Line = ({
+  config,
+  data,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'line'
+    },
+    rawConfig,
+    config,
+    data,
+    getOptions: ({
+      dimensions,
+      overrideItemStyle,
+      horizontal
+    }) => getOptions$1({
+      horizontal,
+      dimensions,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27694,50 +27684,48 @@ var Line = function Line(_ref2, ref) {
 };
 var Line$1 = forwardRef(Line);
 
-var _getOptions$2 = function getOptions(_ref) {
-  var _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var itemName = dimensions[0];
-  var value = dimensions.slice(1);
+const getOptions$2 = ({
+  dimensions: _dimensions = [],
+  overrideItemStyle
+}) => {
+  const itemName = _dimensions[0];
+  const value = _dimensions.slice(1);
   return {
-    series: [_extends({
+    series: [{
       type: 'pie',
       radius: '60%',
       encode: {
-        itemName: itemName,
-        value: value
-      }
-    }, overrideItemStyle)]
+        itemName,
+        value
+      },
+      ...overrideItemStyle
+    }]
   };
 };
-var Pie = function Pie(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'pie'
-      },
-      rawConfig: rawConfig,
-      config: _extends({}, config, {
-        showAxis: false
-      }),
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          overrideItemStyle = _ref3.overrideItemStyle;
-        return _getOptions$2({
-          dimensions: dimensions,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const Pie = ({
+  config,
+  data,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'pie'
+    },
+    rawConfig,
+    config: {
+      ...config,
+      showAxis: false
+    },
+    data,
+    getOptions: ({
+      dimensions,
+      overrideItemStyle
+    }) => getOptions$2({
+      dimensions,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27746,62 +27734,59 @@ var Pie = function Pie(_ref2, ref) {
 };
 var Pie$1 = forwardRef(Pie);
 
-var MAX = 60;
-var _getOptions$3 = function getOptions(_ref) {
-  var _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    radius = _ref.radius,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var itemName = dimensions[0];
-  var value = dimensions.slice(1);
+const MAX = 60;
+const getOptions$3 = ({
+  dimensions: _dimensions = [],
+  radius,
+  overrideItemStyle
+}) => {
+  const itemName = _dimensions[0];
+  const value = _dimensions.slice(1);
   return {
-    series: [_extends({
+    series: [{
       type: 'pie',
-      radius: radius,
+      radius,
       encode: {
-        itemName: itemName,
-        value: value
-      }
-    }, overrideItemStyle)]
+        itemName,
+        value
+      },
+      ...overrideItemStyle
+    }]
   };
 };
-var Doughnut = function Doughnut(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    _ref2$size = _ref2.size,
-    size = _ref2$size === void 0 ? 40 : _ref2$size,
-    rawConfig = _ref2.rawConfig;
-  var torus = useMemo(function () {
-    if (size >= MAX) {
+const Doughnut = ({
+  config,
+  data,
+  size: _size = 40,
+  rawConfig
+}, ref) => {
+  const torus = useMemo(() => {
+    if (_size >= MAX) {
       return 0;
     }
-    return MAX - size;
-  }, [size]);
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'pie',
-        radius: [torus + "%", MAX + "%"]
-      },
-      rawConfig: rawConfig,
-      config: _extends({}, config, {
-        showAxis: false
-      }),
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          overrideItemStyle = _ref3.overrideItemStyle;
-        return _getOptions$3({
-          dimensions: dimensions,
-          radius: [torus + "%", MAX + "%"],
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+    return MAX - _size;
+  }, [_size]);
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'pie',
+      radius: [`${torus}%`, `${MAX}%`]
+    },
+    rawConfig,
+    config: {
+      ...config,
+      showAxis: false
+    },
+    data,
+    getOptions: ({
+      dimensions,
+      overrideItemStyle
+    }) => getOptions$3({
+      dimensions,
+      radius: [`${torus}%`, `${MAX}%`],
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27810,95 +27795,82 @@ var Doughnut = function Doughnut(_ref2, ref) {
 };
 var Doughnut$1 = forwardRef(Doughnut);
 
-var scatterTransform = function scatterTransform(input) {
+const scatterTransform = input => {
   if (Array.isArray(input)) {
     if (Array.isArray(input[0])) {
-      return input.map(function (_ref) {
-        var label = _ref[0],
-          x = _ref[1],
-          y = _ref[2];
-        return [x, y, label];
-      });
+      return input.map(([label, x, y]) => [x, y, label]);
     }
     if (typeof input[0] === 'object' && !Array.isArray(input[0])) {
-      return input.map(function (_ref2) {
-        var label = _ref2.label,
-          x = _ref2.x,
-          y = _ref2.y;
-        return [x, y, label];
-      });
+      return input.map(({
+        label,
+        x,
+        y
+      }) => [x, y, label]);
     }
   }
   if (typeof input === 'object') {
-    return Object.keys(input).map(function (key) {
-      return [].concat(input[key], [key]);
-    });
+    return Object.keys(input).map(key => [...input[key], key]);
   }
   throw new Error('Invalid input format');
 };
-var _getOptions$4 = function getOptions(_ref3) {
-  var data = _ref3.data,
-    symbolSize = _ref3.symbolSize,
-    showLabel = _ref3.showLabel,
-    transformedConfig = _ref3.transformedConfig,
-    overrideItemStyle = _ref3.overrideItemStyle;
+const getOptions$4 = ({
+  data,
+  symbolSize,
+  showLabel,
+  transformedConfig,
+  overrideItemStyle
+}) => {
   return {
-    series: [_extends({
+    series: [{
       type: 'scatter',
-      symbolSize: symbolSize,
+      symbolSize,
       emphasis: {
         focus: 'self'
       },
       label: {
         show: showLabel,
-        formatter: function formatter(p) {
-          return p.data[2];
-        },
+        formatter: p => p.data[2],
         minMargin: 10,
         position: 'top'
-      }
-    }, overrideItemStyle)],
-    xAxis: _extends({}, transformedConfig.xAxis, {
+      },
+      ...overrideItemStyle
+    }],
+    xAxis: {
+      ...transformedConfig.xAxis,
       splitLine: {
         show: true
       }
-    }),
+    },
     dataset: {
       source: data ? scatterTransform(data) : []
     }
   };
 };
-var ScatterPlot = function ScatterPlot(_ref4, ref) {
-  var config = _ref4.config,
-    data = _ref4.data,
-    _ref4$symbolSize = _ref4.symbolSize,
-    symbolSize = _ref4$symbolSize === void 0 ? 10 : _ref4$symbolSize,
-    _ref4$showLabel = _ref4.showLabel,
-    showLabel = _ref4$showLabel === void 0 ? true : _ref4$showLabel,
-    rawConfig = _ref4.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'scatter'
-      },
-      rawConfig: rawConfig,
-      config: config,
-      getOptions: function getOptions(_ref5) {
-        var transformedConfig = _ref5.transformedConfig,
-          overrideItemStyle = _ref5.overrideItemStyle;
-        return _getOptions$4({
-          data: data,
-          symbolSize: symbolSize,
-          showLabel: showLabel,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const ScatterPlot = ({
+  config,
+  data,
+  symbolSize: _symbolSize = 10,
+  showLabel: _showLabel = true,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'scatter'
+    },
+    rawConfig,
+    config,
+    getOptions: ({
+      transformedConfig,
+      overrideItemStyle
+    }) => getOptions$4({
+      data,
+      symbolSize: _symbolSize,
+      showLabel: _showLabel,
+      transformedConfig,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27907,69 +27879,65 @@ var ScatterPlot = function ScatterPlot(_ref4, ref) {
 };
 var ScatterPlot$1 = forwardRef(ScatterPlot);
 
-var _getOptions$5 = function getOptions(_ref) {
-  var dimensions = _ref.dimensions,
-    stackMapping = _ref.stackMapping,
-    transformedConfig = _ref.transformedConfig,
-    horizontal = _ref.horizontal,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var dimensionToStackMap = {};
-  Object.keys(stackMapping).forEach(function (stackGroup) {
-    stackMapping[stackGroup].forEach(function (dim) {
+const getOptions$5 = ({
+  dimensions,
+  stackMapping,
+  transformedConfig,
+  horizontal,
+  overrideItemStyle
+}) => {
+  const dimensionToStackMap = {};
+  Object.keys(stackMapping).forEach(stackGroup => {
+    stackMapping[stackGroup].forEach(dim => {
       dimensionToStackMap[dim] = stackGroup;
     });
   });
-  var series = dimensions.slice(1).map(function (dim) {
-    return _extends({
-      name: dim,
-      type: 'bar',
-      stack: dimensionToStackMap[dim] || 'defaultStack',
-      encode: {
-        x: horizontal ? dim : 'category',
-        y: horizontal ? 'category' : dim
-      }
-    }, overrideItemStyle);
-  });
+  const series = dimensions.slice(1).map(dim => ({
+    name: dim,
+    type: 'bar',
+    stack: dimensionToStackMap[dim] || 'defaultStack',
+    encode: {
+      x: horizontal ? dim : 'category',
+      y: horizontal ? 'category' : dim
+    },
+    ...overrideItemStyle
+  }));
   return {
-    tooltip: _extends({}, transformedConfig.tooltip, {
+    tooltip: {
+      ...transformedConfig.tooltip,
       trigger: 'axis'
-    }),
-    series: series
+    },
+    series
   };
 };
-var StackBar = function StackBar(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    _ref2$stackMapping = _ref2.stackMapping,
-    stackMapping = _ref2$stackMapping === void 0 ? {} : _ref2$stackMapping,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'bar',
-        stack: 'defaultStack'
-      },
-      rawConfig: rawConfig,
-      config: config,
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          transformedConfig = _ref3.transformedConfig,
-          overrideItemStyle = _ref3.overrideItemStyle,
-          horizontal = _ref3.horizontal;
-        return _getOptions$5({
-          dimensions: dimensions,
-          stackMapping: stackMapping,
-          horizontal: horizontal,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const StackBar = ({
+  config,
+  data,
+  stackMapping: _stackMapping = {},
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      stack: 'defaultStack'
+    },
+    rawConfig,
+    config,
+    data,
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) => getOptions$5({
+      dimensions,
+      stackMapping: _stackMapping,
+      horizontal,
+      transformedConfig,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -27978,61 +27946,56 @@ var StackBar = function StackBar(_ref2, ref) {
 };
 var StackBar$1 = forwardRef(StackBar);
 
-var _getOptions$6 = function getOptions(_ref) {
-  var transformedConfig = _ref.transformedConfig,
-    _ref$horizontal = _ref.horizontal,
-    horizontal = _ref$horizontal === void 0 ? false : _ref$horizontal,
-    _ref$dimensions = _ref.dimensions,
-    dimensions = _ref$dimensions === void 0 ? [] : _ref$dimensions,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var series = dimensions.slice(1).map(function (dim) {
-    return _extends({
-      name: dim,
-      type: 'bar',
-      barGap: 0,
-      encode: {
-        x: horizontal ? dim : 'category',
-        y: horizontal ? 'category' : dim
-      }
-    }, overrideItemStyle);
-  });
+const getOptions$6 = ({
+  transformedConfig,
+  horizontal: _horizontal = false,
+  dimensions: _dimensions = [],
+  overrideItemStyle
+}) => {
+  const series = _dimensions.slice(1).map(dim => ({
+    name: dim,
+    type: 'bar',
+    barGap: 0,
+    encode: {
+      x: _horizontal ? dim : 'category',
+      y: _horizontal ? 'category' : dim
+    },
+    ...overrideItemStyle
+  }));
   return {
-    tooltip: _extends({}, transformedConfig.tooltip, {
+    tooltip: {
+      ...transformedConfig.tooltip,
       trigger: 'axis'
-    }),
-    series: series
+    },
+    series
   };
 };
-var StackClusterColumn = function StackClusterColumn(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'bar',
-        barGap: 0
-      },
-      rawConfig: rawConfig,
-      config: config,
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          transformedConfig = _ref3.transformedConfig,
-          overrideItemStyle = _ref3.overrideItemStyle,
-          horizontal = _ref3.horizontal;
-        return _getOptions$6({
-          horizontal: horizontal,
-          dimensions: dimensions,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const StackClusterColumn = ({
+  config,
+  data,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'bar',
+      barGap: 0
+    },
+    rawConfig,
+    config,
+    data,
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) => getOptions$6({
+      horizontal,
+      dimensions,
+      transformedConfig,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -28041,66 +28004,66 @@ var StackClusterColumn = function StackClusterColumn(_ref2, ref) {
 };
 var StackClusterColumn$1 = forwardRef(StackClusterColumn);
 
-var _getOptions$7 = function getOptions(_ref) {
-  var _extends2;
-  var dimensions = _ref.dimensions,
-    transformedConfig = _ref.transformedConfig,
-    horizontal = _ref.horizontal,
-    overrideItemStyle = _ref.overrideItemStyle;
-  var axis = horizontal ? 'yAxis' : 'xAxis';
-  var series = dimensions.slice(1).map(function (dim) {
-    return _extends({
-      name: dim,
-      type: 'line',
-      stack: 'defaultStack',
-      areaStyle: {},
-      encode: {
-        x: horizontal ? dim : 'category',
-        y: horizontal ? 'category' : dim
-      }
-    }, overrideItemStyle);
-  });
-  return _extends({}, transformedConfig, (_extends2 = {
-    tooltip: _extends({}, transformedConfig.tooltip, {
+const getOptions$7 = ({
+  dimensions,
+  transformedConfig,
+  horizontal,
+  overrideItemStyle
+}) => {
+  const axis = horizontal ? 'yAxis' : 'xAxis';
+  const series = dimensions.slice(1).map(dim => ({
+    name: dim,
+    type: 'line',
+    stack: 'defaultStack',
+    areaStyle: {},
+    encode: {
+      x: horizontal ? dim : 'category',
+      y: horizontal ? 'category' : dim
+    },
+    ...overrideItemStyle
+  }));
+  return {
+    ...transformedConfig,
+    tooltip: {
+      ...transformedConfig.tooltip,
       trigger: 'axis',
       axisPointer: {
         type: 'cross'
       }
-    })
-  }, _extends2[axis] = _extends({}, transformedConfig[axis], {
-    boundaryGap: false
-  }), _extends2.series = series, _extends2));
+    },
+    [axis]: {
+      ...transformedConfig[axis],
+      boundaryGap: false
+    },
+    series
+  };
 };
-var StacLine = function StacLine(_ref2, ref) {
-  var config = _ref2.config,
-    data = _ref2.data,
-    rawConfig = _ref2.rawConfig;
-  var _useECharts = useECharts({
-      rawOverrides: {
-        type: 'line',
-        stack: 'defaultStack'
-      },
-      rawConfig: rawConfig,
-      config: config,
-      data: data,
-      getOptions: function getOptions(_ref3) {
-        var dimensions = _ref3.dimensions,
-          transformedConfig = _ref3.transformedConfig,
-          overrideItemStyle = _ref3.overrideItemStyle,
-          horizontal = _ref3.horizontal;
-        return _getOptions$7({
-          dimensions: dimensions,
-          horizontal: horizontal,
-          transformedConfig: transformedConfig,
-          overrideItemStyle: overrideItemStyle
-        });
-      }
-    }),
-    chartRef = _useECharts[0],
-    chartInstance = _useECharts[1];
-  useImperativeHandle(ref, function () {
-    return chartInstance;
+const StacLine = ({
+  config,
+  data,
+  rawConfig
+}, ref) => {
+  const [chartRef, chartInstance] = useECharts({
+    rawOverrides: {
+      type: 'line',
+      stack: 'defaultStack'
+    },
+    rawConfig,
+    config,
+    data,
+    getOptions: ({
+      dimensions,
+      transformedConfig,
+      overrideItemStyle,
+      horizontal
+    }) => getOptions$7({
+      dimensions,
+      horizontal,
+      transformedConfig,
+      overrideItemStyle
+    })
   });
+  useImperativeHandle(ref, () => chartInstance);
   return /*#__PURE__*/React.createElement("div", {
     ref: chartRef,
     role: "figure",
@@ -28109,102 +28072,60 @@ var StacLine = function StacLine(_ref2, ref) {
 };
 var StackLine = forwardRef(StacLine);
 
-// A type of promise-like that resolves synchronously and supports only one observer
-
-const _iteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.iterator || (Symbol.iterator = Symbol("Symbol.iterator"))) : "@@iterator";
-
-const _asyncIteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.asyncIterator || (Symbol.asyncIterator = Symbol("Symbol.asyncIterator"))) : "@@asyncIterator";
-
-// Asynchronously call a function and send errors to recovery continuation
-function _catch(body, recover) {
-	try {
-		var result = body();
-	} catch(e) {
-		return recover(e);
-	}
-	if (result && result.then) {
-		return result.then(void 0, recover);
-	}
-	return result;
-}
-
-var string2WindowObj = function string2WindowObj(path) {
-  if (path === void 0) {
-    path = '';
-  }
-  var obj = path.split('.').reduce(function (obj, key) {
-    return obj && obj[key];
-  }, window);
+const string2WindowObj = (path = '') => {
+  const obj = path.split('.').reduce((obj, key) => obj && obj[key], window);
   if (typeof obj === 'undefined') {
     return null;
   }
   return obj;
 };
 
-var _excluded$5 = ["url", "source"];
-var getGeoJSONList$1 = function getGeoJSONList(d) {
+const getGeoJSONList$1 = d => {
   if (!d) {
     return [];
   }
   if ((d === null || d === void 0 ? void 0 : d.type) === 'Topology') {
-    return Object.keys(d.objects).map(function (kd) {
-      return feature(d, d.objects[kd]);
-    });
+    return Object.keys(d.objects).map(kd => feature(d, d.objects[kd]));
   }
   return [d];
 };
-var MapView = function MapView(_ref, ref) {
+const MapView = ({
+  tile,
+  layer,
+  config,
+  data
+}, ref) => {
   var _data$filter2, _data$map;
-  var tile = _ref.tile,
-    layer = _ref.layer,
-    config = _ref.config,
-    data = _ref.data;
-  var _useState = useState(null),
-    geoData = _useState[0],
-    setGeoData = _useState[1];
-  var _useState2 = useState(null),
-    sourceData = _useState2[0],
-    setSourceData = _useState2[1];
-  var _useState3 = useState(true),
-    preload = _useState3[0],
-    setPreload = _useState3[1];
-  var _useState4 = useState(null),
-    markerLayer = _useState4[0],
-    setMakerLayer = _useState4[1];
-  var mapInstance = useRef(null);
-  var layerURL = layer.url,
-    layerSource = layer.source,
-    layerProps = _objectWithoutPropertiesLoose(layer, _excluded$5);
-  var geoProps = useMemo(function () {
+  const [geoData, setGeoData] = useState(null);
+  const [sourceData, setSourceData] = useState(null);
+  const [preload, setPreload] = useState(true);
+  const [markerLayer, setMarkerLayer] = useState(null);
+  const mapInstance = useRef(null);
+  const {
+    url: layerURL,
+    source: layerSource,
+    ...layerProps
+  } = layer;
+  const geoProps = useMemo(() => {
     return getGeoJSONProps(mapInstance, layerProps, data);
   }, [layerProps, data]);
-  var loadGeoDataFromURL = useCallback(function () {
-    try {
-      var _temp2 = function () {
-        if (layerURL && !geoData) {
-          var _temp = _catch(function () {
-            return Promise.resolve(fetch(layerURL)).then(function (res) {
-              return Promise.resolve(res.json()).then(function (apiData) {
-                if (apiData) {
-                  setGeoData(apiData);
-                }
-              });
-            });
-          }, function (err) {
-            console.error('loadGeoDataFromURL', err);
-          });
-          if (_temp && _temp.then) return _temp.then(function () {});
+  const loadGeoDataFromURL = useCallback(async () => {
+    if (layerURL && !geoData) {
+      try {
+        const res = await fetch(layerURL);
+        const apiData = await res.json();
+        if (apiData) {
+          setGeoData(apiData);
         }
-      }();
-      return Promise.resolve(_temp2 && _temp2.then ? _temp2.then(function () {}) : void 0);
-    } catch (e) {
-      return Promise.reject(e);
+      } catch (err) {
+        console.error('loadGeoDataFromURL', err);
+      }
     }
   }, [layerURL, geoData]);
-  useEffect(function () {
+  useEffect(() => {
     loadGeoDataFromURL();
   }, [loadGeoDataFromURL]);
-  useEffect(function () {
+  useEffect(() => {
     var _data$filter;
     if (mapInstance !== null && mapInstance !== void 0 && mapInstance.current && preload) {
       setPreload(false);
@@ -28214,12 +28135,12 @@ var MapView = function MapView(_ref, ref) {
       if (config !== null && config !== void 0 && config.center) {
         mapInstance.current.getMap().panTo(config.center);
       }
-      var lg = L$1.layerGroup().addTo(mapInstance.current.getMap());
-      setMakerLayer(lg);
+      const lg = L$1.layerGroup().addTo(mapInstance.current.getMap());
+      setMarkerLayer(lg);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource !== null && layerSource !== void 0 && layerSource.includes('window')) {
-        var windowObj = string2WindowObj(layerSource);
+        const windowObj = string2WindowObj(layerSource);
         if (windowObj) {
           setSourceData(windowObj);
         }
@@ -28228,133 +28149,104 @@ var MapView = function MapView(_ref, ref) {
         setSourceData(layerSource);
       }
     }
-    if (markerLayer && (data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
-      return d === null || d === void 0 ? void 0 : d.point;
-    })) === null || _data$filter === void 0 ? void 0 : _data$filter.length) === 0 && markerLayer.getLayers().length) {
+    if (markerLayer && (data === null || data === void 0 ? void 0 : (_data$filter = data.filter(d => d === null || d === void 0 ? void 0 : d.point)) === null || _data$filter === void 0 ? void 0 : _data$filter.length) === 0 && markerLayer.getLayers().length) {
       markerLayer.clearLayers();
     }
   }, [mapInstance, preload, sourceData, layerSource, markerLayer, config === null || config === void 0 ? void 0 : config.zoom, config === null || config === void 0 ? void 0 : config.center, data]);
-  useImperativeHandle(ref, function () {
-    return mapInstance.current;
-  });
+  useImperativeHandle(ref, () => mapInstance.current);
   return /*#__PURE__*/React.createElement(LeafletProvider, {
     ref: mapInstance,
     width: config === null || config === void 0 ? void 0 : config.width,
     height: config === null || config === void 0 ? void 0 : config.height
-  }, /*#__PURE__*/React.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : (_data$filter2 = data.filter(function (d) {
-    return d === null || d === void 0 ? void 0 : d.point;
-  })) === null || _data$filter2 === void 0 ? void 0 : _data$filter2.map(function (d, dx) {
-    return /*#__PURE__*/React.createElement(Marker, {
-      latlng: d === null || d === void 0 ? void 0 : d.point,
-      label: d === null || d === void 0 ? void 0 : d.label,
-      markerLayer: markerLayer,
-      key: dx
-    });
-  }), getGeoJSONList$1(geoData).map(function (gd, gx) {
-    return /*#__PURE__*/React.createElement(GeoJson, _extends({
-      key: gx,
-      data: gd
-    }, geoProps));
-  }), getGeoJSONList$1(sourceData).map(function (sd, sx) {
-    return /*#__PURE__*/React.createElement(GeoJson, _extends({
-      key: sx,
-      data: sd
-    }, geoProps));
-  }), /*#__PURE__*/React.createElement(LegendControl, {
-    data: data === null || data === void 0 ? void 0 : (_data$map = data.map(function (d) {
-      return d === null || d === void 0 ? void 0 : d[layer === null || layer === void 0 ? void 0 : layer.choropleth];
-    })) === null || _data$map === void 0 ? void 0 : _data$map.filter(function (d) {
-      return d;
-    }),
+  }, /*#__PURE__*/React.createElement(TileLayer, tile), data === null || data === void 0 ? void 0 : (_data$filter2 = data.filter(d => d === null || d === void 0 ? void 0 : d.point)) === null || _data$filter2 === void 0 ? void 0 : _data$filter2.map((d, dx) => /*#__PURE__*/React.createElement(Marker, {
+    latlng: d === null || d === void 0 ? void 0 : d.point,
+    label: d === null || d === void 0 ? void 0 : d.label,
+    markerLayer: markerLayer,
+    key: dx
+  })), getGeoJSONList$1(geoData).map((gd, gx) => /*#__PURE__*/React.createElement(GeoJson, Object.assign({
+    key: gx,
+    data: gd,
+    mapData: data
+  }, geoProps))), getGeoJSONList$1(sourceData).map((sd, sx) => /*#__PURE__*/React.createElement(GeoJson, Object.assign({
+    key: sx,
+    data: sd,
+    mapData: data
+  }, geoProps))), /*#__PURE__*/React.createElement(LegendControl, {
+    data: data === null || data === void 0 ? void 0 : (_data$map = data.map(d => d === null || d === void 0 ? void 0 : d[layer === null || layer === void 0 ? void 0 : layer.choropleth])) === null || _data$map === void 0 ? void 0 : _data$map.filter(d => d),
     color: layer === null || layer === void 0 ? void 0 : layer.color
   }));
 };
 var MapView$1 = forwardRef(MapView);
 
-var _excluded$6 = ["data", "markerIcon", "clusterIcon", "groupKey", "type", "renderPopup"];
-var CLUSTER_TYPE = {
-  "default": 0,
+const CLUSTER_TYPE = {
+  default: 0,
   circle: 1
 };
-var clusterCircleIcon = function clusterCircleIcon(cluster, data, groupKey, props) {
-  var _data;
-  if (data === void 0) {
-    data = [];
-  }
-  if (groupKey === void 0) {
-    groupKey = 'name';
-  }
-  if (props === void 0) {
-    props = {};
-  }
-  var groupValues = Object.values((_data = data) === null || _data === void 0 ? void 0 : _data.reduce(function (acc, item) {
-    var groupName = item === null || item === void 0 ? void 0 : item[groupKey];
-    var color = item === null || item === void 0 ? void 0 : item.color;
+const clusterCircleIcon = (cluster, data = [], groupKey = 'name', props = {}) => {
+  const groupValues = Object.values(data === null || data === void 0 ? void 0 : data.reduce((acc, item) => {
+    const groupName = item === null || item === void 0 ? void 0 : item[groupKey];
+    const color = item === null || item === void 0 ? void 0 : item.color;
     if (!acc[groupName]) {
       acc[groupName] = {
         value: groupName,
-        color: color,
+        color,
         count: 0
       };
     }
     acc[groupName].count++;
     return acc;
   }, {}));
-  var totalValue = groupValues.reduce(function (s, _ref) {
-    var count = _ref.count;
-    return s + count;
-  }, 0);
-  var radius = 40;
-  var circleLength = Math.PI * (radius * 2);
-  var spaceLeft = circleLength;
-  return _extends({
-    html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\"> <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"#ffffffad\"/>\n          " + groupValues.map(function (item, index) {
-      var v = index === 0 ? circleLength : spaceLeft;
+  const totalValue = groupValues.reduce((s, {
+    count
+  }) => s + count, 0);
+  const radius = 40;
+  const circleLength = Math.PI * (radius * 2);
+  let spaceLeft = circleLength;
+  return {
+    html: `<svg width="100%" height="100%" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="40" fill="#ffffffad"/>
+          ${groupValues.map((item, index) => {
+      const v = index === 0 ? circleLength : spaceLeft;
       spaceLeft -= item.count / totalValue * circleLength;
-      return "\n                <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"transparent\" stroke-width=\"15\" stroke=\"" + (item.color ? item.color : 'red') + "\" stroke-dasharray=\"" + v + " " + circleLength + "\" />";
-    }).join('') + " <text x=\"50%\" y=\"50%\" fill=\"black\" text-anchor=\"middle\" dy=\".3em\" font-size=\"18px\">" + cluster.getChildCount() + "</text></svg>"
-  }, props);
+      return `
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke-width="15" stroke="${item.color ? item.color : 'red'}" stroke-dasharray="${v} ${circleLength}" />`;
+    }).join('')} <text x="50%" y="50%" fill="black" text-anchor="middle" dy=".3em" font-size="18px">${cluster.getChildCount()}</text></svg>`,
+    ...props
+  };
 };
-var MapCluster = function MapCluster(_ref2, ref) {
-  var _clusterTypes, _data$filter;
-  var data = _ref2.data,
-    _ref2$markerIcon = _ref2.markerIcon,
-    markerIcon = _ref2$markerIcon === void 0 ? {
-      className: 'custom-marker',
-      iconSize: [32, 32],
-      html: true
-    } : _ref2$markerIcon,
-    _ref2$clusterIcon = _ref2.clusterIcon,
-    clusterIcon = _ref2$clusterIcon === void 0 ? {
-      className: "custom-marker-cluster",
-      iconSize: 60
-    } : _ref2$clusterIcon,
-    _ref2$groupKey = _ref2.groupKey,
-    groupKey = _ref2$groupKey === void 0 ? 'name' : _ref2$groupKey,
-    _ref2$type = _ref2.type,
-    type = _ref2$type === void 0 ? 'default' : _ref2$type,
-    _ref2$renderPopup = _ref2.renderPopup,
-    renderPopup = _ref2$renderPopup === void 0 ? null : _ref2$renderPopup,
-    config = _objectWithoutPropertiesLoose(_ref2, _excluded$6);
-  var clusterTypes = (_clusterTypes = {}, _clusterTypes[CLUSTER_TYPE["default"]] = null, _clusterTypes[CLUSTER_TYPE.circle] = function (cluster) {
-    return clusterCircleIcon(cluster, data, groupKey, clusterIcon);
-  }, _clusterTypes);
-  var iconCreateFn = (clusterTypes === null || clusterTypes === void 0 ? void 0 : clusterTypes[CLUSTER_TYPE === null || CLUSTER_TYPE === void 0 ? void 0 : CLUSTER_TYPE[type]]) || clusterTypes["default"];
-  return /*#__PURE__*/React.createElement(Container$1, _extends({
+const MapCluster = ({
+  data,
+  markerIcon: _markerIcon = {
+    className: 'custom-marker',
+    iconSize: [32, 32],
+    html: true
+  },
+  clusterIcon: _clusterIcon = {
+    className: `custom-marker-cluster`,
+    iconSize: 60
+  },
+  groupKey: _groupKey = 'name',
+  type: _type = 'default',
+  renderPopup: _renderPopup = null,
+  ...config
+}, ref) => {
+  var _data$filter;
+  const clusterTypes = {
+    [CLUSTER_TYPE.default]: null,
+    [CLUSTER_TYPE.circle]: cluster => clusterCircleIcon(cluster, data, _groupKey, _clusterIcon)
+  };
+  const iconCreateFn = (clusterTypes === null || clusterTypes === void 0 ? void 0 : clusterTypes[CLUSTER_TYPE === null || CLUSTER_TYPE === void 0 ? void 0 : CLUSTER_TYPE[_type]]) || clusterTypes.default;
+  return /*#__PURE__*/React.createElement(Container$1, Object.assign({
     ref: ref
   }, config), /*#__PURE__*/React.createElement(MarkerClusterGroup, {
     iconCreateFn: iconCreateFn
-  }, data === null || data === void 0 ? void 0 : (_data$filter = data.filter(function (d) {
-    return d === null || d === void 0 ? void 0 : d.point;
-  })) === null || _data$filter === void 0 ? void 0 : _data$filter.map(function (d, dx) {
-    return /*#__PURE__*/React.createElement(Marker, {
-      latlng: d === null || d === void 0 ? void 0 : d.point,
-      key: dx,
-      icon: _extends({}, markerIcon, {
-        html: markerIcon !== null && markerIcon !== void 0 && markerIcon.html ? "<span style=\"background-color:" + (d === null || d === void 0 ? void 0 : d.color) + "; border:2px solid #fff;\"/>" : null
-      })
-    }, typeof renderPopup === 'function' ? renderPopup(d) : /*#__PURE__*/React.createElement(React.Fragment, null, d === null || d === void 0 ? void 0 : d.label));
-  })));
+  }, data === null || data === void 0 ? void 0 : (_data$filter = data.filter(d => d === null || d === void 0 ? void 0 : d.point)) === null || _data$filter === void 0 ? void 0 : _data$filter.map((d, dx) => /*#__PURE__*/React.createElement(Marker, {
+    latlng: d === null || d === void 0 ? void 0 : d.point,
+    key: dx,
+    icon: {
+      ..._markerIcon,
+      html: _markerIcon !== null && _markerIcon !== void 0 && _markerIcon.html ? `<span style="background-color:${d === null || d === void 0 ? void 0 : d.color}; border:2px solid #fff;"/>` : null
+    }
+  }, typeof _renderPopup === 'function' ? _renderPopup(d) : /*#__PURE__*/React.createElement(React.Fragment, null, d === null || d === void 0 ? void 0 : d.label)))));
 };
 var MapCluster$1 = forwardRef(MapCluster);
 

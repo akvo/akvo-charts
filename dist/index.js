@@ -26881,6 +26881,8 @@ var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref, data) {
   }
   if (mapKey && choropleth) {
     allProps = _extends({}, allProps, {
+      mapKey: mapKey,
+      choropleth: choropleth,
       style: function style(feature) {
         var _data, _data2;
         var findData = (_data = data) === null || _data === void 0 ? void 0 : _data.find(function (d) {
@@ -27051,12 +27053,21 @@ var TileLayer = function TileLayer(_ref) {
 };
 
 var GeoJson = function GeoJson(_ref) {
-  var onClick = _ref.onClick,
+  var mapKey = _ref.mapKey,
+    onClick = _ref.onClick,
     onMouseOver = _ref.onMouseOver,
     _ref$data = _ref.data,
     data = _ref$data === void 0 ? {} : _ref$data,
     _ref$style = _ref.style,
-    style = _ref$style === void 0 ? {} : _ref$style;
+    style = _ref$style === void 0 ? {} : _ref$style,
+    _ref$tooltip = _ref.tooltip,
+    tooltip = _ref$tooltip === void 0 ? {
+      show: false,
+      showTooltipForAll: true,
+      tooltipComponent: null
+    } : _ref$tooltip,
+    _ref$mapData = _ref.mapData,
+    mapData = _ref$mapData === void 0 ? [] : _ref$mapData;
   var _useState = React.useState(null),
     layer = _useState[0],
     setLayer = _useState[1];
@@ -27065,7 +27076,7 @@ var GeoJson = function GeoJson(_ref) {
     if (mapRef.current && data !== null && data !== void 0 && data.type && (data === null || data === void 0 ? void 0 : data.type) !== 'Topology' && !layer) {
       try {
         var gl = L$1.geoJSON(data, {
-          onEachFeature: function onEachFeature(_, layer) {
+          onEachFeature: function onEachFeature(feature, layer) {
             if (typeof onClick === 'function') {
               layer.on({
                 click: function click(props) {
@@ -27079,6 +27090,52 @@ var GeoJson = function GeoJson(_ref) {
                   onMouseOver(props);
                 }
               });
+            }
+            if (tooltip !== null && tooltip !== void 0 && tooltip.show) {
+              var _feature$properties;
+              var name = (feature === null || feature === void 0 ? void 0 : (_feature$properties = feature.properties) === null || _feature$properties === void 0 ? void 0 : _feature$properties[mapKey]) || null;
+              var findMapData = mapData.find(function (md) {
+                var _md$mapKey;
+                return (md === null || md === void 0 ? void 0 : (_md$mapKey = md[mapKey]) === null || _md$mapKey === void 0 ? void 0 : _md$mapKey.toLowerCase()) === (name === null || name === void 0 ? void 0 : name.toLowerCase());
+              });
+              if (tooltip !== null && tooltip !== void 0 && tooltip.showTooltipForAll && !(tooltip !== null && tooltip !== void 0 && tooltip.tooltipComponent)) {
+                layer.bindTooltip(name || 'No name', {
+                  permanent: false,
+                  direction: 'auto'
+                });
+              }
+              if (tooltip !== null && tooltip !== void 0 && tooltip.showTooltipForAll && tooltip !== null && tooltip !== void 0 && tooltip.tooltipComponent) {
+                var tooltipElement = document.createElement('div');
+                reactDom.render( /*#__PURE__*/React__default.createElement(tooltip.tooltipComponent, {
+                  props: _extends({
+                    name: name
+                  }, findMapData)
+                }), tooltipElement);
+                layer.bindTooltip(tooltipElement, {
+                  permanent: false,
+                  direction: 'auto',
+                  className: 'custom-tooltip-wrapper'
+                });
+              }
+              if (!(tooltip !== null && tooltip !== void 0 && tooltip.showTooltipForAll) && !(tooltip !== null && tooltip !== void 0 && tooltip.tooltipComponent) && findMapData) {
+                layer.bindTooltip(name || 'No name', {
+                  permanent: false,
+                  direction: 'auto'
+                });
+              }
+              if (!(tooltip !== null && tooltip !== void 0 && tooltip.showTooltipForAll) && tooltip !== null && tooltip !== void 0 && tooltip.tooltipComponent && findMapData) {
+                var _tooltipElement = document.createElement('div');
+                reactDom.render( /*#__PURE__*/React__default.createElement(tooltip.tooltipComponent, {
+                  props: _extends({
+                    name: name
+                  }, findMapData)
+                }), _tooltipElement);
+                layer.bindTooltip(_tooltipElement, {
+                  permanent: false,
+                  direction: 'auto',
+                  className: 'custom-tooltip-wrapper'
+                });
+              }
             }
           }
         });
@@ -27096,14 +27153,14 @@ var GeoJson = function GeoJson(_ref) {
         });
       });
     }
-  }, [mapRef, layer, data, style, onClick, onMouseOver]);
+  }, [mapRef, layer, data, style, onClick, onMouseOver, tooltip, mapData, mapKey]);
   React.useEffect(function () {
     loadGeoJson();
   }, [loadGeoJson]);
   return null;
 };
 
-var styles = {"container":"ae-container","legend":"ae-legend"};
+var styles = {"container":"_styles-module__container__1Lxpd","legend":"_styles-module__legend__2XKrJ"};
 
 var LegendControl = function LegendControl(_ref) {
   var _ref$data = _ref.data,
@@ -28173,7 +28230,7 @@ var MapView = function MapView(_ref, ref) {
     setPreload = _useState3[1];
   var _useState4 = React.useState(null),
     markerLayer = _useState4[0],
-    setMakerLayer = _useState4[1];
+    setMarkerLayer = _useState4[1];
   var mapInstance = React.useRef(null);
   var layerURL = layer.url,
     layerSource = layer.source,
@@ -28218,7 +28275,7 @@ var MapView = function MapView(_ref, ref) {
         mapInstance.current.getMap().panTo(config.center);
       }
       var lg = L$1.layerGroup().addTo(mapInstance.current.getMap());
-      setMakerLayer(lg);
+      setMarkerLayer(lg);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource !== null && layerSource !== void 0 && layerSource.includes('window')) {
@@ -28256,12 +28313,14 @@ var MapView = function MapView(_ref, ref) {
   }), getGeoJSONList$1(geoData).map(function (gd, gx) {
     return /*#__PURE__*/React__default.createElement(GeoJson, _extends({
       key: gx,
-      data: gd
+      data: gd,
+      mapData: data
     }, geoProps));
   }), getGeoJSONList$1(sourceData).map(function (sd, sx) {
     return /*#__PURE__*/React__default.createElement(GeoJson, _extends({
       key: sx,
-      data: sd
+      data: sd,
+      mapData: data
     }, geoProps));
   }), /*#__PURE__*/React__default.createElement(LegendControl, {
     data: data === null || data === void 0 ? void 0 : (_data$map = data.map(function (d) {
