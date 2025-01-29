@@ -130,6 +130,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         <GeoJson
           key={gx}
           data={gd}
+          mapData={data}
           {...geoProps}
         />
       ))}
@@ -137,6 +138,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         <GeoJson
           key={sx}
           data={sd}
+          mapData={data}
           {...geoProps}
         />
       ))}

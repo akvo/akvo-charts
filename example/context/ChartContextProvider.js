@@ -9,6 +9,19 @@ import {
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
 
+const CustomTooltip = ({ props }) => (
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }}
+  >
+    <div style={{ fontWeight: 700 }}>{props?.name || 'No Name'}</div>
+    <div>Density: {props?.density || 'N/A'}</div>
+  </div>
+);
+
 const defaultMapConfig = {
   tile: {
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -80,7 +93,9 @@ const initalChartState = {
         fillOpacity: 0.4
       },
       tooltip: {
-        show: true
+        show: true,
+        showTooltipForAll: false,
+        tooltipComponent: CustomTooltip
       },
       onClick: '(map, { target }) => map.fitBounds(target._bounds)',
       mapKey: 'Propinsi',
