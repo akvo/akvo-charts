@@ -57,7 +57,9 @@ const GeoJson = ({
                 // Render the custom tooltip content using the passed component
                 const tooltipElement = document.createElement('div');
                 ReactDOM.render(
-                  <tooltip.tooltipComponent props={{ name: name }} />,
+                  <tooltip.tooltipComponent
+                    props={{ name: name, ...findMapData }}
+                  />,
                   tooltipElement
                 );
                 // Bind the custom HTML content to the tooltip
