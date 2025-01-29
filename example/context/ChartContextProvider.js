@@ -3,11 +3,26 @@ import { createContext, useContext, useReducer } from 'react';
 import {
   basicChartExampleData,
   chartTypes,
-  clusterExampleData
+  clusterExampleData,
+  choroplethExampleData,
+  choroplethExampleColor
 } from '../static/config';
 
 const ChartContext = createContext(null);
 const ChartDispatchContext = createContext(null);
+
+const CustomTooltip = ({ props }) => (
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
+    }}
+  >
+    <div style={{ fontWeight: 700 }}>{props?.name || 'No Name'}</div>
+    <div>Density: {props?.density || 'N/A'}</div>
+  </div>
+);
 
 const defaultMapConfig = {
   tile: {
@@ -77,24 +92,19 @@ const initalChartState = {
         color: '#92400e',
         weight: 1,
         fillColor: '#fbbf24',
-        fillOpacity: 0.4
+        fillOpacity: 0.7
       },
-      onClick: '(map, { target }) => map.fitBounds(target._bounds)'
+      tooltip: {
+        show: true,
+        showTooltipForAll: false,
+        tooltipComponent: CustomTooltip
+      },
+      onClick: '(map, { target }) => map.fitBounds(target._bounds)',
+      mapKey: 'Propinsi',
+      choropleth: 'density',
+      color: choroplethExampleColor
     },
-    data: [
-      {
-        point: [-6.170166, 106.831375],
-        label: 'Istiqlal Mosque'
-      },
-      {
-        point: [-6.174596, 106.830407],
-        label: 'Gambir Station'
-      },
-      {
-        point: [-6.175414, 106.827175],
-        label: 'The National Monument'
-      }
-    ]
+    data: choroplethExampleData
   },
   customMap: {
     [chartTypes.CLUSTER_MAP]: {

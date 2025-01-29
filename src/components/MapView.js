@@ -34,7 +34,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
   const [geoData, setGeoData] = useState(null);
   const [sourceData, setSourceData] = useState(null);
   const [preload, setPreload] = useState(true);
-  const [markerLayer, setMakerLayer] = useState(null);
+  const [markerLayer, setMarkerLayer] = useState(null);
 
   const mapInstance = useRef(null);
 
@@ -74,7 +74,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         mapInstance.current.getMap().panTo(config.center);
       }
       const lg = L.layerGroup().addTo(mapInstance.current.getMap());
-      setMakerLayer(lg);
+      setMarkerLayer(lg);
     }
     if (!sourceData) {
       if (typeof layerSource === 'string' && layerSource?.includes('window')) {
@@ -130,6 +130,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         <GeoJson
           key={gx}
           data={gd}
+          mapData={data}
           {...geoProps}
         />
       ))}
@@ -137,6 +138,7 @@ const MapView = ({ tile, layer, config, data }, ref) => {
         <GeoJson
           key={sx}
           data={sd}
+          mapData={data}
           {...geoProps}
         />
       ))}

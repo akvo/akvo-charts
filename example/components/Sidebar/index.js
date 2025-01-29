@@ -105,6 +105,12 @@ const Sidebar = () => {
             ? prevOpenItems.filter((id) => id !== key) // Close if already open
             : [...prevOpenItems, key] // Open if not already open
       );
+      if (key === chartTypes.MAP) {
+        chartDispatch({
+          type: 'RESET_MAP'
+        });
+      }
+      return;
     }
     const isMapType = [
       chartTypes.MAP,
@@ -131,7 +137,7 @@ const Sidebar = () => {
       type: 'SET_SELECTED_CHART_TYPE',
       payload: key
     });
-    if (key === chartTypes.CHOROPLETH_MAP) {
+    if (key === chartTypes.CHOROPLETH_MAP || key === chartTypes.MAP) {
       chartDispatch({
         type: 'UPDATE_MAP',
         payload: {
@@ -147,11 +153,6 @@ const Sidebar = () => {
             choropleth: 'density'
           }
         }
-      });
-    }
-    if (key === chartTypes.MAP) {
-      chartDispatch({
-        type: 'RESET_MAP'
       });
     }
   };

@@ -14,6 +14,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
 - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [API](#api)
+    - [Raw config](#raw-config)
     - [Config](#config)
       - [Legend](#legend)
       - [Text Style](#text-style)
@@ -27,46 +28,62 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
     - [Bar Chart](#bar-chart)
       - [Props](#props)
       - [Example usage of Bar chart](#example-usage-of-bar-chart)
+      - [Example usage of `rawConfig` for a Bar chart](#example-usage-of-rawconfig-for-a-bar-chart)
     - [Line Chart](#line-chart)
       - [Props](#props-1)
       - [Example usage of Line chart](#example-usage-of-line-chart)
+      - [Example usage of `rawConfig` for a Line chart](#example-usage-of-rawconfig-for-a-line-chart)
     - [Pie Chart](#pie-chart)
       - [Props](#props-2)
       - [Example usage of Pie chart](#example-usage-of-pie-chart)
+      - [Example usage of `rawConfig` for a Pie chart](#example-usage-of-rawconfig-for-a-pie-chart)
     - [Doughnut Chart](#doughnut-chart)
       - [Props](#props-3)
       - [Example usage of Doughnut chart](#example-usage-of-doughnut-chart)
+      - [Example usage of `rawConfig` for a Doughnut chart](#example-usage-of-rawconfig-for-a-doughnut-chart)
     - [Stack Bar Chart](#stack-bar-chart)
       - [Props](#props-4)
       - [Example of stackMapping props](#example-of-stackmapping-props)
       - [Example usage of StackBar chart](#example-usage-of-stackbar-chart)
+      - [Example usage of `rawConfig` for a StackBar chart](#example-usage-of-rawconfig-for-a-stackbar-chart)
     - [Stack Cluster Column](#stack-cluster-column)
       - [Props](#props-5)
       - [Example usage of StackClusterColumn chart](#example-usage-of-stackclustercolumn-chart)
+      - [Example usage of `rawConfig` for a StackClusterColumn chart](#example-usage-of-rawconfig-for-a-stackclustercolumn-chart)
     - [Scatter Plot Chart](#scatter-plot-chart)
       - [Props](#props-6)
       - [Example usage of ScatterPlot chart](#example-usage-of-scatterplot-chart)
+      - [Example usage of `rawConfig` for a ScatterPlot chart](#example-usage-of-rawconfig-for-a-scatterplot-chart)
     - [Stack Line Chart](#stack-line-chart)
       - [Props](#props-7)
       - [Example usage of StackLine chart](#example-usage-of-stackline-chart)
+      - [Example usage of `rawConfig` for a StackLine chart](#example-usage-of-rawconfig-for-a-stackline-chart)
     - [MapView](#mapview)
-      - [Layer](#layer)
-      - [Data](#data-1)
-      - [Config](#config-1)
+      - [config](#config-1)
+      - [layer](#layer)
+        - [tooltip (object)](#tooltip-object)
+      - [data](#data-1)
+      - [config](#config-2)
       - [Example usage of MapView](#example-usage-of-mapview)
-      - [Example usage with Choropleth Mapping](#example-usage-with-choropleth-mapping)
+      - [Example Usage with Choropleth Mapping](#example-usage-with-choropleth-mapping)
     - [MapCluster](#mapcluster)
-      - [markerIcon](#markericon)
-      - [clusterIcon](#clustericon)
-      - [Additional properties](#additional-properties)
+      - [Props](#props-8)
+        - [`markerIcon`](#markericon)
+        - [`clusterIcon`](#clustericon)
+        - [Additional Properties](#additional-properties)
+      - [Example Usage](#example-usage)
+      - [MapCluster Notes](#mapcluster-notes)
     - [Fully Customized Map](#fully-customized-map)
-      - [Container](#map-container)
-      - [GeoJson](#map-geojson)
-      - [LegendControl](#map-legend-control)
-      - [Marker](#map-marker)
-      - [MarkerClusterGroup](#map-marker-cluster-group)
-      - [TileLayer](#map-tile-layer)
-      - [Utils](#map-utils)
+    - [Components](#components)
+      - [Container](#container)
+      - [GeoJson](#geojson)
+      - [LegendControl](#legendcontrol)
+      - [Marker](#marker)
+      - [MarkerClusterGroup](#markerclustergroup)
+      - [TileLayer](#tilelayer)
+      - [Utils](#utils)
+      - [Example Usage](#example-usage-1)
+      - [Map components Notes](#map-components-notes)
 ---
 
 ## Installation
@@ -347,7 +364,7 @@ const BarChartExample = () => {
       }
     ]
   };
-  
+
   return <Bar rawConfig={rawConfig} />;
 };
 
@@ -427,7 +444,7 @@ const LineChartExample = () => {
       }
     ]
   };
-  
+
   return <Line rawConfig={rawConfig} />;
 };
 
@@ -523,7 +540,7 @@ const PieChartExample = () => {
       }
     ]
   };
-  
+
   return <Pie rawConfig={rawConfig} />;
 };
 
@@ -626,7 +643,7 @@ const DoughnutChartExample = () => {
       }
     ]
   };
-  
+
   return <Doughnut rawConfig={rawConfig} />;
 };
 
@@ -756,7 +773,7 @@ const StackBarChartExample = () => {
       }
     ]
   };
-  
+
   return <StackBar rawConfig={rawConfig} />;
 };
 
@@ -863,7 +880,7 @@ const StackClusterColumnChartExample = () => {
       }
     ]
   };
-  
+
   return <StackClusterColumn rawConfig={rawConfig} />;
 };
 
@@ -941,7 +958,7 @@ const ScatterPlotChartExample = () => {
       }
     ]
   };
-  
+
   return <ScatterPlot rawConfig={rawConfig} />;
 };
 
@@ -1105,7 +1122,7 @@ const StackLineChartExample = () => {
       }
     ]
   };
-  
+
   return <StackLine rawConfig={rawConfig} />;
 };
 
@@ -1134,6 +1151,16 @@ The `MapView` component provides an easy way to render a map in your React appli
 |`color` _(optional)_ | array | An array of colors used for choropleth mapping. Each feature will be colored according to its data value based on this color scale.|
 |`mapKey` _(optional)_ |string | The key in the GeoJSON feature properties that is used to map the data values for the choropleth map.|
 |`choropleth` _(optional)_ | string | The data attribute used for determining the color scale in the choropleth map. This value should match the data property in your dataset.|
+|`tooltip` _(optional)_ | object | Configuration for displaying a Leaflet tooltip on a choropleth map. |
+
+
+##### tooltip (object)
+Configuration for displaying a Leaflet tooltip on a choropleth map.
+| Prop	| Type |	Description |
+|-------|------|--------------|
+| `show` | `boolean` |	Determines whether tooltips are enabled globally on the map. |
+| `showTooltipForAll` |	`boolean` |	Indicates if tooltips should be shown for all data points, regardless of value. |
+| `tooltipComponent` |	`React component` |	Custom React component used to render the tooltip content. |
 
 
 #### data
@@ -1226,6 +1253,19 @@ Here is an example of how to define a layer in MapView for applying a choropleth
 
 ```jsx
 const ChoroPlethExample = () => {
+  const CustomTooltip = ({ props }) => (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10
+      }}
+    >
+      <div style={{ fontWeight: 700 }}>{props?.name || 'No Name'}</div>
+      <div>Density: {props?.density || 'N/A'}</div>
+    </div>
+  );
+
   const config = {
     center: [-6.2, 106.816666],
     zoom: 8,
@@ -1264,6 +1304,11 @@ const ChoroPlethExample = () => {
     mapKey: "Propinsi",
     choropleth: "density",
     onClick: onClick,
+    tooltip: {
+        show: true,
+        showTooltipForAll: false,
+        tooltipComponent: CustomTooltip
+      },
   };
 
   const tile = {
@@ -1282,27 +1327,27 @@ const ChoroPlethExample = () => {
 export default ChoroPlethExample;
 ```
 
-### MapCluster  
-The `MapCluster` component provides an initial implementation for map clustering in Akvo project use cases. It leverages [Container](#map-container), [MarkerClusterGroup](#map-marker-cluster-group), and [Marker](#map-marker) to group and display markers on a map.  
+### MapCluster
+The `MapCluster` component provides an initial implementation for map clustering in Akvo project use cases. It leverages [Container](#map-container), [MarkerClusterGroup](#map-marker-cluster-group), and [Marker](#map-marker) to group and display markers on a map.
 
-#### Props  
+#### Props
 
-##### `markerIcon`  
-Defines the styling and attributes for individual marker icons.  
+##### `markerIcon`
+Defines the styling and attributes for individual marker icons.
 | Prop         | Type               | Description                                 |
 |--------------|--------------------|---------------------------------------------|
 | `className`  | `string`           | CSS class for styling the marker icon.      |
 | `iconSize`   | `[number, number]` | Dimensions of the marker icon `[width, height]`. |
 | `html`       | `boolean`          | If `true`, uses a default HTML circle icon. |
 
-##### `clusterIcon`  
-Defines the styling and attributes for cluster icons.  
+##### `clusterIcon`
+Defines the styling and attributes for cluster icons.
 | Prop         | Type           | Description                                 |
 |--------------|----------------|---------------------------------------------|
 | `className`  | `string`       | CSS class for styling the cluster icon.     |
 | `iconSize`   | `number`       | Size of the cluster icon in pixels.         |
 
-##### Additional Properties  
+##### Additional Properties
 | Prop           | Type                               | Description                                                                 |
 |----------------|------------------------------------|-----------------------------------------------------------------------------|
 | `groupKey`     | `string`                           | Key used to group data when `type` is set to `"circle"`.                    |
@@ -1313,7 +1358,7 @@ Defines the styling and attributes for cluster icons.
 
 ---
 
-#### Example Usage  
+#### Example Usage
 
 ```jsx
 import React from "react";
@@ -1363,24 +1408,24 @@ const Chart = () => {
 export default Chart;
 ```
 
-#### MapCluster Notes  
-- When using `"default"` for `type`, the component applies styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).  
-- When using `"circle"` for `type`, the component applies Akvo-specific predefined styles.  
-- Ensure the `data` prop is formatted correctly to include the required latitude and longitude coordinates for each marker.  
-- Customize `renderPopup` to display additional information for markers as needed.  
+#### MapCluster Notes
+- When using `"default"` for `type`, the component applies styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster).
+- When using `"circle"` for `type`, the component applies Akvo-specific predefined styles.
+- Ensure the `data` prop is formatted correctly to include the required latitude and longitude coordinates for each marker.
+- Customize `renderPopup` to display additional information for markers as needed.
 
 
 ---
 
 
-### Fully Customized Map  
-If the [MapView](#mapview) or [MapCluster](#mapcluster) components do not meet your specific requirements, you can use this fully customizable map component to create a tailored solution.  
+### Fully Customized Map
+If the [MapView](#mapview) or [MapCluster](#mapcluster) components do not meet your specific requirements, you can use this fully customizable map component to create a tailored solution.
 
 
-### Components  
+### Components
 
-#### <a id="map-container"></a>Container  
-The `Container` component serves as the base for rendering a map.  
+#### <a id="map-container"></a>Container
+The `Container` component serves as the base for rendering a map.
 
 | Prop         | Type           | Description                                   |
 |--------------|----------------|-----------------------------------------------|
@@ -1390,8 +1435,8 @@ The `Container` component serves as the base for rendering a map.
 
 ---
 
-#### <a id="map-geojson"></a>GeoJson  
-The `GeoJson` component allows you to render GeoJSON data as layers on the map.  
+#### <a id="map-geojson"></a>GeoJson
+The `GeoJson` component allows you to render GeoJSON data as layers on the map.
 
 | Prop         | Type           | Description                                   |
 |--------------|----------------|-----------------------------------------------|
@@ -1402,8 +1447,8 @@ The `GeoJson` component allows you to render GeoJSON data as layers on the map.
 
 ---
 
-#### <a id="map-legend-control"></a>LegendControl  
-The `LegendControl` component creates a legend control based on color ranges.  
+#### <a id="map-legend-control"></a>LegendControl
+The `LegendControl` component creates a legend control based on color ranges.
 
 | Prop         | Type           | Description                                   |
 |--------------|----------------|-----------------------------------------------|
@@ -1412,8 +1457,8 @@ The `LegendControl` component creates a legend control based on color ranges.
 
 ---
 
-#### <a id="map-marker"></a>Marker  
-The `Marker` component is used to display individual points on the map.  
+#### <a id="map-marker"></a>Marker
+The `Marker` component is used to display individual points on the map.
 
 | Prop         | Type           | Description                                   |
 |--------------|----------------|-----------------------------------------------|
@@ -1421,12 +1466,12 @@ The `Marker` component is used to display individual points on the map.
 | `latlng`     | `[number, number]` | Latitude and longitude of the marker `[latitude, longitude]`. |
 | `label`      | `string`       | Label or title for the marker.               |
 
-It also supports all [Marker options](https://leafletjs.com/reference.html#marker-option).  
+It also supports all [Marker options](https://leafletjs.com/reference.html#marker-option).
 
 ---
 
-#### <a id="map-marker-cluster-group"></a>MarkerClusterGroup  
-The `MarkerClusterGroup` component groups multiple markers into clusters.  
+#### <a id="map-marker-cluster-group"></a>MarkerClusterGroup
+The `MarkerClusterGroup` component groups multiple markers into clusters.
 
 | Prop            | Type           | Description                                   |
 |-----------------|----------------|-----------------------------------------------|
@@ -1435,12 +1480,12 @@ The `MarkerClusterGroup` component groups multiple markers into clusters.
 | `onClick`       | `function`     | Event handler for click events on the cluster. |
 | `onMarkerClick` | `function`     | Event handler for click events on individual markers. |
 
-It supports all [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options).  
+It supports all [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options).
 
 ---
 
-#### <a id="map-tile-layer"></a>TileLayer  
-The `TileLayer` component is used to display map tiles.  
+#### <a id="map-tile-layer"></a>TileLayer
+The `TileLayer` component is used to display map tiles.
 
 | Prop         | Type           | Description                                   |
 |--------------|----------------|-----------------------------------------------|
@@ -1448,13 +1493,13 @@ The `TileLayer` component is used to display map tiles.
 | `maxZoom`    | `number`       | The maximum zoom level for the layer.        |
 | `attribution`| `string`       | Attribution text to display on the map.      |
 
-It supports all [TileLayer options](https://leafletjs.com/reference.html#tilelayer-option).  
+It supports all [TileLayer options](https://leafletjs.com/reference.html#tilelayer-option).
 
 ---
 
-#### <a id="map-utils"></a>Utils  
+#### <a id="map-utils"></a>Utils
 
-* `getGeoJSONList`: This utility function converts TopoJSON data to GeoJSON using the [topojson-client library](https://www.npmjs.com/package/topojson-client).  
+* `getGeoJSONList`: This utility function converts TopoJSON data to GeoJSON using the [topojson-client library](https://www.npmjs.com/package/topojson-client).
 
 ---
 
@@ -1536,9 +1581,9 @@ const DisplayMap = () => {
 export default DisplayMap;
 ```
 
-#### Map components Notes  
-- Customize `iconCreateFn` to define your cluster icons dynamically.  
-- Use `getGeoJSONList` to handle TopoJSON conversions and simplify rendering GeoJSON layers.  
+#### Map components Notes
+- Customize `iconCreateFn` to define your cluster icons dynamically.
+- Use `getGeoJSONList` to handle TopoJSON conversions and simplify rendering GeoJSON layers.
 - Always define `style` properties for `GeoJson` to ensure proper rendering of layers.
 
 ---

@@ -15,6 +15,8 @@ const useLocalStorage = (key, initialValue) => {
 
   const setValue = (value) => {
     try {
+      // clear before saving to reupdate the value
+      window.localStorage.removeItem(key);
       // If the passed value is a callback function,
       //  then call it with the existing state.
       const valueToStore = value instanceof Function ? value(state) : value;
