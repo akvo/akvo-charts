@@ -307,6 +307,7 @@ A component for rendering basic bar chart.
 ```jsx
 import React from 'react';
 import { Bar } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const BarChartExample = () => {
   const data = [
@@ -331,6 +332,7 @@ export default BarChartExample;
 
 ```jsx
 import { Bar } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const BarChartExample = () => {
   const rawConfig = {
@@ -387,6 +389,7 @@ A component for rendering basic line chart.
 ```jsx
 import React from 'react';
 import { Line } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const LineChartExample = () => {
   const data = [
@@ -410,6 +413,7 @@ export default LineChartExample;
 
 ```jsx
 import { Line } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const LineChartExample = () => {
   const rawConfig = {
@@ -466,6 +470,7 @@ A component for rendering basic pie chart.
 ```jsx
 import React from 'react';
 import { Pie } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const PieChartExample = () => {
   const data = [
@@ -488,6 +493,7 @@ export default PieChartExample;
 
 ```jsx
 import { Pie } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const PieChartExample = () => {
   const rawConfig = {
@@ -563,6 +569,7 @@ A component for rendering basic doughnut chart.
 ```jsx
 import React from 'react';
 import { Doughnut } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const DoughnutChartExample = () => {
   const data = [
@@ -585,6 +592,7 @@ export default DoughnutChartExample;
 
 ```jsx
 import { Doughnut } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const DoughnutChartExample = () => {
   const rawConfig = {
@@ -687,6 +695,7 @@ const stackMapping = {
 ```jsx
 import React from 'react';
 import { StackBar } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const StackBarChartExample = () => {
   const data = [
@@ -718,6 +727,7 @@ export default StackBarChartExample;
 
 ```jsx
 import { StackBar } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const StackBarChartExample = () => {
   const rawConfig = {
@@ -799,6 +809,7 @@ A component for rendering stakc cluster column. Basically this chart is like sta
 ```jsx
 import React from 'react';
 import { StackClusterColumn } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const StackClusterColumnChartExample = () => {
   const data = [
@@ -825,6 +836,7 @@ export default StackClusterColumnChartExample;
 
 ```jsx
 import { StackClusterColumn } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const StackClusterColumnChartExample = () => {
   const rawConfig = {
@@ -906,6 +918,7 @@ A component for rendering basic scatter plot chart.
 ```jsx
 import React from 'react';
 import { ScatterPlot } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const ScatterPlotChartExample = () => {
    const data = [
@@ -928,6 +941,7 @@ export default ScatterPlotChartExample;
 
 ```jsx
 import { ScatterPlot } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const ScatterPlotChartExample = () => {
   const rawConfig = {
@@ -982,6 +996,7 @@ A component for rendering stack line chart.
 ```jsx
 import React from 'react';
 import { StackLine } from 'akvo-charts';
+import 'akvo-charts/dist/index.css'
 
 const StackLineChartExample = () => {
   const data = [
@@ -1008,6 +1023,7 @@ export default StackLineChartExample;
 
 ```jsx
 import { StackLine } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const StackLineChartExample = () => {
   const rawConfig = {
@@ -1187,6 +1203,7 @@ An array of objects that define either marker points or data for choropleth mapp
 ```jsx
 import React from "react";
 import { MapView } from "akvo-charts";
+import 'akvo-charts/dist/index.css'
 
 const MapViewExample = () => {
   const config = {
@@ -1363,6 +1380,7 @@ Defines the styling and attributes for cluster icons.
 ```jsx
 import React from "react";
 import MapCluster from "./MapCluster";
+import 'akvo-charts/dist/index.css'
 
 const markerIcon = {
   className: "custom-marker",
@@ -1507,7 +1525,8 @@ It supports all [TileLayer options](https://leafletjs.com/reference.html#tilelay
 
 ```jsx
 import { Map } from 'akvo-charts';
-
+import 'akvo-charts/dist/index.css'
+****
 const { getGeoJSONList } = Map;
 
 const DisplayMap = () => {
