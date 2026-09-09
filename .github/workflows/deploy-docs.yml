@@ -1,0 +1,57 @@
+name: Deploy Docs to GitHub Pages
+
+# Runs on the same tag pattern as "Publish to NPM", so the documentation site
+# and the published package always describe the same code. `workflow_dispatch`
+# allows a manual redeploy without cutting a release.
+on:
+  push:
+    tags:
+      - '*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# The gh-pages branch is a single shared resource; never let two deploys race.
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # The example app resolves akvo-charts via "link:.." to dist/index.js, so
+      # it renders BUILT output rather than src/. Building the library first is
+      # what keeps the docs site from demonstrating a stale dist/.
+      - name: Build library
+        run: yarn build
+
+      - name: Install example dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: example
+
+      # next.config.mjs sets output:'export' with distDir:'build', so the static
+      # site is written to example/build.
+      - name: Build example
+        run: yarn build
+        working-directory: example
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./example/build
+          enable_jekyll: false
