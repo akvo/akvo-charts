@@ -9,7 +9,8 @@ export const chartTypes = {
   STACK_LINE: 'StackLine',
   MAP: 'MapView',
   CHOROPLETH_MAP: 'MapViewChoropleth',
-  CLUSTER_MAP: 'MapCluster'
+  CLUSTER_MAP: 'MapCluster',
+  QUANTITY_MAP: 'MapClusterQuantity'
 };
 
 export const excludeHorizontal = [
@@ -268,4 +269,19 @@ export const clusterExampleData = [
     serviceLevel: 'Basic',
     color: '#00b8ec'
   }
+];
+
+export const quantityExampleData = [
+  { point: [-6.2087634, 106.845599], label: 'Jakarta', population: 10562088 },
+  { point: [-7.2574719, 112.7520883], label: 'Surabaya', population: 2874314 },
+  { point: [-6.9174639, 107.6191228], label: 'Bandung', population: 2444160 },
+  { point: [3.5951956, 98.6722227], label: 'Medan', population: 2435252 },
+  { point: [-6.9666204, 110.4166595], label: 'Semarang', population: 1653524 },
+  { point: [-5.1476651, 119.4327314], label: 'Makassar', population: 1423877 },
+  { point: [-6.5971469, 106.8060388], label: 'Bogor', population: 1043070 },
+  { point: [-6.2382905, 106.9755126], label: 'Bekasi', population: 2543676 },
+  { point: [-6.4058172, 106.8185594], label: 'Depok', population: 2056335 },
+  { point: [-6.1701664, 106.6403236], label: 'Tangerang', population: 1895486 },
+  { point: [-7.7955798, 110.3694896], label: 'Yogyakarta', population: 373589 },
+  { point: [-8.6704582, 115.2126293], label: 'Denpasar', population: 725314 }
 ];

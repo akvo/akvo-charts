@@ -140,6 +140,8 @@ const ChartDisplay = () => {
         return <MapDisplay {...mapConfig} />;
       case chartTypes.CLUSTER_MAP:
         return <MapCluster {...customMap[chartTypes.CLUSTER_MAP]} />;
+      case chartTypes.QUANTITY_MAP:
+        return <MapCluster {...customMap[chartTypes.QUANTITY_MAP]} />;
       default:
         return null;
     }

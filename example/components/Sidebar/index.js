@@ -79,6 +79,11 @@ const sidebarList = [
         key: chartTypes.CLUSTER_MAP,
         name: 'Cluster Map',
         icon: null
+      },
+      {
+        key: chartTypes.QUANTITY_MAP,
+        name: 'Quantity Map',
+        icon: null
       }
     ]
   }
@@ -115,7 +120,8 @@ const Sidebar = () => {
     const isMapType = [
       chartTypes.MAP,
       chartTypes.CHOROPLETH_MAP,
-      chartTypes.CLUSTER_MAP
+      chartTypes.CLUSTER_MAP,
+      chartTypes.QUANTITY_MAP
     ].includes(key);
     if (isMap && !isMapType) {
       chartDispatch({
