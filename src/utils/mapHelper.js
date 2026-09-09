@@ -89,6 +89,9 @@ export const sumClusterValue = (cluster, optionKey = 'quantityValue') => {
   );
 };
 
+// Minimum RENDERED label size, in real px, regardless of circle diameter.
+const MIN_LABEL_PX = 10;
+
 export const buildQuantityIcon = (
   value,
   { color = '#4c78a8', formatValue = formatCompact, radiusScale } = {}
@@ -96,9 +99,24 @@ export const buildQuantityIcon = (
   const radius = typeof radiusScale === 'function' ? radiusScale(value) : 16;
   const diameter = Math.round(radius * 2);
   const fill = typeof color === 'function' ? color(value) : color;
+
+  /**
+   * The <svg> has a fixed 0-100 viewBox scaled to fit the icon's pixel box,
+   * so every length declared inside it - including font-size - scales with
+   * the box. A hard-coded "18px" font-size therefore rendered at ~5.8px on
+   * the smallest leaf circles (32px diameter), making the label unreadable
+   * right where the feature's whole point - a value-labelled circle - most
+   * needs to hold. To give the RENDERED size a floor, pick the desired
+   * rendered px size first (with a floor), then convert it back into
+   * viewBox units so it renders at that size no matter the diameter.
+   */
+  const safeDiameter = diameter || 1;
+  const fontPx = Math.max(MIN_LABEL_PX, safeDiameter * 0.22);
+  const fontVb = (fontPx / safeDiameter) * 100;
+
   return {
     diameter,
-    html: `<svg width="100%" height="100%" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="${fill}" fill-opacity="0.85" stroke="#ffffff" stroke-width="3"/><text x="50%" y="50%" fill="#ffffff" text-anchor="middle" dy=".3em" font-size="18px">${formatValue(
+    html: `<svg width="100%" height="100%" viewBox="0 0 100 100" overflow="visible"><circle cx="50" cy="50" r="46" fill="${fill}" fill-opacity="0.85" stroke="#ffffff" stroke-width="3"/><text x="50%" y="50%" fill="#ffffff" text-anchor="middle" dy=".3em" font-size="${fontVb}px">${formatValue(
       value
     )}</text></svg>`
   };

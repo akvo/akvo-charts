@@ -21,6 +21,18 @@ const DEFAULT_MARKER_ICON = {
   html: true
 };
 
+/**
+ * `buildMarkerIcon` only reaches the quantity branch when `markerIcon` is
+ * falsy (an explicit `markerIcon` opts a caller out of the quantity circle
+ * entirely - see the design doc's "accepted cost"). So `markerIcon?.className`
+ * can never contribute a value in that branch, unlike the cluster path's
+ * `clusterIcon?.className`. There is currently no supported way to keep the
+ * quantity leaf circle AND rename its class, so this stays a named constant
+ * rather than a bare inline string, documenting the class name instead of
+ * pretending it is configurable.
+ */
+const QUANTITY_MARKER_CLASSNAME = 'custom-marker-quantity';
+
 const clusterCircleIcon = (
   cluster,
   data = [],
@@ -77,6 +89,36 @@ const quantityMarkerIcon = (value, { className, ...opts }) => {
   return { html, className, iconSize: [diameter, diameter] };
 };
 
+/**
+ * Builds the default popup content for a leaf marker. Exported as a pure
+ * function (rather than only inlined in the component) because Leaflet
+ * markers don't render in jsdom, so component tests can't assert on popup
+ * DOM - but this piece is plain React, testable in isolation.
+ *
+ * A user-supplied `renderPopup` always wins. Otherwise, quantity maps show
+ * the label plus the EXACT value (`toLocaleString`, not the compact form
+ * already shown inside the circle); every other type keeps showing only
+ * the label, unchanged.
+ */
+export const buildPopupContent = (
+  d,
+  { renderPopup, isQuantity, valueKey } = {}
+) => {
+  if (typeof renderPopup === 'function') {
+    return renderPopup(d);
+  }
+  if (isQuantity) {
+    return (
+      <React.Fragment>
+        {d?.label}
+        <br />
+        <strong>{(Number(d?.[valueKey]) || 0).toLocaleString()}</strong>
+      </React.Fragment>
+    );
+  }
+  return <React.Fragment>{d?.label}</React.Fragment>;
+};
+
 const MapCluster = (
   {
     data,
@@ -99,10 +141,16 @@ const MapCluster = (
   const isQuantity = CLUSTER_TYPE?.[type] === CLUSTER_TYPE.quantity;
 
   const points = data?.filter((d) => d?.point) || [];
-  const radiusScale = calculateRadiusScale(
-    points.map((d) => Number(d?.[valueKey]) || 0),
-    radius
-  );
+  // `default` and `circle` consumers never use the radius scale, and
+  // computing it unconditionally cost every render an O(n) map + reduce +
+  // `Math.min(...numbers)` - the latter throws past ~100k points (argument
+  // spread has a call-stack limit), exactly the size clustering targets.
+  const radiusScale = isQuantity
+    ? calculateRadiusScale(
+        points.map((d) => Number(d?.[valueKey]) || 0),
+        radius
+      )
+    : null;
   const quantityOpts = { color, formatValue, radiusScale };
 
   const clusterTypes = {
@@ -128,7 +176,7 @@ const MapCluster = (
     if (!markerIcon && isQuantity) {
       return quantityMarkerIcon(Number(d?.[valueKey]) || 0, {
         ...quantityOpts,
-        className: 'custom-marker-quantity'
+        className: QUANTITY_MARKER_CLASSNAME
       });
     }
     const icon = markerIcon || DEFAULT_MARKER_ICON;
@@ -150,14 +198,12 @@ const MapCluster = (
           <Marker
             latlng={d?.point}
             key={dx}
-            quantityValue={Number(d?.[valueKey]) || 0}
+            {...(isQuantity
+              ? { quantityValue: Number(d?.[valueKey]) || 0 }
+              : {})}
             icon={buildMarkerIcon(d)}
           >
-            {typeof renderPopup === 'function' ? (
-              renderPopup(d)
-            ) : (
-              <React.Fragment>{d?.label}</React.Fragment>
-            )}
+            {buildPopupContent(d, { renderPopup, isQuantity, valueKey })}
           </Marker>
         ))}
       </MarkerClusterGroup>

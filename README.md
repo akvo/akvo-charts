@@ -1369,9 +1369,10 @@ Defines the styling and attributes for cluster icons.
 | Prop           | Type                               | Description                                                                 |
 |----------------|------------------------------------|-----------------------------------------------------------------------------|
 | `groupKey`     | `string`                           | Key used to group data when `type` is set to `"circle"`.                    |
-| `type`         | `enum`(default&#124;circle) |Defines the clustering mode:                                               |
+| `type`         | `enum`(default&#124;circle&#124;quantity) |Defines the clustering mode:                                               |
 |                |                                    | - `"default"`: Uses default styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). |
 |                |                                    | - `"circle"`: Uses predefined styles specific to common Akvo project use cases. |
+|                |                                    | - `"quantity"`: Aggregates and sizes circles by a numeric value instead of by count — see [MapClusterQuantity](#mapclusterquantity) for the `valueKey`, `radius`, `color` and `formatValue` props it introduces. |
 | `renderPopup`  | `function`                         | Function to render a custom child component in the marker popup.            |
 
 ---
@@ -1445,14 +1446,28 @@ Use `type="circle"` when you care about how many points there are, and `MapView`
 | `color` | `string \| (sum) => string` | `'#4c78a8'` | Circle fill, or a function of the aggregated value |
 | `formatValue` | `(n) => string` | compact (`12.4M`) | Renders the number inside the circle |
 
-Circle **area** is proportional to value, so a place with four times the population draws
-a circle twice as wide. The size scale is fixed for the lifetime of the data — its domain
-runs from the smallest single value to the sum of all values — so circle sizes stay
-comparable as you zoom.
+Circles are sized on a square-root scale, so larger values grow sub-linearly in width
+rather than dominating the map. The scale runs from the minimum radius at the smallest
+single value up to the maximum radius at the sum of all values, and it is fixed for the
+lifetime of the data so circle sizes stay comparable as you zoom. Because the domain top
+is the total rather than the largest single value, individual places sit in the lower
+part of the size range and only a fully collapsed cluster approaches the maximum.
 
 Rows missing a `point` are skipped, as with any `MapCluster`. Rows that have a `point` but
 a missing or non-numeric value are rendered as zero rather than dropped, so bad data shows
 up on the map instead of disappearing.
+
+Passing an explicit `markerIcon` suppresses the quantity leaf circle entirely — the leaf
+marker then renders using `markerIcon` like any other `MapCluster` type, with no
+value-driven sizing. This is the accepted cost of adding quantity clustering to the
+existing `MapCluster` rather than as a new component. When the quantity circle is used,
+the leaf marker carries the CSS class `custom-marker-quantity` (analogous to
+`custom-marker-cluster` for cluster icons); because supplying `markerIcon` bypasses the
+quantity circle altogether, this class name is not currently configurable independently.
+
+Clicking a leaf circle opens a popup showing the label and the exact value
+(`Number(v).toLocaleString()`), not the compact form shown inside the circle — precision
+is what a popup is for. Passing `renderPopup` still overrides this default completely.
 
 ```jsx
 import { MapCluster } from 'akvo-charts';

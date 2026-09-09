@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import MapCluster from '../MapCluster';
+import MapCluster, { buildPopupContent } from '../MapCluster';
 
 describe('MapCluster chart', () => {
   test('renders MapCluster correctly', async () => {
@@ -170,5 +170,61 @@ describe('MapCluster chart', () => {
     });
 
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  // Leaflet markers/popups don't render in jsdom (Leaflet needs real layout),
+  // so popup content is asserted directly against the exported pure builder
+  // instead of against rendered marker DOM.
+  describe('buildPopupContent', () => {
+    const jakarta = { label: 'Jakarta', population: 10562088 };
+
+    test('shows the label and the exact (non-compact) value for quantity type', () => {
+      const { container } = render(
+        buildPopupContent(jakarta, { isQuantity: true, valueKey: 'population' })
+      );
+
+      expect(container.textContent).toContain('Jakarta');
+      expect(container.textContent).toContain((10562088).toLocaleString());
+      // The circle itself already shows the compact form; the popup must not
+      // just repeat it.
+      expect(container.textContent).not.toContain('10.6M');
+    });
+
+    test('coerces a missing or non-numeric value to zero rather than dropping it', () => {
+      const { container } = render(
+        buildPopupContent(
+          { label: 'Bandung' },
+          { isQuantity: true, valueKey: 'population' }
+        )
+      );
+
+      expect(container.textContent).toContain('Bandung');
+      expect(container.textContent).toContain('0');
+    });
+
+    test('shows only the label for non-quantity types', () => {
+      const { container } = render(
+        buildPopupContent(jakarta, {
+          isQuantity: false,
+          valueKey: 'population'
+        })
+      );
+
+      expect(container.textContent).toBe('Jakarta');
+    });
+
+    test('lets a user-supplied renderPopup override the default completely, even for quantity type', () => {
+      const renderPopup = (d) => <span>{`Custom: ${d.label}`}</span>;
+      const { container } = render(
+        buildPopupContent(jakarta, {
+          renderPopup,
+          isQuantity: true,
+          valueKey: 'population'
+        })
+      );
+
+      expect(container.textContent).toBe('Custom: Jakarta');
+      expect(container.textContent).not.toContain('10,562,088');
+    });
   });
 });

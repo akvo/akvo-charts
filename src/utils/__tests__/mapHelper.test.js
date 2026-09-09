@@ -177,5 +177,39 @@ describe('utils/mapHelper', () => {
 
       expect(html).toContain('#ff0000');
     });
+
+    it('should keep the RENDERED label size at or above a 10px floor on a small circle', () => {
+      // radiusScale pinned to the leaf minimum: radius 16 -> diameter 32.
+      const { html, diameter } = buildQuantityIcon(1, {
+        radiusScale: () => 16
+      });
+      expect(diameter).toEqual(32);
+
+      const match = html.match(/font-size="([\d.]+)px"/);
+      expect(match).not.toBeNull();
+
+      const fontVb = parseFloat(match[1]);
+      const renderedPx = fontVb * (diameter / 100);
+
+      expect(renderedPx).toBeGreaterThanOrEqual(10);
+    });
+
+    it('should let the label grow proportionally (no ceiling) on a large circle', () => {
+      const { html, diameter } = buildQuantityIcon(1, {
+        radiusScale: () => 56 // rMax default -> diameter 112
+      });
+
+      const match = html.match(/font-size="([\d.]+)px"/);
+      const fontVb = parseFloat(match[1]);
+      const renderedPx = fontVb * (diameter / 100);
+
+      expect(renderedPx).toBeCloseTo(diameter * 0.22, 5);
+    });
+
+    it('should mark the svg as overflow-visible so small-circle labels are not clipped', () => {
+      const { html } = buildQuantityIcon(1, { radiusScale: () => 16 });
+
+      expect(html).toContain('overflow="visible"');
+    });
   });
 });
