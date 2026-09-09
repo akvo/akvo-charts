@@ -26909,7 +26909,7 @@ var buildQuantityIcon = function buildQuantityIcon(value, _temp) {
   var fontVb = fontPx / safeDiameter * 100;
   return {
     diameter: diameter,
-    html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" overflow=\"visible\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"" + fill + "\" fill-opacity=\"0.85\" stroke=\"#ffffff\" stroke-width=\"3\"/><text x=\"50%\" y=\"50%\" fill=\"#ffffff\" text-anchor=\"middle\" dy=\".3em\" font-size=\"" + fontVb + "px\">" + formatValue(value) + "</text></svg>"
+    html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" overflow=\"visible\"><circle cx=\"50\" cy=\"50\" r=\"50\" fill=\"" + fill + "\" fill-opacity=\"0.85\"/><text x=\"50%\" y=\"50%\" fill=\"#ffffff\" text-anchor=\"middle\" dy=\".3em\" font-size=\"" + fontVb + "px\" font-weight=\"bold\">" + formatValue(value) + "</text></svg>"
   };
 };
 var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref2, data) {
