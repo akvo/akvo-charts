@@ -28405,7 +28405,7 @@ var MapView$1 = forwardRef(MapView);
 
 var _excluded$6 = ["className"],
   _excluded2$1 = ["className"],
-  _excluded3 = ["data", "markerIcon", "clusterIcon", "groupKey", "type", "valueKey", "radius", "color", "formatValue", "renderPopup"];
+  _excluded3 = ["data", "markerIcon", "clusterIcon", "groupKey", "type", "valueKey", "radius", "color", "formatValue", "renderPopup", "cluster"];
 var CLUSTER_TYPE = {
   "default": 0,
   circle: 1,
@@ -28493,6 +28493,18 @@ var buildPopupContent = function buildPopupContent(d, _temp) {
   }
   return /*#__PURE__*/React.createElement(React.Fragment, null, d === null || d === void 0 ? void 0 : d.label);
 };
+var NO_CLUSTERING = {
+  disableClusteringAtZoom: 0
+};
+var resolveClusterOptions = function resolveClusterOptions(cluster) {
+  if (cluster === false) {
+    return NO_CLUSTERING;
+  }
+  if (cluster && typeof cluster === 'object') {
+    return cluster;
+  }
+  return {};
+};
 var MapCluster = function MapCluster(_ref5, ref) {
   var _clusterTypes;
   var data = _ref5.data,
@@ -28517,8 +28529,11 @@ var MapCluster = function MapCluster(_ref5, ref) {
     formatValue = _ref5$formatValue === void 0 ? formatCompact : _ref5$formatValue,
     _ref5$renderPopup = _ref5.renderPopup,
     renderPopup = _ref5$renderPopup === void 0 ? null : _ref5$renderPopup,
+    _ref5$cluster = _ref5.cluster,
+    cluster = _ref5$cluster === void 0 ? true : _ref5$cluster,
     config = _objectWithoutPropertiesLoose(_ref5, _excluded3);
   var isQuantity = (CLUSTER_TYPE === null || CLUSTER_TYPE === void 0 ? void 0 : CLUSTER_TYPE[type]) === CLUSTER_TYPE.quantity;
+  var clusterOptions = resolveClusterOptions(cluster);
   var points = (data === null || data === void 0 ? void 0 : data.filter(function (d) {
     return d === null || d === void 0 ? void 0 : d.point;
   })) || [];
@@ -28551,10 +28566,10 @@ var MapCluster = function MapCluster(_ref5, ref) {
   };
   return /*#__PURE__*/React.createElement(Container$1, _extends({
     ref: ref
-  }, config), /*#__PURE__*/React.createElement(MarkerClusterGroup, {
-    key: type,
+  }, config), /*#__PURE__*/React.createElement(MarkerClusterGroup, _extends({
+    key: type + "-" + JSON.stringify(clusterOptions),
     iconCreateFn: iconCreateFn
-  }, points.map(function (d, dx) {
+  }, clusterOptions), points.map(function (d, dx) {
     return /*#__PURE__*/React.createElement(Marker, _extends({
       latlng: d === null || d === void 0 ? void 0 : d.point,
       key: dx

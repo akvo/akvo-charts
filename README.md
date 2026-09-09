@@ -72,6 +72,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
         - [`clusterIcon`](#clustericon)
         - [Additional Properties](#additional-properties)
       - [Example Usage](#example-usage)
+      - [Disabling or tuning clustering](#disabling-or-tuning-clustering)
       - [MapClusterQuantity](#mapclusterquantity)
       - [MapCluster Notes](#mapcluster-notes)
     - [Fully Customized Map](#fully-customized-map)
@@ -1374,6 +1375,7 @@ Defines the styling and attributes for cluster icons.
 |                |                                    | - `"circle"`: Uses predefined styles specific to common Akvo project use cases. |
 |                |                                    | - `"quantity"`: Aggregates and sizes circles by a numeric value instead of by count — see [MapClusterQuantity](#mapclusterquantity) for the `valueKey`, `radius`, `color` and `formatValue` props it introduces. |
 | `renderPopup`  | `function`                         | Function to render a custom child component in the marker popup.            |
+| `cluster`      | `boolean` &#124; `object`          | Controls clustering. `true` (default) clusters nearby points and splits them apart as you zoom in. `false` turns clustering off entirely, so every point renders as its own marker at every zoom. An object is passed straight through as [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options) — see [Disabling or tuning clustering](#disabling-or-tuning-clustering). |
 
 ---
 
@@ -1427,6 +1429,40 @@ const Chart = () => {
 
 export default Chart;
 ```
+
+#### Disabling or tuning clustering
+
+By default `MapCluster` groups nearby points and breaks them apart as you zoom in.
+Pass `cluster={false}` to switch that off — every point then renders as its own
+marker at every zoom level, including points that share exact coordinates:
+
+```jsx
+<MapCluster tile={tile} config={config} data={data} cluster={false} />
+```
+
+To keep clustering but change how it behaves, pass an options object instead. It
+goes straight to [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster#all-options):
+
+```jsx
+// Cluster only tightly-grouped points, and stop clustering past zoom 12.
+<MapCluster
+  tile={tile}
+  config={config}
+  data={data}
+  cluster={{ maxClusterRadius: 40, disableClusteringAtZoom: 12 }}
+/>
+```
+
+Cluster settings are per-map: each `MapCluster` builds its own Leaflet map and its
+own cluster group, so disabling clustering on one map does not affect any other
+map on the same page. Marker and cluster **styling**, on the other hand, comes from
+global CSS classes — give each map a different `clusterIcon.className` if you need
+them to look different.
+
+> **Note:** prefer `cluster={false}` over `cluster={{ maxClusterRadius: 0 }}` when
+> you want clustering off. A zero radius still groups points that share exact
+> coordinates, and it funnels every point into a single internal grid cell, which
+> gets slow on large datasets.
 
 #### MapClusterQuantity
 

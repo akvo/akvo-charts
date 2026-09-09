@@ -243,6 +243,133 @@ describe('MapCluster chart', () => {
     });
   });
 
+  // Leaflet renders no marker DOM under jsdom (it needs real layout), but the
+  // cluster TREE is fully computed - so clustering is asserted through each
+  // marker's `__parent`: a marker that clustered hangs off a MarkerCluster,
+  // while a marker that did not hangs off the group's top level.
+  describe('cluster prop', () => {
+    // Close enough together to cluster at the rendered zoom, plus a third
+    // point exactly coincident with the first - the hardest case to
+    // un-cluster, since a zero-radius grid still groups coincident points.
+    const nearbyProps = {
+      tile: {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+      },
+      data: [
+        { point: [39.61, -105.02], name: 'Basic', label: 'Littleton' },
+        { point: [39.62, -105.03], name: 'Basic', label: 'Near Littleton' },
+        { point: [39.61, -105.02], name: 'Basic', label: 'Also Littleton' }
+      ],
+      config: {
+        center: [39.61, -105.02],
+        zoom: 10,
+        height: '100vh',
+        width: '100%'
+      }
+    };
+
+    const getClusterGroups = (map) => {
+      const groups = [];
+      map.eachLayer((layer) => {
+        if (typeof layer?.options?.iconCreateFunction === 'function') {
+          groups.push(layer);
+        }
+      });
+      return groups;
+    };
+
+    const renderMap = async (props) => {
+      let instance = null;
+      const result = render(
+        <MapCluster
+          {...props}
+          ref={(el) => {
+            instance = el;
+          }}
+        />
+      );
+      await waitFor(() => {
+        expect(screen.getByTestId('map-view')).toBeInTheDocument();
+      });
+      return { ...result, getMap: () => instance.getMap() };
+    };
+
+    test('clusters nearby points by default', async () => {
+      const { getMap } = await renderMap(nearbyProps);
+
+      const [group] = getClusterGroups(getMap());
+      const clustered = group
+        .getLayers()
+        .filter((m) => m.__parent !== group._topClusterLevel);
+
+      expect(clustered).toHaveLength(nearbyProps.data.length);
+    });
+
+    test('renders every point separately when cluster is false', async () => {
+      const { getMap } = await renderMap({ ...nearbyProps, cluster: false });
+
+      const [group] = getClusterGroups(getMap());
+      const clustered = group
+        .getLayers()
+        .filter((m) => m.__parent !== group._topClusterLevel);
+
+      expect(clustered).toHaveLength(0);
+    });
+
+    test('passes a cluster options object through to the Leaflet cluster group', async () => {
+      const { getMap } = await renderMap({
+        ...nearbyProps,
+        cluster: { maxClusterRadius: 200, spiderfyOnMaxZoom: false }
+      });
+
+      const [group] = getClusterGroups(getMap());
+
+      expect(group.options.maxClusterRadius).toBe(200);
+      expect(group.options.spiderfyOnMaxZoom).toBe(false);
+    });
+
+    // The cluster group is built in an effect keyed only on the map ref, so a
+    // changed `cluster` value can only take effect by remounting the group.
+    // Without that, toggling clustering silently keeps the old group.
+    test('toggling cluster on a mounted instance rebuilds the group instead of leaving a stale one', async () => {
+      let instance = null;
+      const { rerender } = render(
+        <MapCluster
+          {...nearbyProps}
+          ref={(el) => {
+            instance = el;
+          }}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('map-view')).toBeInTheDocument();
+      });
+
+      rerender(
+        <MapCluster
+          {...nearbyProps}
+          cluster={false}
+          ref={(el) => {
+            instance = el;
+          }}
+        />
+      );
+
+      await waitFor(() => {
+        const groups = getClusterGroups(instance.getMap());
+        expect(groups).toHaveLength(1);
+
+        const clustered = groups[0]
+          .getLayers()
+          .filter((m) => m.__parent !== groups[0]._topClusterLevel);
+        expect(clustered).toHaveLength(0);
+      });
+    });
+  });
+
   // Leaflet markers/popups don't render in jsdom (Leaflet needs real layout),
   // so popup content is asserted directly against the exported pure builder
   // instead of against rendered marker DOM.
