@@ -27270,38 +27270,42 @@ var MarkerClusterGroup = function MarkerClusterGroup(_ref) {
     onClick = _ref.onClick,
     onMarkerClick = _ref.onMarkerClick,
     props = _objectWithoutPropertiesLoose(_ref, _excluded$4);
-  var _useState = useState(true),
-    preload = _useState[0],
-    setPreload = _useState[1];
   var mapRef = useLeaflet();
   var clusterGroupRef = useRef(null);
   useEffect(function () {
-    if (preload && mapRef.current) {
-      setPreload(false);
-      var clusterGroup = L$1.markerClusterGroup(_extends({}, props, {
-        iconCreateFunction: typeof iconCreateFn === 'function' ? function (cluster) {
-          var divIcon = iconCreateFn(cluster);
-          if (divIcon !== null && divIcon !== void 0 && divIcon.iconSize) {
-            Object.assign(divIcon, {
-              iconSize: L$1.point(divIcon.iconSize, divIcon.iconSize, true)
-            });
-          }
-          return L$1.divIcon(divIcon);
-        } : null
-      })).addTo(mapRef.current);
-      clusterGroupRef.current = clusterGroup;
-      if (typeof onMarkerClick === 'function') {
-        clusterGroup.on('click', function (e) {
-          return onMarkerClick(e);
-        });
-      }
-      if (typeof onClick === 'function') {
-        clusterGroup.on('clusterclick', function (e) {
-          return onClick(e);
-        });
-      }
+    var map = mapRef.current;
+    if (!map) {
+      return undefined;
     }
-  }, [iconCreateFn, props, onMarkerClick, onClick, mapRef, preload]);
+    var clusterGroup = L$1.markerClusterGroup(_extends({}, props, {
+      iconCreateFunction: typeof iconCreateFn === 'function' ? function (cluster) {
+        var divIcon = iconCreateFn(cluster);
+        if (divIcon !== null && divIcon !== void 0 && divIcon.iconSize) {
+          Object.assign(divIcon, {
+            iconSize: L$1.point(divIcon.iconSize, divIcon.iconSize, true)
+          });
+        }
+        return L$1.divIcon(divIcon);
+      } : null
+    })).addTo(map);
+    clusterGroupRef.current = clusterGroup;
+    if (typeof onMarkerClick === 'function') {
+      clusterGroup.on('click', function (e) {
+        return onMarkerClick(e);
+      });
+    }
+    if (typeof onClick === 'function') {
+      clusterGroup.on('clusterclick', function (e) {
+        return onClick(e);
+      });
+    }
+    return function () {
+      map.removeLayer(clusterGroup);
+      if (clusterGroupRef.current === clusterGroup) {
+        clusterGroupRef.current = null;
+      }
+    };
+  }, [mapRef]);
   useEffect(function () {
     if (clusterGroupRef.current) {
       var markers = React.Children.map(children, function (child) {
@@ -28548,6 +28552,7 @@ var MapCluster = function MapCluster(_ref5, ref) {
   return /*#__PURE__*/React.createElement(Container$1, _extends({
     ref: ref
   }, config), /*#__PURE__*/React.createElement(MarkerClusterGroup, {
+    key: type,
     iconCreateFn: iconCreateFn
   }, points.map(function (d, dx) {
     return /*#__PURE__*/React.createElement(Marker, _extends({
