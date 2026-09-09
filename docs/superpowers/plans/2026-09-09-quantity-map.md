@@ -20,6 +20,11 @@
 - The per-marker value rides in Leaflet marker options under the fixed key `quantityValue` — **never** under the user's `valueKey`, which could collide with real `L.Marker` options (`title`, `alt`, `opacity`, `zIndexOffset`).
 - Library tests run from the repo root; example tests run from `example/`.
 - Do not touch `dist/` or bump the version.
+- **Commit messages must be prefixed `[#54]`** — this repo ties every commit to its
+  GitHub issue (see `[#49] Update documentation for MapCluster & other Map components`).
+  Plain sentence after the tag; this repo does not use `feat:`/`fix:` prefixes.
+  Branch is `feature/54-support-quantity-maps`. Issue:
+  https://github.com/akvo/akvo-charts/issues/54
 
 ---
 
@@ -290,7 +295,7 @@ Expected: no errors.
 
 ```bash
 git add src/utils/mapHelper.js src/utils/__tests__/mapHelper.test.js
-git commit -m "feat: add pure helpers for quantity map sizing and formatting"
+git commit -m "[#54] Add pure helpers for quantity map sizing and formatting"
 ```
 
 ---
@@ -660,7 +665,7 @@ git add src/components/MapCluster.js \
   src/components/__tests__/MapCluster.test.js \
   src/components/__tests__/__snapshots__/MapCluster.test.js.snap \
   README.md
-git commit -m "feat: add quantity cluster type to MapCluster"
+git commit -m "[#54] Add quantity cluster type to MapCluster"
 ```
 
 ---
@@ -826,7 +831,7 @@ git add example/static/config.js \
   example/components/ChartDisplay.js \
   example/components/Sidebar/index.js \
   example/utils/code-block.js
-git commit -m "docs: add quantity map example and fix generated import names"
+git commit -m "[#54] Add quantity map example and fix generated import names"
 ```
 
 ---
