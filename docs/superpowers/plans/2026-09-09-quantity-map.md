@@ -19,7 +19,11 @@
 - Default `radius` is `[16, 56]`. Default `valueKey` is `'value'`. Default `color` is `'#4c78a8'`.
 - The per-marker value rides in Leaflet marker options under the fixed key `quantityValue` — **never** under the user's `valueKey`, which could collide with real `L.Marker` options (`title`, `alt`, `opacity`, `zIndexOffset`).
 - Library tests run from the repo root; example tests run from `example/`.
-- Do not touch `dist/` or bump the version.
+- Do not bump the version.
+- `dist/` **must be rebuilt and committed** at the end of the work (`yarn build`). The example
+  app resolves `akvo-charts` via `"link:.."` to `dist/index.js`, so it renders built output,
+  not `src/` — skipping the rebuild leaves the playground silently running the old component.
+  Individual tasks should not commit `dist/` churn mid-stream; it is rebuilt once at the end.
 - **Commit messages must be prefixed `[#54]`** — this repo ties every commit to its
   GitHub issue (see `[#49] Update documentation for MapCluster & other Map components`).
   Plain sentence after the tag; this repo does not use `feat:`/`fix:` prefixes.

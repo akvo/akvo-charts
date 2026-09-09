@@ -198,9 +198,18 @@ A `MapClusterQuantity` subsection under the existing `MapCluster` README heading
 the four new props, the data shape, and guidance on choosing quantity clustering over
 count clustering.
 
-## Out of scope
+## Build output
 
-- `dist/` — built by `yarn build` at release time (`release.sh`).
+`dist/` **must be rebuilt and committed** as part of this work. The example app declares
+`"akvo-charts": "link:.."` (`example/package.json:16`), which resolves through
+`package.json`'s `"main": "dist/index.js"` — so the playground renders **built output, not
+`src/`**. A branch that changes `src/` without rebuilding `dist/` leaves the example running
+the previous version of the component, silently and with no error.
+
+This matches the repo's existing practice: `[#49] Update dist to add MapCluster & apply all
+Map component changes`, `[#51] Update dist`.
+
+## Out of scope
 - Version bump.
 - Bivariate encoding (size + color as independent variables). Accepting a function for
   `color` leaves the door open without building it now.
