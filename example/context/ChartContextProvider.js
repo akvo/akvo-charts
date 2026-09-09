@@ -56,6 +56,7 @@ const initalChartState = {
       xAxisLabel: 'Product',
       yAxisLabel: 'Sales',
       horizontal: false,
+      toolbox: true,
       legend: {
         show: true,
         icon: null,
