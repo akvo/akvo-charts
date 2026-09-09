@@ -26893,6 +26893,7 @@ var sumClusterValue = function sumClusterValue(cluster, optionKey) {
     return sum + (Number(m === null || m === void 0 ? void 0 : (_m$options = m.options) === null || _m$options === void 0 ? void 0 : _m$options[optionKey]) || 0);
   }, 0);
 };
+var MIN_LABEL_PX = 10;
 var buildQuantityIcon = function buildQuantityIcon(value, _temp) {
   var _ref = _temp === void 0 ? {} : _temp,
     _ref$color = _ref.color,
@@ -26903,9 +26904,12 @@ var buildQuantityIcon = function buildQuantityIcon(value, _temp) {
   var radius = typeof radiusScale === 'function' ? radiusScale(value) : 16;
   var diameter = Math.round(radius * 2);
   var fill = typeof color === 'function' ? color(value) : color;
+  var safeDiameter = diameter || 1;
+  var fontPx = Math.max(MIN_LABEL_PX, safeDiameter * 0.22);
+  var fontVb = fontPx / safeDiameter * 100;
   return {
     diameter: diameter,
-    html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"" + fill + "\" fill-opacity=\"0.85\" stroke=\"#ffffff\" stroke-width=\"3\"/><text x=\"50%\" y=\"50%\" fill=\"#ffffff\" text-anchor=\"middle\" dy=\".3em\" font-size=\"18px\">" + formatValue(value) + "</text></svg>"
+    html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" overflow=\"visible\"><circle cx=\"50\" cy=\"50\" r=\"46\" fill=\"" + fill + "\" fill-opacity=\"0.85\" stroke=\"#ffffff\" stroke-width=\"3\"/><text x=\"50%\" y=\"50%\" fill=\"#ffffff\" text-anchor=\"middle\" dy=\".3em\" font-size=\"" + fontVb + "px\">" + formatValue(value) + "</text></svg>"
   };
 };
 var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref2, data) {
@@ -28411,6 +28415,7 @@ var DEFAULT_MARKER_ICON = {
   iconSize: [32, 32],
   html: true
 };
+var QUANTITY_MARKER_CLASSNAME = 'custom-marker-quantity';
 var clusterCircleIcon = function clusterCircleIcon(cluster, data, groupKey, props) {
   var _data;
   if (data === void 0) {
@@ -28474,38 +28479,51 @@ var quantityMarkerIcon = function quantityMarkerIcon(value, _ref3) {
     iconSize: [diameter, diameter]
   };
 };
-var MapCluster = function MapCluster(_ref4, ref) {
+var buildPopupContent = function buildPopupContent(d, _temp) {
+  var _ref4 = _temp === void 0 ? {} : _temp,
+    renderPopup = _ref4.renderPopup,
+    isQuantity = _ref4.isQuantity,
+    valueKey = _ref4.valueKey;
+  if (typeof renderPopup === 'function') {
+    return renderPopup(d);
+  }
+  if (isQuantity) {
+    return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, d === null || d === void 0 ? void 0 : d.label, /*#__PURE__*/React__default.createElement("br", null), /*#__PURE__*/React__default.createElement("strong", null, (Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0).toLocaleString()));
+  }
+  return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, d === null || d === void 0 ? void 0 : d.label);
+};
+var MapCluster = function MapCluster(_ref5, ref) {
   var _clusterTypes;
-  var data = _ref4.data,
-    _ref4$markerIcon = _ref4.markerIcon,
-    markerIcon = _ref4$markerIcon === void 0 ? null : _ref4$markerIcon,
-    _ref4$clusterIcon = _ref4.clusterIcon,
-    clusterIcon = _ref4$clusterIcon === void 0 ? {
+  var data = _ref5.data,
+    _ref5$markerIcon = _ref5.markerIcon,
+    markerIcon = _ref5$markerIcon === void 0 ? null : _ref5$markerIcon,
+    _ref5$clusterIcon = _ref5.clusterIcon,
+    clusterIcon = _ref5$clusterIcon === void 0 ? {
       className: "custom-marker-cluster",
       iconSize: 60
-    } : _ref4$clusterIcon,
-    _ref4$groupKey = _ref4.groupKey,
-    groupKey = _ref4$groupKey === void 0 ? 'name' : _ref4$groupKey,
-    _ref4$type = _ref4.type,
-    type = _ref4$type === void 0 ? 'default' : _ref4$type,
-    _ref4$valueKey = _ref4.valueKey,
-    valueKey = _ref4$valueKey === void 0 ? 'value' : _ref4$valueKey,
-    _ref4$radius = _ref4.radius,
-    radius = _ref4$radius === void 0 ? [16, 56] : _ref4$radius,
-    _ref4$color = _ref4.color,
-    color = _ref4$color === void 0 ? '#4c78a8' : _ref4$color,
-    _ref4$formatValue = _ref4.formatValue,
-    formatValue = _ref4$formatValue === void 0 ? formatCompact : _ref4$formatValue,
-    _ref4$renderPopup = _ref4.renderPopup,
-    renderPopup = _ref4$renderPopup === void 0 ? null : _ref4$renderPopup,
-    config = _objectWithoutPropertiesLoose(_ref4, _excluded3);
+    } : _ref5$clusterIcon,
+    _ref5$groupKey = _ref5.groupKey,
+    groupKey = _ref5$groupKey === void 0 ? 'name' : _ref5$groupKey,
+    _ref5$type = _ref5.type,
+    type = _ref5$type === void 0 ? 'default' : _ref5$type,
+    _ref5$valueKey = _ref5.valueKey,
+    valueKey = _ref5$valueKey === void 0 ? 'value' : _ref5$valueKey,
+    _ref5$radius = _ref5.radius,
+    radius = _ref5$radius === void 0 ? [16, 56] : _ref5$radius,
+    _ref5$color = _ref5.color,
+    color = _ref5$color === void 0 ? '#4c78a8' : _ref5$color,
+    _ref5$formatValue = _ref5.formatValue,
+    formatValue = _ref5$formatValue === void 0 ? formatCompact : _ref5$formatValue,
+    _ref5$renderPopup = _ref5.renderPopup,
+    renderPopup = _ref5$renderPopup === void 0 ? null : _ref5$renderPopup,
+    config = _objectWithoutPropertiesLoose(_ref5, _excluded3);
   var isQuantity = (CLUSTER_TYPE === null || CLUSTER_TYPE === void 0 ? void 0 : CLUSTER_TYPE[type]) === CLUSTER_TYPE.quantity;
   var points = (data === null || data === void 0 ? void 0 : data.filter(function (d) {
     return d === null || d === void 0 ? void 0 : d.point;
   })) || [];
-  var radiusScale = calculateRadiusScale(points.map(function (d) {
+  var radiusScale = isQuantity ? calculateRadiusScale(points.map(function (d) {
     return Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0;
-  }), radius);
+  }), radius) : null;
   var quantityOpts = {
     color: color,
     formatValue: formatValue,
@@ -28522,7 +28540,7 @@ var MapCluster = function MapCluster(_ref4, ref) {
   var buildMarkerIcon = function buildMarkerIcon(d) {
     if (!markerIcon && isQuantity) {
       return quantityMarkerIcon(Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0, _extends({}, quantityOpts, {
-        className: 'custom-marker-quantity'
+        className: QUANTITY_MARKER_CLASSNAME
       }));
     }
     var icon = markerIcon || DEFAULT_MARKER_ICON;
@@ -28535,12 +28553,18 @@ var MapCluster = function MapCluster(_ref4, ref) {
   }, config), /*#__PURE__*/React__default.createElement(MarkerClusterGroup, {
     iconCreateFn: iconCreateFn
   }, points.map(function (d, dx) {
-    return /*#__PURE__*/React__default.createElement(Marker, {
+    return /*#__PURE__*/React__default.createElement(Marker, _extends({
       latlng: d === null || d === void 0 ? void 0 : d.point,
-      key: dx,
-      quantityValue: Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0,
+      key: dx
+    }, isQuantity ? {
+      quantityValue: Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0
+    } : {}, {
       icon: buildMarkerIcon(d)
-    }, typeof renderPopup === 'function' ? renderPopup(d) : /*#__PURE__*/React__default.createElement(React__default.Fragment, null, d === null || d === void 0 ? void 0 : d.label));
+    }), buildPopupContent(d, {
+      renderPopup: renderPopup,
+      isQuantity: isQuantity,
+      valueKey: valueKey
+    }));
   })));
 };
 var MapCluster$1 = React.forwardRef(MapCluster);
