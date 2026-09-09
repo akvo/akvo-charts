@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
@@ -25,11 +25,11 @@ jobs:
         id: get_tag_name
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          echo "::set-output name=TAG_NAME::${TAG_NAME}"
+          echo "TAG_NAME=${TAG_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Read version from package.json
         id: read_version
-        run: echo "::set-output name=VERSION::$(node -p "require('./package.json').version")"
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
       - name: Check tag and version match
         id: check_tag_version
@@ -38,6 +38,13 @@ jobs:
           VERSION=${{ steps.read_version.outputs.VERSION }}
           echo "Tag: $TAG_NAME"
           echo "Version: $VERSION"
+          # Guard against the failure mode that made this check useless before:
+          # if either value resolves empty, "" != "" passes and npm publish runs
+          # unverified. Fail loudly instead.
+          if [ -z "$TAG_NAME" ] || [ -z "$VERSION" ]; then
+            echo "Tag name or version could not be resolved - refusing to publish"
+            exit 1
+          fi
           if [ "$TAG_NAME" != "$VERSION" ]; then
             echo "Tag name ($TAG_NAME) does not match version ($VERSION)"
             exit 1
