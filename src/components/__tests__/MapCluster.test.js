@@ -243,6 +243,99 @@ describe('MapCluster chart', () => {
     });
   });
 
+  // Regression tests for #61: `type="quantity"` hard-coded a SUM, which is
+  // wrong for intensive quantities (litres per person per day, %
+  // functionality, cost per connection) - two points merging on zoom-out made
+  // the circle claim a figure with no meaning, and grow while claiming it.
+  describe('aggregate prop', () => {
+    const iconCreateFnOf = (instance) => {
+      let fn = null;
+      instance.getMap().eachLayer((layer) => {
+        if (typeof layer?.options?.iconCreateFunction === 'function') {
+          fn = layer.options.iconCreateFunction;
+        }
+      });
+      return fn;
+    };
+
+    const clusterOfCities = {
+      getAllChildMarkers: () => [
+        { options: { quantityValue: 10562088 } },
+        { options: { quantityValue: 2874314 } }
+      ],
+      getChildCount: () => 2
+    };
+
+    // Jakarta alone: the dataset maximum. Under `average` it must draw at
+    // rMax (56) - a diameter of 112.
+    const clusterOfMax = {
+      getAllChildMarkers: () => [{ options: { quantityValue: 10562088 } }],
+      getChildCount: () => 1
+    };
+
+    const renderQuantity = async (props) => {
+      let instance = null;
+      render(
+        <MapCluster
+          {...quantityProps}
+          {...props}
+          ref={(el) => {
+            instance = el;
+          }}
+        />
+      );
+      await waitFor(() => {
+        expect(screen.getByTestId('map-view')).toBeInTheDocument();
+      });
+      return instance;
+    };
+
+    test('labels a cluster with the mean of its children when aggregate is average', async () => {
+      const instance = await renderQuantity({ aggregate: 'average' });
+
+      const icon = iconCreateFnOf(instance)(clusterOfCities);
+
+      // (10562088 + 2874314) / 2 = 6718201 -> 6.7M. The sum reads 13.4M.
+      expect(icon.options.html).toContain('>6.7M<');
+    });
+
+    test('keeps summing when aggregate is omitted', async () => {
+      const instance = await renderQuantity({});
+
+      expect(iconCreateFnOf(instance)(clusterOfCities).options.html).toContain(
+        '>13.4M<'
+      );
+    });
+
+    test('keeps summing when aggregate is set to sum', async () => {
+      const instance = await renderQuantity({ aggregate: 'sum' });
+
+      expect(iconCreateFnOf(instance)(clusterOfCities).options.html).toContain(
+        '>13.4M<'
+      );
+    });
+
+    // The guard that fails if only the reducer is swapped and the radius
+    // scale is left on the sum domain: no cluster average can then reach the
+    // domain top, so every circle collapses toward rMin (here 103px instead
+    // of 112px, and far worse as the dataset grows) with no error to show it.
+    test('draws the dataset maximum at rMax when aggregate is average', async () => {
+      const instance = await renderQuantity({ aggregate: 'average' });
+
+      expect(iconCreateFnOf(instance)(clusterOfMax).options.iconSize.x).toEqual(
+        112
+      );
+    });
+
+    test('keeps the sum domain when aggregate is sum, so a single max point stays below rMax', async () => {
+      const instance = await renderQuantity({ aggregate: 'sum' });
+
+      expect(
+        iconCreateFnOf(instance)(clusterOfMax).options.iconSize.x
+      ).toBeLessThan(112);
+    });
+  });
+
   // Leaflet renders no marker DOM under jsdom (it needs real layout), but the
   // cluster TREE is fully computed - so clustering is asserted through each
   // marker's `__parent`: a marker that clustered hangs off a MarkerCluster,

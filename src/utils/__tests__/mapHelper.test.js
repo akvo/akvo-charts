@@ -5,7 +5,7 @@ import {
   getGeoJSONProps,
   formatCompact,
   calculateRadiusScale,
-  sumClusterValue,
+  aggregateClusterValue,
   buildQuantityIcon
 } from '../mapHelper';
 
@@ -118,18 +118,51 @@ describe('utils/mapHelper', () => {
 
       expect(scale(undefined)).toEqual(16);
     });
+
+    // Under averaging a cluster's value can never exceed its largest member,
+    // so the domain top is max(values), not their sum. With the sum domain
+    // the dataset maximum would draw at ~34px instead of rMax and every
+    // circle on a larger dataset would collapse toward the floor.
+    it('should map the largest value to rMax when the aggregate is average', () => {
+      const scale = calculateRadiusScale([100, 300], [16, 56], 'average');
+
+      expect(scale(100)).toEqual(16);
+      expect(scale(300)).toEqual(56);
+    });
+
+    it('should keep the sum domain when the aggregate is sum or omitted', () => {
+      expect(calculateRadiusScale([100, 300], [16, 56], 'sum')(400)).toEqual(
+        56
+      );
+      expect(calculateRadiusScale([100, 300], [16, 56])(400)).toEqual(56);
+    });
+
+    it('should return rMin for a single row and all-equal values when averaging', () => {
+      expect(calculateRadiusScale([500], [16, 56], 'average')(500)).toEqual(16);
+      expect(calculateRadiusScale([7, 7], [16, 56], 'average')(7)).toEqual(16);
+    });
   });
 
-  describe('sumClusterValue', () => {
-    it('should sum the quantityValue option across all child markers', () => {
-      const cluster = {
-        getAllChildMarkers: () => [
-          { options: { quantityValue: 120 } },
-          { options: { quantityValue: 380 } }
-        ]
-      };
+  describe('aggregateClusterValue', () => {
+    const clusterOf = (...values) => ({
+      getAllChildMarkers: () =>
+        values.map((quantityValue) => ({ options: { quantityValue } }))
+    });
 
-      expect(sumClusterValue(cluster)).toEqual(500);
+    it('should sum the quantityValue option across all child markers', () => {
+      expect(aggregateClusterValue(clusterOf(120, 380))).toEqual(500);
+    });
+
+    it('should sum when aggregate is explicitly sum', () => {
+      expect(
+        aggregateClusterValue(clusterOf(10, 20, 60), { aggregate: 'sum' })
+      ).toEqual(90);
+    });
+
+    it('should return the mean over child markers when aggregate is average', () => {
+      expect(
+        aggregateClusterValue(clusterOf(10, 20, 60), { aggregate: 'average' })
+      ).toEqual(30);
     });
 
     it('should treat missing or non-numeric values as zero', () => {
@@ -141,12 +174,54 @@ describe('utils/mapHelper', () => {
         ]
       };
 
-      expect(sumClusterValue(cluster)).toEqual(120);
+      expect(aggregateClusterValue(cluster)).toEqual(120);
+    });
+
+    // A non-numeric value counts as a zero-valued POINT rather than dropping
+    // out of the cluster, so it drags the mean down - the same reading the
+    // sum path already gives it.
+    it('should divide by every child marker, including the non-numeric ones, when averaging', () => {
+      const cluster = {
+        getAllChildMarkers: () => [
+          { options: { quantityValue: 120 } },
+          { options: {} },
+          { options: { quantityValue: 'abc' } }
+        ]
+      };
+
+      expect(aggregateClusterValue(cluster, { aggregate: 'average' })).toEqual(
+        40
+      );
     });
 
     it('should return zero when the cluster exposes no children', () => {
-      expect(sumClusterValue(null)).toEqual(0);
-      expect(sumClusterValue({ getAllChildMarkers: () => [] })).toEqual(0);
+      expect(aggregateClusterValue(null)).toEqual(0);
+      expect(aggregateClusterValue(null, { aggregate: 'average' })).toEqual(0);
+      expect(
+        aggregateClusterValue(
+          { getAllChildMarkers: () => [] },
+          { aggregate: 'average' }
+        )
+      ).toEqual(0);
+    });
+
+    it('should read a custom option key under both aggregates', () => {
+      const cluster = {
+        getAllChildMarkers: () => [
+          { options: { litres: 40 } },
+          { options: { litres: 60 } }
+        ]
+      };
+
+      expect(aggregateClusterValue(cluster, { optionKey: 'litres' })).toEqual(
+        100
+      );
+      expect(
+        aggregateClusterValue(cluster, {
+          optionKey: 'litres',
+          aggregate: 'average'
+        })
+      ).toEqual(50);
     });
   });
 

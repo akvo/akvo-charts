@@ -3,10 +3,11 @@ import MarkerClusterGroup from './Map/MarkerClusterGroup';
 import Marker from './Map/Marker';
 import Container from './Map/Container';
 import {
+  AGGREGATE,
+  aggregateClusterValue,
   buildQuantityIcon,
   calculateRadiusScale,
-  formatCompact,
-  sumClusterValue
+  formatCompact
 } from '../utils/mapHelper';
 
 const CLUSTER_TYPE = {
@@ -76,8 +77,11 @@ const clusterCircleIcon = (
 /**
  * Cluster path: MarkerClusterGroup expects iconSize as a NUMBER.
  */
-const quantityClusterIcon = (cluster, { className, ...opts }) => {
-  const { html, diameter } = buildQuantityIcon(sumClusterValue(cluster), opts);
+const quantityClusterIcon = (cluster, { className, aggregate, ...opts }) => {
+  const { html, diameter } = buildQuantityIcon(
+    aggregateClusterValue(cluster, { aggregate }),
+    opts
+  );
   return { html, className, iconSize: diameter };
 };
 
@@ -159,6 +163,7 @@ const MapCluster = (
     groupKey = 'name',
     type = 'default',
     valueKey = 'value',
+    aggregate = AGGREGATE.sum,
     radius = [16, 56],
     color = '#4c78a8',
     formatValue = formatCompact,
@@ -179,7 +184,8 @@ const MapCluster = (
   const radiusScale = isQuantity
     ? calculateRadiusScale(
         points.map((d) => Number(d?.[valueKey]) || 0),
-        radius
+        radius,
+        aggregate
       )
     : null;
   const quantityOpts = { color, formatValue, radiusScale };
@@ -191,6 +197,7 @@ const MapCluster = (
     [CLUSTER_TYPE.quantity]: (cluster) =>
       quantityClusterIcon(cluster, {
         ...quantityOpts,
+        aggregate,
         className: clusterIcon?.className
       })
   };

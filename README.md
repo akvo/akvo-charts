@@ -74,6 +74,8 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
       - [Example Usage](#example-usage)
       - [Disabling or tuning clustering](#disabling-or-tuning-clustering)
       - [MapClusterQuantity](#mapclusterquantity)
+        - [Choosing `aggregate`](#choosing-aggregate)
+        - [Sizing](#sizing)
       - [MapCluster Notes](#mapcluster-notes)
     - [Fully Customized Map](#fully-customized-map)
     - [Components](#components)
@@ -1373,7 +1375,7 @@ Defines the styling and attributes for cluster icons.
 | `type`         | `enum`(default&#124;circle&#124;quantity) |Defines the clustering mode:                                               |
 |                |                                    | - `"default"`: Uses default styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). |
 |                |                                    | - `"circle"`: Uses predefined styles specific to common Akvo project use cases. |
-|                |                                    | - `"quantity"`: Aggregates and sizes circles by a numeric value instead of by count — see [MapClusterQuantity](#mapclusterquantity) for the `valueKey`, `radius`, `color` and `formatValue` props it introduces. |
+|                |                                    | - `"quantity"`: Aggregates and sizes circles by a numeric value instead of by count — see [MapClusterQuantity](#mapclusterquantity) for the `valueKey`, `aggregate`, `radius`, `color` and `formatValue` props it introduces. |
 | `renderPopup`  | `function`                         | Function to render a custom child component in the marker popup.            |
 | `cluster`      | `boolean` &#124; `object`          | Controls clustering. `true` (default) clusters nearby points and splits them apart as you zoom in. `false` turns clustering off entirely, so every point renders as its own marker at every zoom. An object is passed straight through as [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options) — see [Disabling or tuning clustering](#disabling-or-tuning-clustering). |
 
@@ -1467,8 +1469,8 @@ them to look different.
 #### MapClusterQuantity
 
 Set `type="quantity"` to aggregate by a **numeric value** instead of by marker count.
-Zoomed out, nearby places merge into one circle labelled with the sum of their values and
-sized by that sum. Zoomed in, clusters split and the numbers break down, down to
+Zoomed out, nearby places merge into one circle labelled with the aggregate of their
+values and sized by it. Zoomed in, clusters split and the numbers break down, down to
 individual places — which stay circles, sized by their own value.
 
 Use this when each point carries a magnitude (population, households served, budget).
@@ -1478,16 +1480,46 @@ Use `type="circle"` when you care about how many points there are, and `MapView`
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `valueKey` | `string` | `'value'` | Field on each row holding the number |
+| `aggregate` | `enum`(sum&#124;average) | `'sum'` | How a cluster collapses its points into one number |
 | `radius` | `[number, number]` | `[16, 56]` | Min and max circle radius in pixels |
 | `color` | `string \| (sum) => string` | `'#4c78a8'` | Circle fill, or a function of the aggregated value |
 | `formatValue` | `(n) => string` | compact (`12.4M`) | Renders the number inside the circle |
 
+##### Choosing `aggregate`
+
+`aggregate` says what a cluster's number *means*, and only you can know that from the
+data:
+
+- **`'sum'`** (default) — for **extensive** quantities, which genuinely add up:
+  population served, households reached, litres per day, beneficiaries. Five villages of
+  2,000 people is 10,000 people.
+- **`'average'`** — for **intensive** ones, which do not: litres per person per day, %
+  functionality, average household size, cost per connection. Five villages at 50 l/p/d
+  is still about 50, not 250.
+
+Getting this wrong is silent. A rate summed reads correctly while you are zoomed in on
+single points, then claims a meaningless figure — and grows, implying "more" — the
+moment two points merge on zoom-out, with nothing on screen to signal it.
+
+The average is taken over **points**, not over the underlying records: the component sees
+one number per point and has no access to what produced it. For a cluster of sites that
+is the intended reading. Collapsing several submissions per site into that one number
+belongs in your data layer.
+
+##### Sizing
+
 Circles are sized on a square-root scale, so larger values grow sub-linearly in width
-rather than dominating the map. The scale runs from the minimum radius at the smallest
-single value up to the maximum radius at the sum of all values, and it is fixed for the
-lifetime of the data so circle sizes stay comparable as you zoom. Because the domain top
-is the total rather than the largest single value, individual places sit in the lower
-part of the size range and only a fully collapsed cluster approaches the maximum.
+rather than dominating the map. The scale is fixed for the lifetime of the data so circle
+sizes stay comparable as you zoom, and its top end follows `aggregate` — it has to,
+because the largest circle the map can ever draw is a different number under each:
+
+- Under `'sum'` the domain runs from the smallest single value to the **sum of all
+  values**, since the biggest circle is the fully-collapsed cluster holding every point.
+  Individual places therefore sit in the lower part of the size range and only that
+  collapsed cluster approaches the maximum.
+- Under `'average'` it runs to the **largest single value**, since a cluster's mean can
+  never exceed its largest member. A point at the dataset maximum draws at the maximum
+  radius.
 
 Rows missing a `point` are skipped, as with any `MapCluster`. Rows that have a `point` but
 a missing or non-numeric value are rendered as zero rather than dropped, so bad data shows
@@ -1518,6 +1550,7 @@ const Chart = () => (
   <MapCluster
     type="quantity"
     valueKey="population"
+    aggregate="sum"
     data={data}
     tile={{
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
