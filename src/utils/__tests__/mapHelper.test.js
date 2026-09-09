@@ -206,6 +206,20 @@ describe('utils/mapHelper', () => {
       expect(renderedPx).toBeCloseTo(diameter * 0.22, 5);
     });
 
+    it('should render the circle without a white outline stroke, filling the icon box', () => {
+      const { html } = buildQuantityIcon(400, opts);
+
+      expect(html).toContain('r="50"');
+      expect(html).not.toContain('stroke=');
+      expect(html).not.toContain('stroke-width');
+    });
+
+    it('should render the label in bold', () => {
+      const { html } = buildQuantityIcon(400, opts);
+
+      expect(html).toContain('font-weight="bold"');
+    });
+
     it('should mark the svg as overflow-visible so small-circle labels are not clipped', () => {
       const { html } = buildQuantityIcon(1, { radiusScale: () => 16 });
 
