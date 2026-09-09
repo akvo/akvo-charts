@@ -19,6 +19,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
       - [Legend](#legend)
       - [Text Style](#text-style)
       - [Item Style](#item-style)
+      - [Toolbox](#toolbox)
       - [Example Config](#example-config)
     - [Data](#data)
       - [2D Array](#2d-array)
@@ -126,6 +127,7 @@ An object containing the chart configuration options that adhere to Apache EChar
 | `textStyle` | An object that specifies the general text style options for the entire chart. This textStyle configuration will override all individual text styles within the chart. For detailed configuration options, refer to the [Text Style Section](#text-style). | object | None |
 | `itemStyle` | An object that defines the general styling options for items within the entire series in the chart. For more detailed configuration options, refer to the [Item Style Section](#item-style). | object | None |
 | `color`	| An array that specifies the color list of palette. If no color is set in series, the colors would be adopted sequentially and circularly from this list as the colors of series. | array | `['#4475B4', '#73ADD1', '#AAD9E8', '#FEE08F', '#FDAE60', '#F36C42', '#D73027']` |
+| `toolbox` _(optional)_ | Enables a chart toolbar. `true` turns on every tool that works on this chart type; an array turns on exactly the tools it names; an object of the form `{ tools, position }` also places it. For the tool names, the positions, and which charts support what, refer to the [Toolbox Section](#toolbox). | boolean \| array \| object | `false` |
 
 #### Legend
 
@@ -206,6 +208,140 @@ const config = {
 }
 ```
 
+
+#### Toolbox
+
+Adds a toolbar to the chart. The `toolbox` prop accepts three shapes:
+
+| Value | Type | Description |
+|-------|------|-------------|
+| `true` | boolean | Every tool that works on this chart type. |
+| `['image', 'csv']` | array | Exactly the tools named. Tools the chart cannot support are dropped silently. |
+| `{ tools, position }` | object | As above, plus a placement. See the properties below. |
+| `false` _(default)_ | boolean | No toolbar. Omitting `toolbox` does the same. |
+
+**`toolbox` object properties**
+
+| Prop	| Description |	Type | Default |
+|-------|-------------|------|---------|
+| `tools`	| Which tools to show. `true` selects every tool valid for the chart type; an array selects exactly the tools it names. Options are: `'image'`, `'csv'`, `'zoom'`, `'switch'`, `'restore'`, `'dataView'`. | boolean \| array | `true` |
+| `position`	| Where the toolbar sits. Options are: `'righttop'`, `'lefttop'`, `'rightbottom'`, `'leftbottom'`, `'right'`, `'left'`, `'center'`. An unrecognised name falls back to `'righttop'`. Also accepts an ECharts object such as `{ left: '20%', bottom: 4, orient: 'vertical' }`, which is passed through untouched. | string \| object | `'righttop'` |
+
+**Tools**
+
+| Value | Description | Available on |
+|-------|-------------|--------------|
+| `'image'` | Downloads the chart as a PNG on a white background. | all charts |
+| `'csv'` | Downloads the chart data as a CSV, UTF-8 with a BOM so Excel reads it correctly. | all charts |
+| `'zoom'` | Drag to select a region of the axes to zoom into, with a button to zoom back out. | charts with axes |
+| `'switch'` | Toggles the chart between bar and line. `Bar` and its stacked variants offer `bar → line`; `Line` and `StackLine` offer `line → bar`. | Bar and Line charts, and their stacked variants |
+| `'restore'` | Resets `'zoom'` and `'switch'` back to the original chart. | all charts, but `true` includes it only alongside `'zoom'` or `'switch'` |
+| `'dataView'` | Opens the underlying numbers in a read-only table. Opt-in only. | all charts |
+
+`toolbox: true` resolves to:
+
+| Chart | Tools |
+|-------|-------|
+| `Bar`, `Line`, `StackBar`, `StackLine`, `StackClusterColumn` | `'image'`, `'csv'`, `'zoom'`, `'switch'`, `'restore'` |
+| `ScatterPlot` | `'image'`, `'csv'`, `'zoom'`, `'restore'` |
+| `Pie`, `Doughnut` | `'image'`, `'csv'` |
+
+Charts without axes drop `'zoom'` and `'switch'`; `ScatterPlot` keeps zoom but drops
+`'switch'`, because a scatter chart has nothing to switch to. Naming a dropped tool in an
+array is not an error — it is simply ignored, and a list containing only dropped tools
+produces no toolbar at all.
+
+`'restore'` is the one tool whose treatment differs between the two forms. `true` adds it
+only when `'zoom'` or `'switch'` survived, since it has nothing to reset otherwise — which
+is why it is absent from the `Pie` and `Doughnut` row above. An array is taken at your word:
+`toolbox: ['image', 'restore']` puts a restore button on a pie chart.
+
+`'dataView'` is never included by `true` — `'csv'` covers the same need without a modal.
+Name it explicitly to enable it.
+
+**Position**
+
+| Value | Placement | Orientation | ECharts equivalent |
+|-------|-----------|-------------|--------------------|
+| `'righttop'` _(default)_ | top right | horizontal | `{ right: 10, top: 0 }` |
+| `'lefttop'` | top left | horizontal | `{ left: 10, top: 0 }` |
+| `'rightbottom'` | bottom right | horizontal | `{ right: 10, bottom: 10 }` |
+| `'leftbottom'` | bottom left | horizontal | `{ left: 10, bottom: 10 }` |
+| `'right'` | right edge, vertically centered | vertical | `{ right: 10, top: 'middle' }` |
+| `'left'` | left edge, vertically centered | vertical | `{ left: 10, top: 'middle' }` |
+| `'center'` | top center | horizontal | `{ left: 'center', top: 0 }` |
+
+Names are case-insensitive, so `'rightTop'` and `'righttop'` are the same value.
+
+Only the default clears the title, the legend and the plot area. Every other position floats
+the toolbar over part of the chart — that is the point of moving it, but check the result
+against your own titles and legend. The library does not adjust `grid` to make room.
+
+**Example of `toolbox` config**
+
+```javascript
+// every tool valid for this chart
+const config = {
+  // ...other config
+  toolbox: true
+}
+
+// only the two export tools
+const config = {
+  // ...other config
+  toolbox: ['image', 'csv']
+}
+
+// exports and the data table, moved to the bottom left
+const config = {
+  // ...other config
+  toolbox: {
+    tools: ['image', 'csv', 'dataView'],
+    position: 'leftbottom'
+  }
+}
+
+// every valid tool, standing vertically down the left edge
+const config = {
+  // ...other config
+  toolbox: {
+    tools: true,
+    position: 'left'
+  }
+}
+```
+
+Downloaded files are named after the chart `title` (`Sales by Region` becomes
+`sales-by-region.png` and `sales-by-region.csv`), falling back to `chart`. `ScatterPlot`'s
+CSV has no header row, because its dataset carries no dimension names.
+
+**`toolbox` and `rawConfig` do not combine**
+
+`toolbox` is a `config` key, so [the usual rule](#raw-config) applies: whenever `rawConfig`
+is set, the whole `config` prop is ignored — `toolbox` with it, and **even when that
+`rawConfig` declares no toolbox of its own**. A `rawConfig` chart declares its toolbar the
+ECharts way:
+
+```javascript
+const rawConfig = {
+  // ...your ECharts option
+  toolbox: {
+    right: 10,
+    top: 0,
+    feature: {
+      saveAsImage: { backgroundColor: '#fff' },
+      restore: {}
+    }
+  }
+}
+```
+
+Note that a toolbar declared this way does not keep its zoom or chart-type state across a
+parent re-render, where a `config.toolbox` one does. Memoize your `rawConfig` object if
+that matters.
+
+For custom icons, per-feature ECharts options, or any toolbox feature not listed above, use
+[`rawConfig`](#raw-config), which passes a complete `toolbox` option straight through.
 
 #### Example Config
 

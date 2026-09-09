@@ -110,4 +110,31 @@ describe('Pie chart', () => {
       expect(ref.current.renderToSVGString()).toMatchSnapshot();
     });
   });
+  test('renders a toolbox without the axis-only tools', async () => {
+    const ref = React.createRef();
+    render(
+      <Pie
+        config={{
+          title: 'Toolbox Pie',
+          renderer: 'svg',
+          width: 400,
+          height: 400,
+          toolbox: true
+        }}
+        data={[{ product: 'Product 1', sales: 30 }]}
+        ref={ref}
+      />
+    );
+
+    await waitFor(() => {
+      expect(ref.current).toBeTruthy();
+    });
+
+    const { feature } = ref.current.getOption().toolbox[0];
+    expect(feature.saveAsImage).toBeDefined();
+    expect(feature.myCsv).toBeDefined();
+    expect(feature.dataZoom).toBeUndefined();
+    expect(feature.magicType).toBeUndefined();
+    expect(feature.restore).toBeUndefined();
+  });
 });

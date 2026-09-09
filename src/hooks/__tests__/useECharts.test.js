@@ -86,7 +86,8 @@ describe('useECharts', () => {
             dimensions: ['dimension1', 'dimension2'],
             source: data
           }
-        })
+        }),
+        { notMerge: true }
       );
     });
   });
@@ -101,22 +102,30 @@ describe('useECharts', () => {
     });
 
     await waitFor(() => {
-      expect(chartInstanceMock.setOption).toHaveBeenCalledWith(rawConfig);
+      expect(chartInstanceMock.setOption).toHaveBeenCalledWith(rawConfig, {
+        notMerge: true
+      });
     });
   });
 
-  it('should clean up the chart on unmount', async () => {
-    const { unmount } = render(<TestComponent />);
+  it('should replace the option wholesale rather than clearing first', async () => {
+    render(<TestComponent />);
 
     await act(async () => {
       jest.advanceTimersByTime(0);
     });
 
-    unmount();
-
     await waitFor(() => {
-      expect(chartInstanceMock.clear).toHaveBeenCalled();
-      expect(chartInstanceMock.clear).toHaveBeenCalledTimes(1);
+      expect(chartInstanceMock.setOption).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          notMerge: true
+        }
+      );
     });
+
+    // clear() is setOption({series: []}, true), which would become the instance's
+    // first option - and ECharts' `restore` recreates from that first option.
+    expect(chartInstanceMock.clear).not.toHaveBeenCalled();
   });
 });
