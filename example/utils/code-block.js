@@ -1,8 +1,21 @@
 import { chartTypes } from '../static/config';
 import { obj2String } from './string';
 
-const importBlocks = Object.entries(chartTypes).reduce((acc, [key, value]) => {
-  acc[value] = `import { ${value} } from "akvo-charts";`;
+/**
+ * Some chart types are variants of a component rather than components in
+ * their own right - `MapViewChoropleth` is a configured `MapView`, and
+ * `MapClusterQuantity` is a configured `MapCluster`. Without this map the
+ * generated import statement names an export that does not exist.
+ */
+const COMPONENT_BY_TYPE = {
+  [chartTypes.CHOROPLETH_MAP]: 'MapView',
+  [chartTypes.QUANTITY_MAP]: 'MapCluster'
+};
+
+const importBlocks = Object.values(chartTypes).reduce((acc, value) => {
+  acc[value] = `import { ${
+    COMPONENT_BY_TYPE[value] || value
+  } } from "akvo-charts";`;
   return acc;
 }, {});
 
@@ -61,6 +74,7 @@ const renderCodes = (type, props) => {
     case chartTypes.CHOROPLETH_MAP:
       return `<MapView ${attributes} />`;
     case chartTypes.CLUSTER_MAP:
+    case chartTypes.QUANTITY_MAP:
       return `<MapCluster ${attributes} />`;
     default:
       return 'Undefined chart type.';

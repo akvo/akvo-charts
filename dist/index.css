@@ -1,11 +1,11 @@
 /* add css module styles here (optional) */
 
-._styles-module__container__1Lxpd {
+.ae-container {
   width: 100%;
   height: 100%;
 }
 
-._styles-module__legend__2XKrJ {
+.ae-legend {
   line-height: 18px;
   color: #212121;
   background-color: #fff;

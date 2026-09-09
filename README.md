@@ -72,6 +72,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
         - [`clusterIcon`](#clustericon)
         - [Additional Properties](#additional-properties)
       - [Example Usage](#example-usage)
+      - [MapClusterQuantity](#mapclusterquantity)
       - [MapCluster Notes](#mapcluster-notes)
     - [Fully Customized Map](#fully-customized-map)
     - [Components](#components)
@@ -1368,9 +1369,10 @@ Defines the styling and attributes for cluster icons.
 | Prop           | Type                               | Description                                                                 |
 |----------------|------------------------------------|-----------------------------------------------------------------------------|
 | `groupKey`     | `string`                           | Key used to group data when `type` is set to `"circle"`.                    |
-| `type`         | `enum`(default&#124;circle) |Defines the clustering mode:                                               |
+| `type`         | `enum`(default&#124;circle&#124;quantity) |Defines the clustering mode:                                               |
 |                |                                    | - `"default"`: Uses default styles from [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster). |
 |                |                                    | - `"circle"`: Uses predefined styles specific to common Akvo project use cases. |
+|                |                                    | - `"quantity"`: Aggregates and sizes circles by a numeric value instead of by count — see [MapClusterQuantity](#mapclusterquantity) for the `valueKey`, `radius`, `color` and `formatValue` props it introduces. |
 | `renderPopup`  | `function`                         | Function to render a custom child component in the marker popup.            |
 
 ---
@@ -1424,6 +1426,71 @@ const Chart = () => {
 };
 
 export default Chart;
+```
+
+#### MapClusterQuantity
+
+Set `type="quantity"` to aggregate by a **numeric value** instead of by marker count.
+Zoomed out, nearby places merge into one circle labelled with the sum of their values and
+sized by that sum. Zoomed in, clusters split and the numbers break down, down to
+individual places — which stay circles, sized by their own value.
+
+Use this when each point carries a magnitude (population, households served, budget).
+Use `type="circle"` when you care about how many points there are, and `MapView`'s
+`choropleth` when the thing being measured is an area rather than a place.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `valueKey` | `string` | `'value'` | Field on each row holding the number |
+| `radius` | `[number, number]` | `[16, 56]` | Min and max circle radius in pixels |
+| `color` | `string \| (sum) => string` | `'#4c78a8'` | Circle fill, or a function of the aggregated value |
+| `formatValue` | `(n) => string` | compact (`12.4M`) | Renders the number inside the circle |
+
+Circles are sized on a square-root scale, so larger values grow sub-linearly in width
+rather than dominating the map. The scale runs from the minimum radius at the smallest
+single value up to the maximum radius at the sum of all values, and it is fixed for the
+lifetime of the data so circle sizes stay comparable as you zoom. Because the domain top
+is the total rather than the largest single value, individual places sit in the lower
+part of the size range and only a fully collapsed cluster approaches the maximum.
+
+Rows missing a `point` are skipped, as with any `MapCluster`. Rows that have a `point` but
+a missing or non-numeric value are rendered as zero rather than dropped, so bad data shows
+up on the map instead of disappearing.
+
+Passing an explicit `markerIcon` suppresses the quantity leaf circle entirely — the leaf
+marker then renders using `markerIcon` like any other `MapCluster` type, with no
+value-driven sizing. This is the accepted cost of adding quantity clustering to the
+existing `MapCluster` rather than as a new component. When the quantity circle is used,
+the leaf marker carries the CSS class `custom-marker-quantity` (analogous to
+`custom-marker-cluster` for cluster icons); because supplying `markerIcon` bypasses the
+quantity circle altogether, this class name is not currently configurable independently.
+
+Clicking a leaf circle opens a popup showing the label and the exact value
+(`Number(v).toLocaleString()`), not the compact form shown inside the circle — precision
+is what a popup is for. Passing `renderPopup` still overrides this default completely.
+
+```jsx
+import { MapCluster } from 'akvo-charts';
+
+const data = [
+  { point: [-6.2251619, 106.714291], label: 'Jakarta', population: 10562088 },
+  { point: [-7.2574719, 112.7520883], label: 'Surabaya', population: 2874314 },
+  { point: [-6.9174639, 107.6191228], label: 'Bandung', population: 2444160 }
+];
+
+const Chart = () => (
+  <MapCluster
+    type="quantity"
+    valueKey="population"
+    data={data}
+    tile={{
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }}
+    config={{ center: [-6.2, 106.8], zoom: 5, height: '500px', width: '100%' }}
+  />
+);
 ```
 
 #### MapCluster Notes
@@ -1499,6 +1566,19 @@ The `MarkerClusterGroup` component groups multiple markers into clusters.
 | `onMarkerClick` | `function`     | Event handler for click events on individual markers. |
 
 It supports all [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options).
+
+**`iconCreateFn` is captured when the cluster group is created and is not re-read on
+later renders.** Callers typically build it as a fresh inline function each render, so
+depending on its identity would rebuild the whole cluster group constantly. To switch to a
+different `iconCreateFn` — for example when changing `MapCluster`'s `type` — remount the
+component with a changing `key`, which tears the old group down and builds a new one:
+
+```jsx
+<MarkerClusterGroup
+  key={type}
+  iconCreateFn={iconCreateFn}
+>
+```
 
 ---
 

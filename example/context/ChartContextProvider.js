@@ -5,7 +5,8 @@ import {
   chartTypes,
   clusterExampleData,
   choroplethExampleData,
-  choroplethExampleColor
+  choroplethExampleColor,
+  quantityExampleData
 } from '../static/config';
 
 const ChartContext = createContext(null);
@@ -121,6 +122,14 @@ const initalChartState = {
       },
       groupKey: 'serviceLevel',
       type: 'circle'
+    },
+    [chartTypes.QUANTITY_MAP]: {
+      ...defaultMapConfig,
+      data: quantityExampleData,
+      type: 'quantity',
+      valueKey: 'population',
+      radius: [16, 56],
+      color: '#4c78a8'
     }
   },
   chartConfig: {
