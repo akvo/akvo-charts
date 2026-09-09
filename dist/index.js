@@ -26851,12 +26851,19 @@ var formatCompact = function formatCompact(n) {
   if (abs >= 1e3) return parseFloat((value / 1e3).toFixed(1)) + "K";
   return "" + value;
 };
-var calculateRadiusScale = function calculateRadiusScale(values, range) {
+var AGGREGATE = {
+  sum: 'sum',
+  average: 'average'
+};
+var calculateRadiusScale = function calculateRadiusScale(values, range, aggregate) {
   if (values === void 0) {
     values = [];
   }
   if (range === void 0) {
     range = [16, 56];
+  }
+  if (aggregate === void 0) {
+    aggregate = AGGREGATE.sum;
   }
   var _range = range,
     rMin = _range[0],
@@ -26870,7 +26877,7 @@ var calculateRadiusScale = function calculateRadiusScale(values, range) {
     };
   }
   var vMin = Math.min.apply(Math, numbers);
-  var vMax = numbers.reduce(function (sum, v) {
+  var vMax = aggregate === AGGREGATE.average ? Math.max.apply(Math, numbers) : numbers.reduce(function (sum, v) {
     return sum + v;
   }, 0);
   var span = vMax - vMin;
@@ -26883,24 +26890,30 @@ var calculateRadiusScale = function calculateRadiusScale(values, range) {
     return rMin + (rMax - rMin) * Math.sqrt(ratio);
   };
 };
-var sumClusterValue = function sumClusterValue(cluster, optionKey) {
-  if (optionKey === void 0) {
-    optionKey = 'quantityValue';
-  }
+var aggregateClusterValue = function aggregateClusterValue(cluster, _temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+    _ref$optionKey = _ref.optionKey,
+    optionKey = _ref$optionKey === void 0 ? 'quantityValue' : _ref$optionKey,
+    _ref$aggregate = _ref.aggregate,
+    aggregate = _ref$aggregate === void 0 ? AGGREGATE.sum : _ref$aggregate;
   var markers = typeof (cluster === null || cluster === void 0 ? void 0 : cluster.getAllChildMarkers) === 'function' ? cluster.getAllChildMarkers() : [];
-  return markers.reduce(function (sum, m) {
+  var total = markers.reduce(function (sum, m) {
     var _m$options;
     return sum + (Number(m === null || m === void 0 ? void 0 : (_m$options = m.options) === null || _m$options === void 0 ? void 0 : _m$options[optionKey]) || 0);
   }, 0);
+  if (aggregate === AGGREGATE.average) {
+    return markers.length ? total / markers.length : 0;
+  }
+  return total;
 };
 var MIN_LABEL_PX = 10;
-var buildQuantityIcon = function buildQuantityIcon(value, _temp) {
-  var _ref = _temp === void 0 ? {} : _temp,
-    _ref$color = _ref.color,
-    color = _ref$color === void 0 ? '#4c78a8' : _ref$color,
-    _ref$formatValue = _ref.formatValue,
-    formatValue = _ref$formatValue === void 0 ? formatCompact : _ref$formatValue,
-    radiusScale = _ref.radiusScale;
+var buildQuantityIcon = function buildQuantityIcon(value, _temp2) {
+  var _ref2 = _temp2 === void 0 ? {} : _temp2,
+    _ref2$color = _ref2.color,
+    color = _ref2$color === void 0 ? '#4c78a8' : _ref2$color,
+    _ref2$formatValue = _ref2.formatValue,
+    formatValue = _ref2$formatValue === void 0 ? formatCompact : _ref2$formatValue,
+    radiusScale = _ref2.radiusScale;
   var radius = typeof radiusScale === 'function' ? radiusScale(value) : 16;
   var diameter = Math.round(radius * 2);
   var fill = typeof color === 'function' ? color(value) : color;
@@ -26912,14 +26925,14 @@ var buildQuantityIcon = function buildQuantityIcon(value, _temp) {
     html: "<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" overflow=\"visible\"><circle cx=\"50\" cy=\"50\" r=\"50\" fill=\"" + fill + "\" fill-opacity=\"0.85\"/><text x=\"50%\" y=\"50%\" fill=\"#ffffff\" text-anchor=\"middle\" dy=\".3em\" font-size=\"" + fontVb + "px\" font-weight=\"bold\">" + formatValue(value) + "</text></svg>"
   };
 };
-var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref2, data) {
-  var _onClick = _ref2.onClick,
-    _onMouseOver = _ref2.onMouseOver,
-    mapKey = _ref2.mapKey,
-    choropleth = _ref2.choropleth,
-    color = _ref2.color,
-    _style = _ref2.style,
-    props = _objectWithoutPropertiesLoose(_ref2, _excluded);
+var getGeoJSONProps = function getGeoJSONProps(mapInstance, _ref3, data) {
+  var _onClick = _ref3.onClick,
+    _onMouseOver = _ref3.onMouseOver,
+    mapKey = _ref3.mapKey,
+    choropleth = _ref3.choropleth,
+    color = _ref3.color,
+    _style = _ref3.style,
+    props = _objectWithoutPropertiesLoose(_ref3, _excluded);
   if (data === void 0) {
     data = [];
   }
@@ -28406,9 +28419,9 @@ var MapView = function MapView(_ref, ref) {
 };
 var MapView$1 = React.forwardRef(MapView);
 
-var _excluded$6 = ["className"],
+var _excluded$6 = ["className", "aggregate"],
   _excluded2$1 = ["className"],
-  _excluded3 = ["data", "markerIcon", "clusterIcon", "groupKey", "type", "valueKey", "radius", "color", "formatValue", "renderPopup", "cluster"];
+  _excluded3 = ["data", "markerIcon", "clusterIcon", "groupKey", "type", "valueKey", "aggregate", "radius", "color", "formatValue", "renderPopup", "cluster"];
 var CLUSTER_TYPE = {
   "default": 0,
   circle: 1,
@@ -28461,8 +28474,11 @@ var clusterCircleIcon = function clusterCircleIcon(cluster, data, groupKey, prop
 };
 var quantityClusterIcon = function quantityClusterIcon(cluster, _ref2) {
   var className = _ref2.className,
+    aggregate = _ref2.aggregate,
     opts = _objectWithoutPropertiesLoose(_ref2, _excluded$6);
-  var _buildQuantityIcon = buildQuantityIcon(sumClusterValue(cluster), opts),
+  var _buildQuantityIcon = buildQuantityIcon(aggregateClusterValue(cluster, {
+      aggregate: aggregate
+    }), opts),
     html = _buildQuantityIcon.html,
     diameter = _buildQuantityIcon.diameter;
   return {
@@ -28524,6 +28540,8 @@ var MapCluster = function MapCluster(_ref5, ref) {
     type = _ref5$type === void 0 ? 'default' : _ref5$type,
     _ref5$valueKey = _ref5.valueKey,
     valueKey = _ref5$valueKey === void 0 ? 'value' : _ref5$valueKey,
+    _ref5$aggregate = _ref5.aggregate,
+    aggregate = _ref5$aggregate === void 0 ? AGGREGATE.sum : _ref5$aggregate,
     _ref5$radius = _ref5.radius,
     radius = _ref5$radius === void 0 ? [16, 56] : _ref5$radius,
     _ref5$color = _ref5.color,
@@ -28542,7 +28560,7 @@ var MapCluster = function MapCluster(_ref5, ref) {
   })) || [];
   var radiusScale = isQuantity ? calculateRadiusScale(points.map(function (d) {
     return Number(d === null || d === void 0 ? void 0 : d[valueKey]) || 0;
-  }), radius) : null;
+  }), radius, aggregate) : null;
   var quantityOpts = {
     color: color,
     formatValue: formatValue,
@@ -28552,6 +28570,7 @@ var MapCluster = function MapCluster(_ref5, ref) {
     return clusterCircleIcon(cluster, data, groupKey, clusterIcon);
   }, _clusterTypes[CLUSTER_TYPE.quantity] = function (cluster) {
     return quantityClusterIcon(cluster, _extends({}, quantityOpts, {
+      aggregate: aggregate,
       className: clusterIcon === null || clusterIcon === void 0 ? void 0 : clusterIcon.className
     }));
   }, _clusterTypes);
