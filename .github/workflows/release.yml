@@ -16,9 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Trusted Publishing (OIDC) needs npm >= 11.5.1, and npm 11 requires Node
+      # ^20.17.0 || >=22.9.0 - so npm cannot be upgraded in place on Node 18.
+      # Node 24 ships npm 11.x.
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Get the tag name
@@ -54,7 +57,8 @@ jobs:
         run: npm install
       - name: Build Package
         run: npm run build
+      # Authentication comes from the npm Trusted Publisher registered for
+      # akvo/akvo-charts + release.yml, exchanged via the OIDC token granted by
+      # `permissions: id-token: write` above. No NPM_TOKEN is used.
       - name: Publish to NPM
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
