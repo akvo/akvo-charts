@@ -54,7 +54,9 @@ export const formatCompact = (n) => {
  * point. The domain is fixed for the lifetime of the data so circle sizes
  * stay comparable across zoom levels.
  *
- * Radius uses sqrt so that circle AREA is proportional to value.
+ * Radius uses sqrt, so width grows sub-linearly with value. Note this is NOT
+ * strict area-proportionality: the rMin floor and the vMin offset both break
+ * it, so a 4x value does not draw a 2x-wide circle.
  */
 export const calculateRadiusScale = (values = [], range = [16, 56]) => {
   const [rMin, rMax] = range;

@@ -1567,6 +1567,19 @@ The `MarkerClusterGroup` component groups multiple markers into clusters.
 
 It supports all [Leaflet.markercluster options](https://github.com/Leaflet/Leaflet.markercluster#all-options).
 
+**`iconCreateFn` is captured when the cluster group is created and is not re-read on
+later renders.** Callers typically build it as a fresh inline function each render, so
+depending on its identity would rebuild the whole cluster group constantly. To switch to a
+different `iconCreateFn` — for example when changing `MapCluster`'s `type` — remount the
+component with a changing `key`, which tears the old group down and builds a new one:
+
+```jsx
+<MarkerClusterGroup
+  key={type}
+  iconCreateFn={iconCreateFn}
+>
+```
+
 ---
 
 #### <a id="map-tile-layer"></a>TileLayer
