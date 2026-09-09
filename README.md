@@ -72,6 +72,7 @@ The `akvo-charts` library allows you to create a variety of charts by leveraging
         - [`clusterIcon`](#clustericon)
         - [Additional Properties](#additional-properties)
       - [Example Usage](#example-usage)
+      - [MapClusterQuantity](#mapclusterquantity)
       - [MapCluster Notes](#mapcluster-notes)
     - [Fully Customized Map](#fully-customized-map)
     - [Components](#components)
@@ -1424,6 +1425,57 @@ const Chart = () => {
 };
 
 export default Chart;
+```
+
+#### MapClusterQuantity
+
+Set `type="quantity"` to aggregate by a **numeric value** instead of by marker count.
+Zoomed out, nearby places merge into one circle labelled with the sum of their values and
+sized by that sum. Zoomed in, clusters split and the numbers break down, down to
+individual places — which stay circles, sized by their own value.
+
+Use this when each point carries a magnitude (population, households served, budget).
+Use `type="circle"` when you care about how many points there are, and `MapView`'s
+`choropleth` when the thing being measured is an area rather than a place.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `valueKey` | `string` | `'value'` | Field on each row holding the number |
+| `radius` | `[number, number]` | `[16, 56]` | Min and max circle radius in pixels |
+| `color` | `string \| (sum) => string` | `'#4c78a8'` | Circle fill, or a function of the aggregated value |
+| `formatValue` | `(n) => string` | compact (`12.4M`) | Renders the number inside the circle |
+
+Circle **area** is proportional to value, so a place with four times the population draws
+a circle twice as wide. The size scale is fixed for the lifetime of the data — its domain
+runs from the smallest single value to the sum of all values — so circle sizes stay
+comparable as you zoom.
+
+Rows missing a `point` are skipped, as with any `MapCluster`. Rows that have a `point` but
+a missing or non-numeric value are rendered as zero rather than dropped, so bad data shows
+up on the map instead of disappearing.
+
+```jsx
+import { MapCluster } from 'akvo-charts';
+
+const data = [
+  { point: [-6.2251619, 106.714291], label: 'Jakarta', population: 10562088 },
+  { point: [-7.2574719, 112.7520883], label: 'Surabaya', population: 2874314 },
+  { point: [-6.9174639, 107.6191228], label: 'Bandung', population: 2444160 }
+];
+
+const Chart = () => (
+  <MapCluster
+    type="quantity"
+    valueKey="population"
+    data={data}
+    tile={{
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }}
+    config={{ center: [-6.2, 106.8], zoom: 5, height: '500px', width: '100%' }}
+  />
+);
 ```
 
 #### MapCluster Notes
