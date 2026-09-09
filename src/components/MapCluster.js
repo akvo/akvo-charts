@@ -193,7 +193,10 @@ const MapCluster = (
       ref={ref}
       {...config}
     >
-      <MarkerClusterGroup iconCreateFn={iconCreateFn}>
+      <MarkerClusterGroup
+        key={type}
+        iconCreateFn={iconCreateFn}
+      >
         {points.map((d, dx) => (
           <Marker
             latlng={d?.point}

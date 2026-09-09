@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import L from 'leaflet';
 import MapCluster, { buildPopupContent } from '../MapCluster';
 
 describe('MapCluster chart', () => {
@@ -170,6 +171,76 @@ describe('MapCluster chart', () => {
     });
 
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  // Regression test for #54: switching `type` on an already-mounted
+  // MapCluster instance (same tree position, no unmount - this is what the
+  // example playground does when it changes chart type without also
+  // dispatching a re-render) must swap the cluster's icon-create function
+  // and must not leak a second, stale marker cluster group onto the map.
+  test('swapping type from circle to quantity on the same instance updates the cluster icon without leaking a layer', async () => {
+    let instance = null;
+    const circleProps = {
+      ...quantityProps,
+      type: 'circle',
+      groupKey: 'label'
+    };
+
+    const { rerender } = render(
+      <MapCluster
+        {...circleProps}
+        ref={(el) => {
+          instance = el;
+        }}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('map-view')).toBeInTheDocument();
+    });
+
+    // Re-render the SAME instance (same tree position) with type="quantity",
+    // mirroring the example app dispatching SET_SELECTED_CHART_TYPE without
+    // RERENDER_TRUE - no unmount happens here.
+    rerender(
+      <MapCluster
+        {...quantityProps}
+        ref={(el) => {
+          instance = el;
+        }}
+      />
+    );
+
+    await waitFor(() => {
+      const map = instance.getMap();
+      const clusterGroups = [];
+      map.eachLayer((layer) => {
+        if (typeof layer?.options?.iconCreateFunction === 'function') {
+          clusterGroups.push(layer);
+        }
+      });
+
+      // Exactly one cluster group must remain attached - proves the stale
+      // group created for type="circle" was removed, not just emptied.
+      expect(clusterGroups).toHaveLength(1);
+
+      const fakeCluster = {
+        getAllChildMarkers: () => [
+          { options: { quantityValue: 10562088 } },
+          { options: { quantityValue: 2874314 } }
+        ],
+        getChildCount: () => 2
+      };
+      const icon = clusterGroups[0].options.iconCreateFunction(fakeCluster);
+
+      // The quantity icon renders the formatted summed value in a bold
+      // label; the stale count-donut would instead render the bare child
+      // count ("2") with no font-weight.
+      expect(icon.options.html).toContain('font-weight="bold"');
+      expect(icon.options.html).not.toContain(
+        `>${fakeCluster.getChildCount()}</text>`
+      );
+    });
   });
 
   // Leaflet markers/popups don't render in jsdom (Leaflet needs real layout),
