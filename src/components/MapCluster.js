@@ -119,6 +119,35 @@ export const buildPopupContent = (
   return <React.Fragment>{d?.label}</React.Fragment>;
 };
 
+/**
+ * `cluster` accepts a boolean or a Leaflet.markercluster options object:
+ *
+ * - `true` (default) - clustering as before, no options overridden.
+ * - `false` - clustering off. `disableClusteringAtZoom: 0` pulls the group's
+ *   internal max zoom below the map's min zoom, so the slotting loop in
+ *   `_addLayer` never runs and every marker attaches to the top level.
+ *   `maxClusterRadius: 0` is NOT equivalent: it still groups points that share
+ *   exact coordinates, and it funnels every point into a single distance-grid
+ *   cell, making inserts quadratic on exactly the large datasets clustering is
+ *   meant for.
+ * - object - passed straight through to `L.markerClusterGroup`.
+ *
+ * Options are per-instance (Leaflet's `setOptions` copies the prototype
+ * defaults onto the instance before writing), so turning clustering off on one
+ * map never affects another map on the page.
+ */
+const NO_CLUSTERING = { disableClusteringAtZoom: 0 };
+
+const resolveClusterOptions = (cluster) => {
+  if (cluster === false) {
+    return NO_CLUSTERING;
+  }
+  if (cluster && typeof cluster === 'object') {
+    return cluster;
+  }
+  return {};
+};
+
 const MapCluster = (
   {
     data,
@@ -134,11 +163,13 @@ const MapCluster = (
     color = '#4c78a8',
     formatValue = formatCompact,
     renderPopup = null,
+    cluster = true,
     ...config
   },
   ref
 ) => {
   const isQuantity = CLUSTER_TYPE?.[type] === CLUSTER_TYPE.quantity;
+  const clusterOptions = resolveClusterOptions(cluster);
 
   const points = data?.filter((d) => d?.point) || [];
   // `default` and `circle` consumers never use the radius scale, and
@@ -194,8 +225,9 @@ const MapCluster = (
       {...config}
     >
       <MarkerClusterGroup
-        key={type}
+        key={`${type}-${JSON.stringify(clusterOptions)}`}
         iconCreateFn={iconCreateFn}
+        {...clusterOptions}
       >
         {points.map((d, dx) => (
           <Marker
