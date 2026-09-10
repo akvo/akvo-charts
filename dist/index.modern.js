@@ -27470,6 +27470,44 @@ var Axis = {
     }
   }
 };
+var Toolbox = {
+  show: true,
+  itemSize: 15,
+  itemGap: 10
+};
+var ToolboxPosition = {
+  righttop: {
+    right: 10,
+    top: 0
+  },
+  lefttop: {
+    left: 10,
+    top: 0
+  },
+  rightbottom: {
+    right: 10,
+    bottom: 10
+  },
+  leftbottom: {
+    left: 10,
+    bottom: 10
+  },
+  right: {
+    right: 10,
+    top: 'middle',
+    orient: 'vertical'
+  },
+  left: {
+    left: 10,
+    top: 'middle',
+    orient: 'vertical'
+  },
+  center: {
+    left: 'center',
+    top: 0
+  }
+};
+var CsvIcon = 'path://M11 2h2v8h3l-4 5-4-5h3V2zM4 17h16v2H4v-2z';
 
 var filterObjNullValue = function filterObjNullValue(obj) {
   return Object.entries(obj).reduce(function (acc, _ref) {
@@ -27644,6 +27682,157 @@ var normalizeData = function normalizeData(data) {
   throw new Error('Unsupported data format');
 };
 
+var TOOLS = ['image', 'csv', 'zoom', 'switch', 'restore', 'dataView'];
+var DEFAULT_POSITION = 'righttop';
+var AUTO_TOOLS = TOOLS.filter(function (tool) {
+  return tool !== 'dataView';
+});
+var MAGIC_TYPES = {
+  bar: ['bar', 'line'],
+  line: ['line', 'bar']
+};
+var slugify = function slugify(title) {
+  return String(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'chart';
+};
+var escapeCell = function escapeCell(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  var cell = String(value);
+  return /[",\r\n]/.test(cell) ? "\"" + cell.replace(/"/g, '""') + "\"" : cell;
+};
+var toCsv = function toCsv(dimensions, source) {
+  if (dimensions === void 0) {
+    dimensions = [];
+  }
+  if (source === void 0) {
+    source = [];
+  }
+  var keys = dimensions || [];
+  var rows = (source || []).map(function (row) {
+    return Array.isArray(row) ? row : keys.map(function (key) {
+      return row === null || row === void 0 ? void 0 : row[key];
+    });
+  });
+  var lines = keys.length ? [keys.map(escapeCell).join(',')] : [];
+  rows.forEach(function (row) {
+    return lines.push(row.map(escapeCell).join(','));
+  });
+  return lines.join('\r\n');
+};
+var saveCsv = function saveCsv(csv, filename) {
+  if (typeof document === 'undefined' || typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') {
+    return;
+  }
+  var blob = new Blob(["\uFEFF" + csv], {
+    type: 'text/csv;charset=utf-8;'
+  });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+var resolvePosition = function resolvePosition(position) {
+  if (position && typeof position === 'object') {
+    return position;
+  }
+  return ToolboxPosition[String(position || '').toLowerCase()] || ToolboxPosition[DEFAULT_POSITION];
+};
+var resolveToolbox = function resolveToolbox(_temp) {
+  var _ref = _temp === void 0 ? {} : _temp,
+    toolbox = _ref.toolbox,
+    chartType = _ref.chartType,
+    _ref$showAxis = _ref.showAxis,
+    showAxis = _ref$showAxis === void 0 ? true : _ref$showAxis,
+    dataset = _ref.dataset,
+    title = _ref.title;
+  if (!toolbox) {
+    return null;
+  }
+  var wrapped = toolbox === true || Array.isArray(toolbox);
+  var tools = wrapped ? toolbox : toolbox.tools;
+  var position = wrapped ? undefined : toolbox.position;
+  if (!tools) {
+    return null;
+  }
+  var explicit = Array.isArray(tools);
+  var requested = explicit ? tools : AUTO_TOOLS;
+  var magicTypes = showAxis ? MAGIC_TYPES[chartType] : null;
+  var legal = requested.filter(function (tool) {
+    if (!TOOLS.includes(tool)) {
+      return false;
+    }
+    if (tool === 'zoom') {
+      return showAxis;
+    }
+    if (tool === 'switch') {
+      return Boolean(magicTypes);
+    }
+    return true;
+  });
+  var enabled = legal.filter(function (tool) {
+    return tool !== 'restore' || explicit || legal.includes('zoom') || legal.includes('switch');
+  });
+  if (!enabled.length) {
+    return null;
+  }
+  var name = slugify(title);
+  var feature = {};
+  if (enabled.includes('image')) {
+    feature.saveAsImage = {
+      name: name,
+      backgroundColor: '#fff',
+      title: 'Save as image'
+    };
+  }
+  if (enabled.includes('csv')) {
+    feature.myCsv = {
+      show: true,
+      title: 'Save as CSV',
+      icon: CsvIcon,
+      onclick: function onclick(ecModel) {
+        var _option$dataset, _option$title, _option$title$;
+        var option = typeof (ecModel === null || ecModel === void 0 ? void 0 : ecModel.getOption) === 'function' ? ecModel.getOption() : null;
+        var live = option === null || option === void 0 ? void 0 : (_option$dataset = option.dataset) === null || _option$dataset === void 0 ? void 0 : _option$dataset[0];
+        var source = live || dataset || {};
+        var file = slugify((option === null || option === void 0 ? void 0 : (_option$title = option.title) === null || _option$title === void 0 ? void 0 : (_option$title$ = _option$title[0]) === null || _option$title$ === void 0 ? void 0 : _option$title$.text) || title);
+        saveCsv(toCsv(source.dimensions, source.source), file + ".csv");
+      }
+    };
+  }
+  if (enabled.includes('zoom')) {
+    feature.dataZoom = {
+      title: {
+        zoom: 'Zoom',
+        back: 'Reset zoom'
+      }
+    };
+  }
+  if (enabled.includes('switch')) {
+    feature.magicType = {
+      type: magicTypes
+    };
+  }
+  if (enabled.includes('restore')) {
+    feature.restore = {
+      title: 'Restore'
+    };
+  }
+  if (enabled.includes('dataView')) {
+    feature.dataView = {
+      readOnly: true,
+      title: 'Data view'
+    };
+  }
+  return _extends({}, Toolbox, resolvePosition(position), {
+    feature: feature
+  });
+};
+
 var useECharts = function useECharts(_ref) {
   var _ref$config = _ref.config,
     config = _ref$config === void 0 ? {} : _ref$config,
@@ -27656,6 +27845,7 @@ var useECharts = function useECharts(_ref) {
     _ref$rawOverrides = _ref.rawOverrides,
     rawOverrides = _ref$rawOverrides === void 0 ? {} : _ref$rawOverrides;
   var chartRef = useRef(null);
+  var appliedRef = useRef(null);
   var _useState = useState(null),
     chartInstance = _useState[0],
     setChartInstance = _useState[1];
@@ -27706,6 +27896,18 @@ var useECharts = function useECharts(_ref) {
         overrideItemStyle: overrideItemStyle,
         horizontal: horizontal
       }));
+      var toolbox = resolveToolbox({
+        toolbox: config === null || config === void 0 ? void 0 : config.toolbox,
+        chartType: rawOverrides === null || rawOverrides === void 0 ? void 0 : rawOverrides.type,
+        showAxis: (config === null || config === void 0 ? void 0 : config.showAxis) !== false,
+        dataset: options.dataset,
+        title: config === null || config === void 0 ? void 0 : config.title
+      });
+      if (toolbox) {
+        options = _extends({}, options, {
+          toolbox: toolbox
+        });
+      }
     } else {
       options = rawConfig !== null && rawConfig !== void 0 && rawConfig.series ? _extends({}, rawConfig, {
         series: rawConfig.series.map(function (s) {
@@ -27716,11 +27918,19 @@ var useECharts = function useECharts(_ref) {
       }) : rawConfig;
     }
     if (chartInstance) {
-      try {
-        chartInstance.clear();
-        chartInstance.setOption(options);
-      } catch (err) {
-        console.error('useECharts', err);
+      var isRaw = Boolean(Object.keys(rawConfig).length);
+      var signature = isRaw ? null : JSON.stringify(options, function (key, value) {
+        return typeof value === 'function' ? undefined : value;
+      });
+      if (isRaw || signature !== appliedRef.current) {
+        appliedRef.current = signature;
+        try {
+          chartInstance.setOption(options, {
+            notMerge: true
+          });
+        } catch (err) {
+          console.error('useECharts', err);
+        }
       }
     }
   }, [chartInstance, chartRef, config, rawConfig, data, rawOverrides, getOptions]);

@@ -93,3 +93,28 @@ export const Axis = {
     }
   }
 };
+
+// Non-positional defaults only. Position comes from ToolboxPosition, so that
+// merging a 'left' position can never leave a stale 'right' behind - ECharts
+// would honour both.
+export const Toolbox = {
+  show: true,
+  itemSize: 15,
+  itemGap: 10
+};
+
+// The vertically centered positions also stand the toolbar up: a horizontal
+// strip floating in the middle of the plot reads as debris.
+export const ToolboxPosition = {
+  righttop: { right: 10, top: 0 },
+  lefttop: { left: 10, top: 0 },
+  rightbottom: { right: 10, bottom: 10 },
+  leftbottom: { left: 10, bottom: 10 },
+  right: { right: 10, top: 'middle', orient: 'vertical' },
+  left: { left: 10, top: 'middle', orient: 'vertical' },
+  center: { left: 'center', top: 0 }
+};
+
+// Download glyph for the custom CSV tool. ECharts custom features need an
+// icon of their own; built-in features supply theirs.
+export const CsvIcon = 'path://M11 2h2v8h3l-4 5-4-5h3V2zM4 17h16v2H4v-2z';

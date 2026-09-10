@@ -4,3 +4,7 @@ npm-debug.log
 .env
 .DS_Store
 .next
+.claude
+
+.agent/
+agent_docs/
